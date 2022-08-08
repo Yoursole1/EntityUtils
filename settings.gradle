@@ -1,0 +1,11 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url "https://papermc.io/repo/repository/maven-public/"
+        }
+    }
+}
+
+rootProject.name = 'EntityUtils'
+

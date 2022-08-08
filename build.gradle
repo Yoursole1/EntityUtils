@@ -1,0 +1,47 @@
+plugins {
+    id 'java'
+    id 'io.papermc.paperweight.userdev' version libs.versions.paperweight
+    id 'com.github.johnrengelman.shadow' version libs.versions.shadow
+    id 'xyz.jpenilla.run-paper' version '1.0.6'
+    id 'net.minecrell.plugin-yml.bukkit' version '0.5.2'
+}
+
+group 'org.entityutils'
+version '0.1.0'
+
+repositories {
+    mavenCentral()
+    maven { url "https://papermc.io/repo/repository/maven-public/" }
+}
+
+dependencies {
+    paperweightDevelopmentBundle libs.paper.devbundle
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+tasks {
+    assemble {
+        dependsOn(reobfJar)
+    }
+    build {
+        dependsOn(shadowJar)
+        dependsOn(reobfJar)
+    }
+    compileJava {
+        options.release.set(17)
+        options.encoding = "UTF-8"
+    }
+}
+
+bukkit {
+    load = 'STARTUP'
+    main = 'org.entityutils.EntityUtilsPlugin'
+    prefix = 'EntityUtils'
+    apiVersion = '1.18'
+    defaultPermission = 'OP'
+    authors = ['MarvelousAnything', 'Yoursole']
+}
+
