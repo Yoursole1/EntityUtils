@@ -1,20 +1,17 @@
 package org.entityutils.entity.npc;
 
 
+import net.minecraft.world.entity.player.Player;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.entityutils.entity.EUEntity;
 
 /**
  * An NPC is an entity without AI that can be interacted with
  */
-public interface NPC {
+public interface NPC extends Listener, EUEntity {
 
-    /**
-     * Enables
-     * @param alive
-     */
-    void setAlive(boolean alive);
-    void setAlive(Player p, boolean alive);
+
     void showToAll(boolean show);
     void showName(boolean show);
     void setName(String name);

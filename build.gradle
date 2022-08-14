@@ -16,7 +16,11 @@ repositories {
 
 dependencies {
     paperweightDevelopmentBundle libs.paper.devbundle
+
+    compileOnly "org.projectlombok:lombok:1.18.24"
+    annotationProcessor "org.projectlombok:lombok:1.18.24"
 }
+
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
