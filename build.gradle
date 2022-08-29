@@ -1,5 +1,6 @@
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'checkstyle'
     id 'io.papermc.paperweight.userdev' version libs.versions.paperweight
     id 'com.github.johnrengelman.shadow' version libs.versions.shadow
     id 'xyz.jpenilla.run-paper' version '1.0.6'
@@ -38,6 +39,18 @@ tasks {
         options.release.set(17)
         options.encoding = "UTF-8"
     }
+
+    checkstyleMain {
+        source = 'src/main/java'
+    }
+
+    checkstyleTest {
+        source = 'src/test/java'
+    }
+}
+
+checkstyle {
+    configFile file("${rootDir}/config/checkstyle/checkstyle.xml")
 }
 
 bukkit {
