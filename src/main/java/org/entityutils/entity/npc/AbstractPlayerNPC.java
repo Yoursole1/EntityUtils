@@ -7,7 +7,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.Location;
-
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,13 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * An abstract player NPC.
+ */
 @Getter
 @Setter
-
-/**
- *
- */
-public abstract class AbstractPlayerNPC implements NPC{
+public abstract class AbstractPlayerNPC implements NPC {
 
     //The name of the NPC
     private String name;
@@ -36,23 +34,23 @@ public abstract class AbstractPlayerNPC implements NPC{
     //determines if the player's name is shown above their head
     private boolean showName;
 
-    //determines if the NPC's head follows the player
+    // determines if the NPC's head follows the player
     private boolean headTrack;
 
-    //determines if the NPC can be seen by all players
+    // determines if the NPC can be seen by all players
     private boolean showToAll;
 
     private final List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> inventory = new ArrayList<>();
 
-    //the NPC
+    // the NPC
     ServerPlayer npc;
 
-    //players that can see the npc
+    // players that can see the npc
     private ArrayList<UUID> viewers;
 
     private JavaPlugin plugin;
 
-    //Skin data strings
+    // Skin data strings
     private String value;
     private String signature;
 
@@ -63,9 +61,7 @@ public abstract class AbstractPlayerNPC implements NPC{
     private ArmorStand stand;
 
 
-    public AbstractPlayerNPC(){
-
-
+    protected AbstractPlayerNPC() {
 
     }
 
@@ -73,6 +69,7 @@ public abstract class AbstractPlayerNPC implements NPC{
     public void setAlive(boolean alive){
 
     }
+
     @Override
     public void setAlive(Player p, boolean alive) {
 
@@ -125,6 +122,7 @@ public abstract class AbstractPlayerNPC implements NPC{
     public void setItem(ItemStack item, EquipmentSlot slot){
 
     }
+
     public void setItem(ItemStack item, EquipmentSlot slot, Player p){
 
     }
