@@ -90,8 +90,11 @@ public class HologramEntity implements EUEntity {
         }
     }
 
+    //TODO override this with a viewers list
+    /*
     @Override
     public void refresh() {
 
     }
+     */
 }

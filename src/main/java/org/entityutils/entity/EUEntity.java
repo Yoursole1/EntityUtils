@@ -10,5 +10,8 @@ public interface EUEntity {
     void setAlive(boolean alive);
 
     void setAlive(Player p, boolean alive);
-    void refresh();
+    default void refresh(){
+        this.setAlive(false);
+        this.setAlive(true);
+    }
 }
