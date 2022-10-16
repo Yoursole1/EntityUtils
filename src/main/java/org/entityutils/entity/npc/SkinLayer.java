@@ -30,12 +30,12 @@ public enum SkinLayer {
      * @param layers The layers to create the bit mask from.
      * @return The bit mask.
      */
-    public int createMask(SkinLayer... layers) {
+    public static byte createMask(SkinLayer... layers) {
         int out = 0;
         for (SkinLayer layer : layers) {
             out |= layer.getMask();
         }
-        return out;
+        return (byte)out;
     }
 
     /**

@@ -11,6 +11,9 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -245,7 +248,7 @@ public abstract class AbstractPlayerNPC implements NPC {
         PacketUtils.sendPacket(eq, pl);
     }
 
-    public void setSkin(UUID uuid){
+    public void setSkin(UUID uuid, SkinLayer... layers){
         this.skin = uuid;
 
         oshi.util.tuples.Pair<String, String> p;
@@ -261,6 +264,19 @@ public abstract class AbstractPlayerNPC implements NPC {
             this.npc.gameProfile = profile;
 
             this.refresh();
+        }
+
+        //TODO verify that the skin loads with layers when setSkin is called BEFORE the npc is spawned (it prob won't)
+        if(npc == null){
+            return;
+        }
+        SynchedEntityData watcher = npc.getEntityData();
+
+        watcher.set(new EntityDataAccessor<>(17, EntityDataSerializers.BYTE), SkinLayer.createMask(layers));
+
+        ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(npc.getId(), watcher, true);
+        for(org.bukkit.entity.Player pl : Bukkit.getOnlinePlayers()){
+            PacketUtils.sendPacket(packet4, ((CraftPlayer)(pl)).getHandle());
         }
     }
 

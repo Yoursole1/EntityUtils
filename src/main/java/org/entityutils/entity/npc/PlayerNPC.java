@@ -11,6 +11,10 @@ public class PlayerNPC extends AbstractPlayerNPC {
         super(name, loc, plugin);
     }
 
+    /**
+     * Walk with pathfinding
+     * @param location
+     */
     @Override
     public void goTo(Location location) {
 
