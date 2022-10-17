@@ -18,9 +18,8 @@ import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.entityutils.entity.EUEntity;
 import org.entityutils.utils.PacketUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -32,9 +31,6 @@ public class HologramEntity implements EUEntity {
 
     private double OFFSET = 0;
 
-    private ArrayList<UUID> viewers;
-
-
     public HologramEntity(Location location, String text) {
         this.location = location;
         this.text = text;
@@ -45,12 +41,9 @@ public class HologramEntity implements EUEntity {
 
         this.OFFSET = this.hologram.getBbHeight() + 0.5;
 
-        this.hologram.setPos(new Vec3(location.getX(), location.getY() - this.OFFSET, location.getZ()));
+        this.hologram.setPos(new Vec3(location.getX(), location.getY() + this.OFFSET, location.getZ()));
         this.hologram.setCustomName(new TextComponent(text));
-        this.hologram.setCustomNameVisible(true);
-        this.hologram.setInvulnerable(true);
         this.hologram.setInvisible(true);
-        this.hologram.setNoGravity(true);
     }
 
     public void despawn(){
@@ -89,12 +82,4 @@ public class HologramEntity implements EUEntity {
             PacketUtils.sendPacket(new ClientboundRemoveEntitiesPacket(this.hologram.getId()), p);
         }
     }
-
-    //TODO override this with a viewers list
-    /*
-    @Override
-    public void refresh() {
-
-    }
-     */
 }
