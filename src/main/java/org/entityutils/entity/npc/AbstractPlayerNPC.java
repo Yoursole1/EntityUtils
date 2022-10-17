@@ -36,6 +36,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.entityutils.entity.decoration.HologramEntity;
+import org.entityutils.utils.PacketListener;
 import org.entityutils.utils.PacketUtils;
 
 import java.io.IOException;
@@ -151,7 +152,7 @@ public abstract class AbstractPlayerNPC implements NPC {
 
                 this.npc = new ServerPlayer(server, level, profile);
                 this.npc.setPos(this.location.getX(), this.location.getY(), this.location.getZ());
-                PacketListener.npcIds.put(this.npc.getId(), this);
+                PacketListener.registerNPC(this);
             }
 
             if(this.stand == null){
@@ -168,7 +169,7 @@ public abstract class AbstractPlayerNPC implements NPC {
             //this.sendPacket((new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, this.npc)), p);
             //uncomment this if you want the npc removed from tab but for some reason skins don't work if this part is active, just get steve or alix
             this.viewers.add(p.getUUID());
-            PacketListener.addPlayer(p, this.plugin);
+            PacketListener.registerPlayer(p, this.plugin);
         }else{
             if(!this.viewers.contains(p.getUUID()))return;
 
@@ -177,7 +178,7 @@ public abstract class AbstractPlayerNPC implements NPC {
 
             this.stand.setAlive(p, false);
 
-            PacketListener.removePlayer(p);
+            PacketListener.unRegisterPlayer(p);
             this.viewers.remove(p.getUUID());
         }
     }
@@ -186,6 +187,11 @@ public abstract class AbstractPlayerNPC implements NPC {
         for (com.mojang.datafixers.util.Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack> item : this.inventory) {
             this.setItem(item, p);
         }
+    }
+
+    @Override
+    public int getID(){
+        return this.npc.getId();
     }
 
     @Override
