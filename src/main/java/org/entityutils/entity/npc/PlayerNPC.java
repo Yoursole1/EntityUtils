@@ -2,6 +2,7 @@ package org.entityutils.entity.npc;
 
 
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.world.entity.Pose;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -31,20 +32,16 @@ public class PlayerNPC extends AbstractPlayerNPC {
 
     @Override
     public void setPose(Pose pose) {
+        this.getNpc().setPose(pose);
+        ClientboundSetEntityDataPacket p = new ClientboundSetEntityDataPacket(this.getID(), this.getNpc().getEntityData(), true);
 
+        PacketUtils.sendPacket(p, this.getViewers());
     }
 
     @Override
     public void animate(EntityAnimation animation) {
         ClientboundAnimatePacket p = new ClientboundAnimatePacket(this.getNpc(), animation.getId());
 
-        for(UUID uuid : this.getViewers()){
-            Player player = Bukkit.getPlayer(uuid);
-            if(player == null){ //should be unreachable
-                continue;
-            }
-
-            PacketUtils.sendPacket(p, ((CraftPlayer)player).getHandle());
-        }
+        PacketUtils.sendPacket(p, this.getViewers());
     }
 }
