@@ -1,7 +1,7 @@
 package org.entityutils.entity.npc;
 
 
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.Pose;
 import org.bukkit.Location;
 import org.bukkit.event.Listener;
 import org.entityutils.entity.EUEntity;
@@ -19,6 +19,8 @@ public interface NPC extends Listener, EUEntity {
     int getID();
 
     void refresh();
+    void setPose(Pose pose);
+    void animate(EntityAnimation animation);
 
 
 
