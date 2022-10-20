@@ -1,4 +1,4 @@
-package org.entityutils.entity.npc;
+package org.entityutils.entity.npc.player;
 
 import java.util.ArrayList;
 import java.util.List;

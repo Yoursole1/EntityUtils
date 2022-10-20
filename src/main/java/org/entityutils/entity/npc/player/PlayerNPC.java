@@ -1,18 +1,15 @@
-package org.entityutils.entity.npc;
+package org.entityutils.entity.npc.player;
 
 
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.world.entity.Pose;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.entityutils.entity.npc.EntityAnimation;
+import org.entityutils.entity.npc.player.AbstractPlayerNPC;
 import org.entityutils.utils.PacketUtils;
 
-import java.util.Objects;
-import java.util.UUID;
 
 public class PlayerNPC extends AbstractPlayerNPC {
 
