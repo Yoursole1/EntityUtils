@@ -8,7 +8,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.datafixers.util.Pair;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -27,6 +26,7 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -43,18 +43,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
-@Getter
-@Setter
 
 /**
  *
  */
-public abstract class AbstractPlayerNPC implements NPC {
+public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPlayerNPC, StaticPlayerNPC {
 
     //The name of the NPC
     private String name;
@@ -74,9 +69,11 @@ public abstract class AbstractPlayerNPC implements NPC {
     private List<Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack>> inventory = new ArrayList<>();
 
     //the NPC
+    @Getter
     ServerPlayer npc;
 
     //players that can see the npc
+    @Getter
     private ArrayList<UUID> viewers;
 
     private JavaPlugin plugin;
@@ -85,11 +82,16 @@ public abstract class AbstractPlayerNPC implements NPC {
     private String value;
     private String signature;
 
+    @Getter
     private float yaw;
+    @Getter
     private float pitch;
 
     private String hologramText;
+    @Getter
     private HologramEntity stand;
+
+    private ArrayList<SkinLayer> layers;
 
 
     private AbstractPlayerNPC(){
@@ -104,6 +106,7 @@ public abstract class AbstractPlayerNPC implements NPC {
         this.pitch = 0;
 
         this.inventory = new ArrayList<>();
+        this.layers = new ArrayList<>();
         this.hologramText = "";
     }
 
@@ -121,11 +124,16 @@ public abstract class AbstractPlayerNPC implements NPC {
     public void setAlive(boolean alive){
         if (alive){
             if(this.location == null || this.plugin == null) return;
-            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-                for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()){
-                    setAlive(((CraftPlayer)p).getHandle(), true);
-                }
-            }, 5L);
+
+
+            for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()){
+                setAlive(((CraftPlayer)p).getHandle(), true);
+            }
+//            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
+//
+//            }, 0L);
+
+
             return;
         }
 
@@ -138,9 +146,11 @@ public abstract class AbstractPlayerNPC implements NPC {
     }
     @Override
     public void setAlive(Player p, boolean alive) {
+
         if (alive){
             if(this.location == null || this.plugin == null) return;
             if(this.npc == null){
+
                 MinecraftServer server = ((CraftServer) (Bukkit.getServer())).getServer();
                 ServerLevel level = ((CraftWorld)(this.location.getWorld())).getHandle();
                 GameProfile profile = new GameProfile(UUID.randomUUID(), this.showName?this.name:"");
@@ -155,8 +165,10 @@ public abstract class AbstractPlayerNPC implements NPC {
             }
 
             if(this.stand == null){
-                this.stand = new HologramEntity(this.location.add(new Vector(0,1.5,0)), this.hologramText);
+                this.stand = new HologramEntity(this.location.clone().add(new Vector(0,2.9,0)), this.hologramText);
             }
+            this.stand.setText(this.hologramText);
+            this.stand.refresh();
 
             this.stand.setAlive(p, !this.hologramText.equals(""));
 
@@ -170,7 +182,7 @@ public abstract class AbstractPlayerNPC implements NPC {
             this.viewers.add(p.getUUID());
             PacketListener.registerPlayer(p, this.plugin);
         }else{
-            if(!this.viewers.contains(p.getUUID()))return;
+            if(!this.viewers.contains(p.getUUID())) return;
 
             PacketUtils.sendPacket(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, this.npc), p);
             PacketUtils.sendPacket(new ClientboundRemoveEntitiesPacket(this.npc.getId()), p);
@@ -209,6 +221,13 @@ public abstract class AbstractPlayerNPC implements NPC {
     }
 
     @Override
+    public void setHologram(String text) {
+        this.hologramText = text;
+        if(this.npc == null) return;
+        this.refresh();
+    }
+
+    @Override
     public void setDirection(float yaw, float pitch) {
         this.yaw = yaw;
         this.pitch = pitch;
@@ -217,16 +236,23 @@ public abstract class AbstractPlayerNPC implements NPC {
 
     @Override
     public void refresh() {
-        for (UUID uuid : this.viewers) {
-            Player p = ((CraftPlayer)(Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
+        ArrayList<UUID> view = new ArrayList<>(this.viewers); //to avoid a CME ):
+
+        for (UUID uuid : view) {
+            Player p = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
             setAlive(p, false);
         }
         this.npc = null;
-        for (UUID uuid : this.viewers) {
-            Player p = ((CraftPlayer)(Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
+        for (UUID uuid : view) {
+            Player p = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
             setAlive(p, true);
             this.refreshItems(Bukkit.getPlayer(uuid));
+            this.refreshSkin(Bukkit.getPlayer(uuid));
         }
+    }
+
+    public void refreshSkin(org.bukkit.entity.Player p){
+        this.setSkin(this.skin, p, this.layers.toArray(new SkinLayer[0]));
     }
 
     public void headTrack(boolean track){
@@ -256,6 +282,8 @@ public abstract class AbstractPlayerNPC implements NPC {
     public void setSkin(UUID uuid, SkinLayer... layers){
         this.skin = uuid;
 
+        this.layers.addAll(Arrays.asList(layers));
+
         oshi.util.tuples.Pair<String, String> p;
         try {
             p = getSkinData(uuid);
@@ -268,20 +296,50 @@ public abstract class AbstractPlayerNPC implements NPC {
             profile.getProperties().put("textures", new Property("textures", this.value, this.signature));
             this.npc.gameProfile = profile;
 
+            SynchedEntityData watcher = npc.getEntityData();
+
+            watcher.set(new EntityDataAccessor<>(17, EntityDataSerializers.BYTE), SkinLayer.createMask(layers));
+
             this.refresh();
+
+
+
+            ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(npc.getId(), watcher, true);
+            for(org.bukkit.entity.Player pl : Bukkit.getOnlinePlayers()){
+                PacketUtils.sendPacket(packet4, ((CraftPlayer)(pl)).getHandle());
+            }
         }
 
         //TODO verify that the skin loads with layers when setSkin is called BEFORE the npc is spawned (it prob won't)
-        if(npc == null){
-            return;
-        }
-        SynchedEntityData watcher = npc.getEntityData();
 
-        watcher.set(new EntityDataAccessor<>(17, EntityDataSerializers.BYTE), SkinLayer.createMask(layers));
 
-        ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(npc.getId(), watcher, true);
-        for(org.bukkit.entity.Player pl : Bukkit.getOnlinePlayers()){
-            PacketUtils.sendPacket(packet4, ((CraftPlayer)(pl)).getHandle());
+
+    }
+
+    private void setSkin(UUID uuid, org.bukkit.entity.Player player, SkinLayer... layers){
+        this.skin = uuid;
+
+        Collections.addAll(this.layers, new ArrayList<>(List.of(layers)).toArray(new SkinLayer[0]));
+
+        oshi.util.tuples.Pair<String, String> p;
+        try {
+            p = getSkinData(uuid);
+            this.value = p.getA();
+            this.signature = p.getB();
+        } catch (IOException ignored) {return;}
+
+        if(this.npc != null){ //npc already spawned: Update skin
+            GameProfile profile = this.npc.gameProfile;
+            profile.getProperties().put("textures", new Property("textures", this.value, this.signature));
+            this.npc.gameProfile = profile;
+
+            SynchedEntityData watcher = npc.getEntityData();
+
+            watcher.set(new EntityDataAccessor<>(17, EntityDataSerializers.BYTE), SkinLayer.createMask(layers));
+
+            ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(npc.getId(), watcher, true);
+            PacketUtils.sendPacket(packet4, ((CraftPlayer)(player)).getHandle());
+
         }
     }
 
@@ -322,12 +380,13 @@ public abstract class AbstractPlayerNPC implements NPC {
                 && chunky.getZ() == loc.getBlockZ() >> 4;
     }
 
-    @EventHandler
+
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(PlayerJoinEvent e) {
         if (!(this.viewers.contains(e.getPlayer().getUniqueId()))) return;
 
         this.setAlive(((CraftPlayer)(e.getPlayer())).getHandle(), true);
-        this.refreshItems(e.getPlayer());
+        this.refresh();
     }
 
     @EventHandler

@@ -19,8 +19,7 @@ public interface NPC extends Listener, EUEntity {
     int getID();
 
     void refresh();
-    void setPose(Pose pose);
-    void animate(EntityAnimation animation);
+    void setHologram(String text);
 
 
 

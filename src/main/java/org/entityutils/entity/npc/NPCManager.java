@@ -16,7 +16,7 @@ public class NPCManager {
 
     public static NPCManager getInstance() {
         if (instance == null) {
-            synchronized(NPCManager.class) { //thread safe, just for you NotAdam
+            synchronized(NPCManager.class) { //thread safe, just for you NotAdaam
                 if (instance == null) {
                     instance = new NPCManager();
                 }

@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Marker;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
@@ -20,13 +21,14 @@ import org.entityutils.utils.PacketUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
 @Setter
 public class HologramEntity implements EUEntity {
 
-    private Marker hologram;
+    private ArmorStand hologram;
     private Location location;
     private String text;
 
@@ -38,24 +40,22 @@ public class HologramEntity implements EUEntity {
     public HologramEntity(Location location, String text) {
         this.location = location;
         this.text = text;
+
+        this.viewers = new ArrayList<>();
     }
 
-    public void spawn(){
-        this.hologram = new Marker(EntityType.MARKER, ((CraftWorld)(location.getWorld())).getHandle());
+    private void spawn(){
+        this.hologram = new ArmorStand(EntityType.ARMOR_STAND, ((CraftWorld)(location.getWorld())).getHandle());
 
         this.OFFSET = this.hologram.getBbHeight() + 0.5;
 
         this.hologram.setPos(new Vec3(location.getX(), location.getY() - this.OFFSET, location.getZ()));
-        this.hologram.setCustomName(new TextComponent(text));
         this.hologram.setCustomNameVisible(true);
         this.hologram.setInvulnerable(true);
         this.hologram.setInvisible(true);
         this.hologram.setNoGravity(true);
-    }
 
-    public void despawn(){
-        if(this.hologram == null) return;
-        this.hologram.discard();
+        this.hologram.setCustomName(new TextComponent(this.text));
     }
 
     @Override
@@ -77,25 +77,35 @@ public class HologramEntity implements EUEntity {
     public void setAlive(Player p, boolean alive) {
         if(alive){
             if(this.hologram == null){
-                this.hologram = new Marker(EntityType.MARKER, ((CraftWorld)(location.getWorld())).getHandle());
-                this.OFFSET = this.hologram.getBbHeight() + 0.5;
-
-                this.hologram.teleportTo(this.location.getX(), this.location.getY() + this.OFFSET, this.location.getZ());
-
-                PacketUtils.sendPacket(new ClientboundAddEntityPacket(this.hologram), p);
-                PacketUtils.sendPacket(new ClientboundSetEntityDataPacket(this.hologram.getId(), this.hologram.getEntityData(), true), p);
-                this.viewers.add(p.getUUID());
+                this.spawn();
             }
+
+            PacketUtils.sendPacket(new ClientboundAddEntityPacket(this.hologram), p);
+            PacketUtils.sendPacket(new ClientboundSetEntityDataPacket(this.hologram.getId(), this.hologram.getEntityData(), true), p);
+            this.viewers.add(p.getUUID());
         }else{
+            if(!this.viewers.contains(p.getUUID())){
+                return;
+            }
+
             PacketUtils.sendPacket(new ClientboundRemoveEntitiesPacket(this.hologram.getId()), p);
             this.viewers.remove(p.getUUID());
         }
     }
 
-    //TODO override this with a viewers list
-    /*
     @Override
     public void refresh() {
+        ArrayList<UUID> view = new ArrayList<>(this.viewers); //to avoid a CME ):
+
+        for (UUID uuid : view) {
+            Player p = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
+            setAlive(p, false);
+        }
+        this.hologram = null;
+        for (UUID uuid : view) {
+            Player p = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
+            setAlive(p, true);
+        }
     }
-     */
+
 }

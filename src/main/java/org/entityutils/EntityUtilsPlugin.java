@@ -1,5 +1,6 @@
 package org.entityutils;
 
+import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -7,13 +8,16 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class EntityUtilsPlugin extends JavaPlugin {
 
-    // Make this class a singleton
+    @Getter
     private static EntityUtilsPlugin instance;
 
     @Override
     public void onEnable() {
         getLogger().info("EntityUtils enabled!");
         instance = this;
+
+        this.getServer().getPluginManager().registerEvents(new Test(), this);
+
     }
 
     @Override
