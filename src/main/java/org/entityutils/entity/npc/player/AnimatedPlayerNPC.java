@@ -37,4 +37,8 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         PacketUtils.sendPacket(p, this.getViewers());
     }
+
+    public void jump(){
+
+    }
 }

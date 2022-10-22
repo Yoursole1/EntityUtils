@@ -35,6 +35,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.entityutils.entity.decoration.HologramEntity;
 import org.entityutils.entity.npc.NPC;
+import org.entityutils.entity.npc.NPCManager;
 import org.entityutils.utils.PacketListener;
 import org.entityutils.utils.PacketUtils;
 
@@ -108,6 +109,8 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.inventory = new ArrayList<>();
         this.layers = new ArrayList<>();
         this.hologramText = "";
+
+        NPCManager.getInstance().register(this); //TODO test
     }
 
     public AbstractPlayerNPC(String name, Location loc, JavaPlugin plugin){
@@ -282,6 +285,7 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
     public void setSkin(UUID uuid, SkinLayer... layers){
         this.skin = uuid;
 
+        this.layers = new ArrayList<>();
         this.layers.addAll(Arrays.asList(layers));
 
         oshi.util.tuples.Pair<String, String> p;

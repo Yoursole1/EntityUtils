@@ -7,6 +7,7 @@ public non-sealed class StaticPlayerNPC extends AbstractPlayerNPC{
 
     public StaticPlayerNPC(String name, Location loc, JavaPlugin plugin) {
         super(name, loc, plugin);
+        super.headTrack(true);
     }
 
     @Override
