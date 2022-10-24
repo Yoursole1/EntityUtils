@@ -8,7 +8,6 @@ import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Marker;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -17,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.entityutils.entity.EUEntity;
+import org.entityutils.utils.EUState.HologramData;
 import org.entityutils.utils.PacketUtils;
 
 import java.util.ArrayList;
@@ -24,38 +24,25 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Getter
-@Setter
+
 public class HologramEntity implements EUEntity {
 
-    private ArmorStand hologram;
-    private Location location;
-    private String text;
-
-    private double OFFSET = 0;
-
-    private ArrayList<UUID> viewers;
-
-
+    @Getter
+    private final HologramData state;
     public HologramEntity(Location location, String text) {
-        this.location = location;
-        this.text = text;
-
-        this.viewers = new ArrayList<>();
+        this.state = new HologramData(location, text);
     }
 
-    private void spawn(){
-        this.hologram = new ArmorStand(EntityType.ARMOR_STAND, ((CraftWorld)(location.getWorld())).getHandle());
+    private void init(){
+        this.state.setHologram(new ArmorStand(EntityType.ARMOR_STAND, ((CraftWorld)(this.state.getLocation().getWorld())).getHandle()));
 
-        this.OFFSET = this.hologram.getBbHeight() + 0.5;
+        this.state.getHologram().setPos(new Vec3(this.state.getLocation().getX(), this.state.getLocation().getY(), this.state.getLocation().getZ()));
+        this.state.getHologram().setCustomNameVisible(true);
+        this.state.getHologram().setInvulnerable(true);
+        this.state.getHologram().setInvisible(true);
+        this.state.getHologram().setNoGravity(true);
 
-        this.hologram.setPos(new Vec3(location.getX(), location.getY() - this.OFFSET, location.getZ()));
-        this.hologram.setCustomNameVisible(true);
-        this.hologram.setInvulnerable(true);
-        this.hologram.setInvisible(true);
-        this.hologram.setNoGravity(true);
-
-        this.hologram.setCustomName(new TextComponent(this.text));
+        this.state.getHologram().setCustomName(new TextComponent(this.state.getText()));
     }
 
     @Override
@@ -76,35 +63,35 @@ public class HologramEntity implements EUEntity {
     @Override
     public void setAlive(Player p, boolean alive) {
         if(alive){
-            if(this.hologram == null){
-                this.spawn();
+            if(this.state.getHologram() == null){
+                this.init();
             }
 
-            PacketUtils.sendPacket(new ClientboundAddEntityPacket(this.hologram), p);
-            PacketUtils.sendPacket(new ClientboundSetEntityDataPacket(this.hologram.getId(), this.hologram.getEntityData(), true), p);
-            this.viewers.add(p.getUUID());
+            PacketUtils.sendPackets(this.getState().generateStatePackets(), p);
+
+            this.state.getViewers().add(p.getUUID());
         }else{
-            if(!this.viewers.contains(p.getUUID())){
+            if(!this.state.getViewers().contains(p.getUUID())){
                 return;
             }
 
-            PacketUtils.sendPacket(new ClientboundRemoveEntitiesPacket(this.hologram.getId()), p);
-            this.viewers.remove(p.getUUID());
+            PacketUtils.sendPacket(new ClientboundRemoveEntitiesPacket(this.state.getHologram().getId()), p);
+            this.state.getViewers().remove(p.getUUID());
         }
     }
 
     @Override
     public void refresh() {
-        ArrayList<UUID> view = new ArrayList<>(this.viewers); //to avoid a CME ):
+        ArrayList<UUID> view = new ArrayList<>(this.state.getViewers()); //to avoid a CME ):
 
         for (UUID uuid : view) {
             Player p = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
-            setAlive(p, false);
+            this.setAlive(p, false);
         }
-        this.hologram = null;
+        this.state.setHologram(null);
         for (UUID uuid : view) {
             Player p = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
-            setAlive(p, true);
+            this.setAlive(p, true);
         }
     }
 

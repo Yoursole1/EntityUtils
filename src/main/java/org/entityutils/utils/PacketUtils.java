@@ -43,4 +43,21 @@ public class PacketUtils {
         }
     }
 
+    public static void sendPackets(List<Packet<?>> packets, Player player){
+        for(Packet<?> packet : packets){
+            sendPacket(packet, player);
+        }
+    }
+
+    public static void sendPackets(List<Packet<?>> packets, List<UUID> players){
+        for(UUID uuid : players){
+            org.bukkit.entity.Player a = Bukkit.getPlayer(uuid);
+            if(a == null){
+                continue;
+            }
+            Player p = ((CraftPlayer)(a)).getHandle();
+            sendPackets(packets, p);
+        }
+    }
+
 }

@@ -26,16 +26,16 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
     }
 
     public void setPose(Pose pose) {
-        this.state.getNpc().setPose(pose);
-        ClientboundSetEntityDataPacket p = new ClientboundSetEntityDataPacket(this.getID(), this.state.getNpc().getEntityData(), true);
+        this.getState().getNpc().setPose(pose);
+        ClientboundSetEntityDataPacket p = new ClientboundSetEntityDataPacket(this.getID(), this.getState().getNpc().getEntityData(), true);
 
-        PacketUtils.sendPacket(p, this.state.getViewers());
+        PacketUtils.sendPacket(p, this.getState().getViewers());
     }
 
     public void animate(EntityAnimation animation) {
-        ClientboundAnimatePacket p = new ClientboundAnimatePacket(this.state.getNpc(), animation.getId());
+        ClientboundAnimatePacket p = new ClientboundAnimatePacket(this.getState().getNpc(), animation.getId());
 
-        PacketUtils.sendPacket(p, this.state.getViewers());
+        PacketUtils.sendPacket(p, this.getState().getViewers());
     }
 
     public void jump(){

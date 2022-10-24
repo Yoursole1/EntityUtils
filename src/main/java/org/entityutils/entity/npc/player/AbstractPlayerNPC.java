@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import lombok.Getter;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -27,6 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +36,7 @@ import org.bukkit.util.Vector;
 import org.entityutils.entity.decoration.HologramEntity;
 import org.entityutils.entity.npc.NPC;
 import org.entityutils.entity.npc.NPCManager;
-import org.entityutils.entity.npc.state.PlayerNPCData;
+import org.entityutils.utils.EUState.PlayerNPCData;
 import org.entityutils.utils.PacketListener;
 import org.entityutils.utils.PacketUtils;
 
@@ -51,7 +53,8 @@ import java.util.*;
  */
 public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPlayerNPC, StaticPlayerNPC {
 
-    protected final PlayerNPCData state;
+    @Getter
+    private final PlayerNPCData state;
 
     public AbstractPlayerNPC(String name, Location loc, JavaPlugin plugin){
 
@@ -70,14 +73,9 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         if (alive){
             if(this.state.getLocation() == null || this.state.getPlugin() == null) return;
 
-
             for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()){
                 setAlive(((CraftPlayer)p).getHandle(), true);
             }
-//            Bukkit.getScheduler().runTaskLater(this.plugin, () -> {
-//
-//            }, 0L);
-
 
             return;
         }
@@ -89,45 +87,50 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
 
         this.state.setViewers(new ArrayList<>());
     }
+
+    private void init(){
+        MinecraftServer server = ((CraftServer) (Bukkit.getServer())).getServer();
+        ServerLevel level = ((CraftWorld)(this.state.getLocation().getWorld())).getHandle();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), this.state.isShowName()?this.state.getName():"");
+
+        if(this.state.getValue() != null){
+            profile.getProperties().put("textures", new Property("textures", this.state.getValue(), this.state.getSignature()));
+        }
+
+        this.state.setNpc(new ServerPlayer(server, level, profile));
+        this.state.getNpc().setPos(this.state.getLocation().getX(), this.state.getLocation().getY(), this.state.getLocation().getZ());
+
+        this.state.getNpc().setRot(this.state.getYaw(), this.state.getPitch());
+
+        PacketListener.registerNPC(this);
+    }
     @Override
     public void setAlive(Player p, boolean alive) {
 
         if (alive){
             if(this.state.getLocation() == null || this.state.getPlugin() == null) return;
+
+            //init NPC data
             if(this.state.getNpc() == null){
-
-                MinecraftServer server = ((CraftServer) (Bukkit.getServer())).getServer();
-                ServerLevel level = ((CraftWorld)(this.state.getLocation().getWorld())).getHandle();
-                GameProfile profile = new GameProfile(UUID.randomUUID(), this.state.isShowName()?this.state.getName():"");
-
-                if(this.state.getValue() != null){
-                    profile.getProperties().put("textures", new Property("textures", this.state.getValue(), this.state.getSignature()));
-                }
-
-                this.state.setNpc(new ServerPlayer(server, level, profile));
-                this.state.getNpc().setPos(this.state.getLocation().getX(), this.state.getLocation().getY(), this.state.getLocation().getZ());
-
-                this.state.getNpc().setRot(this.state.getYaw(), this.state.getPitch());
-
-                PacketListener.registerNPC(this);
+                this.init();
             }
 
+            //------------------------------|
+            //init hologram
             if(this.state.getStand() == null){
-                this.state.setStand(new HologramEntity(this.state.getLocation().clone().add(new Vector(0,2.9,0)), this.state.getHologramText()));
+                this.state.setStand(new HologramEntity(this.state.getLocation().clone().add(new Vector(0,0.5,0)), this.state.getHologramText()));
             }
 
-            this.state.getStand().setText(this.state.getHologramText());
-            this.state.getStand().refresh();
-
+            this.state.getStand().getState().setText(this.state.getHologramText());
             this.state.getStand().setAlive(p, !this.state.getHologramText().equals(""));
+            //-------------------------------|
 
+            //send spawn packets
+            PacketUtils.sendPackets(this.getState().generateStatePackets(), p);
+            //--
 
-            PacketUtils.sendPacket(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, this.state.getNpc()), p);
-            PacketUtils.sendPacket(new ClientboundAddPlayerPacket(this.state.getNpc()), p);
             refreshItems((org.bukkit.entity.Player) p.getBukkitEntity());
 
-            //this.sendPacket((new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, this.npc)), p);
-            //uncomment this if you want the npc removed from tab but for some reason skins don't work if this part is active, just get steve or alix
             this.state.getViewers().add(p.getUUID());
             PacketListener.registerPlayer(p, this.state.getPlugin());
         }else{
@@ -138,7 +141,6 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
 
             this.state.getStand().setAlive(p, false);
 
-            PacketListener.unRegisterPlayer(p);
             this.state.getViewers().remove(p.getUUID());
         }
     }
@@ -164,7 +166,11 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
     @Override
     public void teleport(Location location) {
         this.state.getNpc().setPos(location.getX(), location.getY(), location.getZ());
-        this.state.getStand().getHologram().setPos(location.getX(), location.getY() + 2.9, location.getZ());
+
+        if(this.state.getStand().getState().getHologram() != null){
+            this.state.getStand().getState().getHologram().setPos(location.getX(), location.getY() + 0.5, location.getZ());
+        }
+
         this.state.setLocation(location);
         this.refresh();
     }
@@ -172,8 +178,22 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
     @Override
     public void setHologram(String text) {
         this.state.setHologramText(text);
-        if(this.state.getNpc() == null) return;
-        this.refresh();
+        this.state.getStand().getState().setText(text);
+
+        if(this.state.getNpc() == null) return; //---------
+
+        if(this.state.getStand().getState().getHologram() == null){
+            for(UUID uuid : this.state.getViewers()){
+                org.bukkit.entity.Player pl = Bukkit.getPlayer(uuid);
+                if(pl == null){
+                    continue;
+                }
+
+                this.state.getStand().setAlive(((CraftPlayer)pl).getHandle(), true);
+            }
+        }else{
+            this.state.getStand().refresh();
+        }
     }
 
     @Override
@@ -181,6 +201,11 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.state.setYaw(yaw);
         this.state.setPitch(pitch);
         this.refresh();
+    }
+
+    @Override
+    public PlayerNPCData getData(){
+        return this.state;
     }
 
     @Override
@@ -198,12 +223,7 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
             Player p = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
             setAlive(p, true);
             this.refreshItems(Bukkit.getPlayer(uuid));
-            this.refreshSkin(Bukkit.getPlayer(uuid));
         }
-    }
-
-    public void refreshSkin(org.bukkit.entity.Player p){
-        this.setSkin(this.state.getSkin(), p, this.state.getLayers().toArray(new SkinLayer[0]));
     }
 
     public void headTrack(boolean track){
@@ -254,46 +274,14 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
 
             this.refresh();
 
-
-
             ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(this.state.getNpc().getId(), watcher, true);
             for(org.bukkit.entity.Player pl : Bukkit.getOnlinePlayers()){
                 PacketUtils.sendPacket(packet4, ((CraftPlayer)(pl)).getHandle());
             }
         }
-
-        //TODO verify that the skin loads with layers when setSkin is called BEFORE the npc is spawned (it prob won't)
-
-
-
     }
 
-    private void setSkin(UUID uuid, org.bukkit.entity.Player player, SkinLayer... layers){
-        this.state.setSkin(uuid);
 
-        Collections.addAll(this.state.getLayers(), new ArrayList<>(List.of(layers)).toArray(new SkinLayer[0]));
-
-        oshi.util.tuples.Pair<String, String> p;
-        try {
-            p = getSkinData(uuid);
-            this.state.setValue(p.getA());
-            this.state.setSignature(p.getB());
-        } catch (IOException ignored) {return;}
-
-        if(this.state.getNpc() != null){ //npc already spawned: Update skin
-            GameProfile profile = this.state.getNpc().gameProfile;
-            profile.getProperties().put("textures", new Property("textures", this.state.getValue(), this.state.getSignature()));
-            this.state.getNpc().gameProfile = profile;
-
-            SynchedEntityData watcher = this.state.getNpc().getEntityData();
-
-            watcher.set(new EntityDataAccessor<>(17, EntityDataSerializers.BYTE), SkinLayer.createMask(layers));
-
-            ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(this.state.getNpc().getId(), watcher, true);
-            PacketUtils.sendPacket(packet4, ((CraftPlayer)(player)).getHandle());
-
-        }
-    }
 
 
     private oshi.util.tuples.Pair<String, String> getSkinData(UUID uuid) throws IOException {
@@ -337,8 +325,13 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
     public void onPlayerJoin(PlayerJoinEvent e) {
         if (!(this.state.getViewers().contains(e.getPlayer().getUniqueId()))) return;
 
-        this.setAlive(((CraftPlayer)(e.getPlayer())).getHandle(), true);
-        this.refresh();
+        PacketUtils.sendPackets(this.state.generateStatePackets(), ((CraftPlayer)e.getPlayer()).getHandle());
+        PacketUtils.sendPackets(this.state.getStand().getState().generateStatePackets(), ((CraftPlayer)e.getPlayer()).getHandle());
+    }
+
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent e){
+        PacketListener.unRegisterPlayer(((CraftPlayer)e.getPlayer()).getHandle());
     }
 
     @EventHandler

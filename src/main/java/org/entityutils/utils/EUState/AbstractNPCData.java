@@ -1,4 +1,4 @@
-package org.entityutils.entity.npc.state;
+package org.entityutils.utils.EUState;
 
 import com.mojang.datafixers.util.Pair;
 import lombok.Getter;
@@ -12,13 +12,14 @@ import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.entityutils.entity.decoration.HologramEntity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
-public abstract class AbstractNPCData {
+public abstract class AbstractNPCData implements EUEntityData{
 
     private Entity npc;
 
@@ -76,4 +77,6 @@ public abstract class AbstractNPCData {
         this.location = loc;
         this.plugin = plugin;
     }
+
+    //Todo:  clone, serialize
 }
