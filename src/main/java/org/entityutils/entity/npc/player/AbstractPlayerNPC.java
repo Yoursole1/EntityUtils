@@ -28,7 +28,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -60,8 +59,8 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
 
         this.state = new PlayerNPCData(name, loc, plugin);
 
-        NPCManager.getInstance().register(this); //TODO test
-        Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
+        NPCManager.getInstance().register(this);
+        //TODO test if moving the self listener registration to NPCManager works
     }
 
     public AbstractPlayerNPC(PlayerNPCData data){
@@ -281,9 +280,6 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         }
     }
 
-
-
-
     private oshi.util.tuples.Pair<String, String> getSkinData(UUID uuid) throws IOException {
         JsonObject json = readJsonFromUrl("https://sessionserver.mojang.com/session/minecraft/profile/"+uuid.toString()+"?unsigned=false");
         if(json.get("properties") != null){
@@ -304,8 +300,6 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         return root.getAsJsonObject();
     }
 
-
-
     //LISTENERS
 
     @EventHandler
@@ -315,7 +309,7 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         }
     }
 
-    private static boolean isInsideChunk(Location loc, Chunk chunky) {
+    private boolean isInsideChunk(Location loc, Chunk chunky) {
         return chunky.getX() == loc.getBlockX() >> 4
                 && chunky.getZ() == loc.getBlockZ() >> 4;
     }
@@ -327,11 +321,6 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
 
         PacketUtils.sendPackets(this.state.generateStatePackets(), ((CraftPlayer)e.getPlayer()).getHandle());
         PacketUtils.sendPackets(this.state.getStand().getState().generateStatePackets(), ((CraftPlayer)e.getPlayer()).getHandle());
-    }
-
-    @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent e){
-        PacketListener.unRegisterPlayer(((CraftPlayer)e.getPlayer()).getHandle());
     }
 
     @EventHandler
