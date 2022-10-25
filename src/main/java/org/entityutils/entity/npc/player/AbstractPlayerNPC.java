@@ -128,8 +128,6 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
             PacketUtils.sendPackets(this.getState().generateStatePackets(), p);
             //--
 
-            refreshItems((org.bukkit.entity.Player) p.getBukkitEntity());
-
             this.state.getViewers().add(p.getUUID());
             PacketListener.registerPlayer(p, this.state.getPlugin());
         }else{
@@ -141,12 +139,6 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
             this.state.getStand().setAlive(p, false);
 
             this.state.getViewers().remove(p.getUUID());
-        }
-    }
-
-    private void refreshItems(org.bukkit.entity.Player p) {
-        for (com.mojang.datafixers.util.Pair<net.minecraft.world.entity.EquipmentSlot, net.minecraft.world.item.ItemStack> item : this.state.getInventory()) {
-            this.setItem(item, p);
         }
     }
 
@@ -221,7 +213,6 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         for (UUID uuid : view) {
             Player p = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
             setAlive(p, true);
-            this.refreshItems(Bukkit.getPlayer(uuid));
         }
     }
 
