@@ -1,6 +1,8 @@
 package org.entityutils.entity.pathfind;
 
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
 import java.util.List;
 
@@ -27,6 +29,84 @@ public record Node(int x, int y, int z, World world) {
      */
     public List<Node> getAdj(){
         return null;
+    }
+
+    /**
+     * @param x restricted to this.x +- 1 or 0
+     * @param y restricted to this.y +- 1 or 0
+     * @param z restricted to this.z +- 1 or 0
+     * @throws IllegalArgumentException if x, y, and z are not adjacent coordinates
+     * @return
+     */
+    private boolean isTraversable(int x, int y, int z){
+        int xOffset = x - this.x;
+        int yOffset = y - this.y;
+        int zOffset = z - this.z;
+
+        if(!(Math.abs(xOffset) <= 1 && Math.abs(yOffset) <= 1 && Math.abs(zOffset) <= 1)){
+            throw new IllegalArgumentException("traversable location too far from node");
+        }
+
+        if(!this.isAir(x, y, z)){
+            return false;
+        }
+
+        if(!this.isAir(x, y + 1, z)){
+            return false;
+        }
+
+        if(!isSolid(x, y - 1, z)){
+            return false;
+        }
+
+        if(yOffset != 0){
+            switch (yOffset){
+                case 1:{
+                    //jumping up, block 2 above current node must be air
+                    if(!this.isAir(this.x, this.y+2, this.z)){
+                        return false;
+                    }
+                }
+                case -1:{
+                    //stepping down, block two above target node must be air
+                    if(!this.isAir(x, y+2, z)){
+                        return false;
+                    }
+                }
+            }
+        }
+
+        if(xOffset != 0 && zOffset != 0){
+            if(yOffset == 0){
+                //level diagonal path, verify blocks diagonal in all directions are safe
+                if(!this.isAir(this.x + xOffset, this.y, this.z) ||
+                !this.isAir(this.x, this.y, this.z + zOffset) ||
+                !this.isAir(this.x + xOffset, this.y + 1, this.z) ||
+                        !this.isAir(this.x, this.y + 1, this.z + zOffset)){
+                    return false;
+                }
+            }else{
+                switch (yOffset){
+                    case 1:{
+                        
+                    }
+                    case -1:{
+
+                    }
+                }
+            }
+        }
+
+
+        return true;
+    }
+
+    private boolean isAir(int x, int y, int z){
+        return this.world.getBlockAt(x, y, z).getType() == Material.AIR;
+    }
+    private boolean isSolid(int x, int y, int z){
+        Block b = this.world.getBlockAt(x, y, z);
+        return b.isSolid();
     }
 
     /**
