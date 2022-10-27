@@ -77,9 +77,11 @@ public record Node(int x, int y, int z, World world) {
         //implementation of this might change because ideally nodes that are already explored shouldn't be added
 
         for(int[] offset : Node.offsets){
+
             int offsetX = this.x + offset[0];
             int offsetY = this.y + offset[1];
             int offsetZ = this.z + offset[2];
+
             if(this.isTraversable(offsetX, offsetY, offsetZ)){
                 adj.add(new Node(offsetX, offsetY, offsetZ, this.world));
             }
