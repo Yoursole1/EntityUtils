@@ -4,9 +4,52 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record Node(int x, int y, int z, World world) {
+
+    /**
+     * These are all possible offsets from the current node.  This could be dynamically generated with
+     * binary, then by doing a bitwise and with each bit again and if it is true then flipping it to negative,
+     * but that approach is less efficient, and since speed is paramount for this class I went with this approach.
+     */
+    private static final int[][] offsets = new int[][]{
+            //{0,0,0}, -> not included, because this is the location of the current node
+
+            {0,0,1},
+            {0,0,-1},
+
+            {0,1,0},
+            {0,-1,0},
+
+            {0,1,1},
+            {0,1,-1},
+            {0,-1,1},
+            {0,-1,-1},
+
+            {1,0,0},
+            {-1,0,0},
+
+            {1,0,1},
+            {1,0,-1},
+            {-1,0,1},
+            {-1,0,-1},
+
+            {1,1,0},
+            {1,-1,0},
+            {-1,1,0},
+            {-1,-1,0},
+
+            {1,1,1},
+            {1,1,-1},
+            {1,-1,1},
+            {1,-1,-1},
+            {-1,1,1},
+            {-1,1,-1},
+            {-1,-1,1},
+            {-1,-1,-1}
+    };
 
     /**
      * Will calculate nodes adjacent that are both traversable and safe.
@@ -27,8 +70,22 @@ public record Node(int x, int y, int z, World world) {
      * - Nodes with an unsafe block under them are also unsafe
      * @return
      */
+
     public List<Node> getAdj(){
-        return null;
+        ArrayList<Node> adj = new ArrayList<>();
+
+        //implementation of this might change because ideally nodes that are already explored shouldn't be added
+
+        for(int[] offset : Node.offsets){
+            int offsetX = this.x + offset[0];
+            int offsetY = this.y + offset[1];
+            int offsetZ = this.z + offset[2];
+            if(this.isTraversable(offsetX, offsetY, offsetZ)){
+                adj.add(new Node(offsetX, offsetY, offsetZ, this.world));
+            }
+        }
+
+        return adj;
     }
 
     /**
@@ -47,11 +104,11 @@ public record Node(int x, int y, int z, World world) {
             throw new IllegalArgumentException("traversable location too far from node");
         }
 
-        if(!this.isAir(x, y, z)){
+        if(this.isNotAir(x, y, z)){
             return false;
         }
 
-        if(!this.isAir(x, y + 1, z)){
+        if(this.isNotAir(x, y + 1, z)){
             return false;
         }
 
@@ -63,13 +120,13 @@ public record Node(int x, int y, int z, World world) {
             switch (yOffset){
                 case 1:{
                     //jumping up, block 2 above current node must be air
-                    if(!this.isAir(this.x, this.y+2, this.z)){
+                    if(this.isNotAir(this.x, this.y + 2, this.z)){
                         return false;
                     }
                 }
                 case -1:{
                     //stepping down, block two above target node must be air
-                    if(!this.isAir(x, y+2, z)){
+                    if(this.isNotAir(x, y + 2, z)){
                         return false;
                     }
                 }
@@ -79,19 +136,27 @@ public record Node(int x, int y, int z, World world) {
         if(xOffset != 0 && zOffset != 0){
             if(yOffset == 0){
                 //level diagonal path, verify blocks diagonal in all directions are safe
-                if(!this.isAir(this.x + xOffset, this.y, this.z) ||
-                !this.isAir(this.x, this.y, this.z + zOffset) ||
-                !this.isAir(this.x + xOffset, this.y + 1, this.z) ||
-                        !this.isAir(this.x, this.y + 1, this.z + zOffset)){
+                if(this.isNotAir(this.x + xOffset, this.y, this.z) ||
+                        this.isNotAir(this.x, this.y, this.z + zOffset) ||
+                        this.isNotAir(this.x + xOffset, this.y + 1, this.z) ||
+                        this.isNotAir(this.x, this.y + 1, this.z + zOffset)){
                     return false;
                 }
             }else{
-                switch (yOffset){
-                    case 1:{
-                        
+                switch (yOffset) {
+                    case 1 -> {
+                        if (this.isNotAir(this.x + xOffset, this.y + 1, this.z) ||
+                                this.isNotAir(this.x, this.y + 1, this.z + zOffset) ||
+                                this.isNotAir(this.x + xOffset, this.y + 2, this.z) ||
+                                this.isNotAir(this.x, this.y + 2, this.z + zOffset)) {
+                            return false;
+                        }
                     }
-                    case -1:{
-
+                    case -1 -> {
+                        if (this.isNotAir(this.x + xOffset, this.y, this.z) ||
+                                this.isNotAir(this.x, this.y, this.z + zOffset)) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -101,8 +166,8 @@ public record Node(int x, int y, int z, World world) {
         return true;
     }
 
-    private boolean isAir(int x, int y, int z){
-        return this.world.getBlockAt(x, y, z).getType() == Material.AIR;
+    private boolean isNotAir(int x, int y, int z){
+        return this.world.getBlockAt(x, y, z).getType() != Material.AIR;
     }
     private boolean isSolid(int x, int y, int z){
         Block b = this.world.getBlockAt(x, y, z);
