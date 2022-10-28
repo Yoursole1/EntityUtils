@@ -8,7 +8,12 @@ import org.bukkit.block.Block;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Getter
 public class Node {
@@ -147,16 +152,16 @@ public class Node {
         }
 
         if(yOffset != 0){
-            switch (yOffset){
-                case 1:{
+            switch (yOffset) {
+                case 1 -> {
                     //jumping up, block 2 above current node must be air
-                    if(this.isNotAir(this.x, this.y + 2, this.z)){
+                    if (this.isNotAir(this.x, this.y + 2, this.z)) {
                         return false;
                     }
                 }
-                case -1:{
+                case -1 -> {
                     //stepping down, block two above target node must be air
-                    if(this.isNotAir(x, y + 2, z)){
+                    if (this.isNotAir(x, y + 2, z)) {
                         return false;
                     }
                 }
@@ -221,35 +226,98 @@ public class Node {
         int offsetSum = Math.abs(xOffset + yOffset + zOffset);
 
         int adder = switch (offsetSum){
+            case 0 -> 0; //shouldn't be 0 but for some reason it is???? todo fix
             case 1 -> 10;
             case 2 -> 14;
             case 3 -> 17;
-            default -> throw new IllegalStateException("Offset is invalid");
+            default -> throw new IllegalStateException("Offset is invalid: " + offsetSum);
         };
 
         return adder + parent.gCost();
     }
 
+    public boolean isBetterParent(Node node){
+        Node thisNode = new Node(this.x, this.y, this.z, this.world, this.parent);
+        this.parent = node;
+
+        int pathA = this.gCost();
+        this.parent = thisNode;
+        int pathB = this.gCost();
+
+        return pathA < pathB;
+    }
+
+    public Path getPath(){
+        Path p = new Path();
+
+        Node current = this;
+        while(current.getParent() != null){
+            p.addNode(current);
+            current = current.getParent();
+        }
+
+        p.reverse();
+        return p;
+    }
+
     /**
      * Returns distance from ending node
-     * @param x
-     * @param y
-     * @param z
-     * @return
+     * @param ending is the ending (target) node
+     * @return hCost of the optimal path not accounting for obstacles
      */
-    public int hCost(int x, int y, int z){
-        return -1;
+    public int hCost(Node ending){
+        int xOffset = Math.abs(this.x - ending.getX());
+        int yOffset = Math.abs(this.y - ending.getY());
+        int zOffset = Math.abs(this.z - ending.getZ());
+
+        List<Integer> offsets = new ArrayList<>(){{ //we use double brace init around here, don't shoot (memory leaks are fake news)
+            add(xOffset);
+            add(yOffset);
+            add(zOffset);
+        }};
+
+        int hCost = 0;
+
+        offsets = offsets.stream()
+                .filter(a -> a != 0)
+                .toList();
+
+        if(offsets.size() == 3){
+            int corner = Collections.min(offsets);
+            hCost += corner * 17; //truncated sqrt(3) * 10
+
+            offsets = offsets.stream()
+                    .map(a -> a - corner)
+                    .filter(a -> a != 0)
+                    .toList();
+        }
+
+        if(offsets.size() == 2){
+            int edge = Collections.min(offsets);
+            hCost += edge * 14; //truncated sqrt(2) * 10
+
+            offsets = offsets.stream()
+                    .map(a -> a - edge)
+                    .filter(a -> a != 0)
+                    .toList();
+        }
+
+        if(offsets.size() == 1){
+            int face = Collections.max(offsets);
+            hCost += face * 10; //truncated sqrt(1) * 10
+        }
+
+
+        return hCost;
     }
 
     /**
      * Returns total evaluation of the node
-     * @param x2
-     * @param y2
-     * @param z2
-     * @return
+     * @param ending is the ending (target) node
+     * @return total fCost of this node (given its current best path)
      */
-    public int fCost(int x2, int y2, int z2){
-        return this.gCost() + this.hCost(x2, y2, z2);
+    public int fCost(Node ending){
+        return this.gCost() + this.hCost(ending);
     }
 
     public boolean equals(Node other){
