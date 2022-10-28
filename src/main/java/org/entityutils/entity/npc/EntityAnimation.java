@@ -1,7 +1,9 @@
 package org.entityutils.entity.npc;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@AllArgsConstructor
 public enum EntityAnimation {
 
     Swing_Main_Arm(0),
@@ -15,8 +17,4 @@ public enum EntityAnimation {
 
     @Getter
     private final int id;
-
-    EntityAnimation(int id){
-        this.id = id;
-    }
 }

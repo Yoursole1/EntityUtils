@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import lombok.Getter;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -24,6 +25,7 @@ import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -45,6 +47,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -191,7 +194,13 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
     public void setDirection(float yaw, float pitch) {
         this.state.setYaw(yaw);
         this.state.setPitch(pitch);
-        this.refresh();
+
+        List<Packet<?>> packets = new ArrayList<>();
+
+        packets.add(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw()%360)*256/360))); //TODO test
+        packets.add(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((this.state.getYaw()%360)*256/360), (byte) ((this.state.getPitch()%360)*256/360), false));
+
+        PacketUtils.sendPackets(packets, Bukkit.getOnlinePlayers().stream().map(Entity::getUniqueId).toList());
     }
 
     @Override
@@ -200,7 +209,7 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
     }
 
     @Override
-    public void refresh() {
+    public void refresh() { //unideal to use, creates a flicker when the NPC respawns
         ArrayList<UUID> view = new ArrayList<>(this.state.getViewers()); //to avoid a CME ):
 
         for (UUID uuid : view) {

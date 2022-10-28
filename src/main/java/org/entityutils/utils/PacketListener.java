@@ -18,18 +18,21 @@ public class PacketListener {
     private static final Map<UUID, Long> clickDelay = new HashMap<>();
     private static final List<Player> players = new ArrayList<>();
 
+    private PacketListener(){
+
+    }
     /**
      * Registers an NPC to have the packet listener listen for click packets to
-     * @param npc
+     * @param npc to register with the listener
      */
     public static void registerNPC(NPC npc){
         npcIds.put(npc.getID(), npc);
     }
 
     /**
-     * Adds a player for the packet listener to watch fot click packets from
-     * @param player
-     * @param p
+     * Adds a player for the packet listener to watch for click packets from
+     * @param player to register with the listener
+     * @param p plugin to register with
      */
     public static void registerPlayer(Player player, JavaPlugin p){
         if (players.contains(player)) return;

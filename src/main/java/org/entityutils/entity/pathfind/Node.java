@@ -1,5 +1,6 @@
 package org.entityutils.entity.pathfind;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Material;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@AllArgsConstructor
 @Getter
 public class Node {
 
@@ -63,14 +65,6 @@ public class Node {
     @Setter
     //Only null if starting node
     private Node parent;
-
-    public Node(int x, int y, int z, World world, @Nullable Node parent){
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.world = world;
-        this.parent = parent;
-    }
 
 
     /**

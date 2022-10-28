@@ -1,11 +1,14 @@
 package org.entityutils.entity.npc.player;
 
+import lombok.AllArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The enum that stores the skin options for a minecraft player skin.
  */
+@AllArgsConstructor
 public enum SkinLayer {
     CAPE(0x01),
     JACKET(0x02),
@@ -16,9 +19,6 @@ public enum SkinLayer {
     HAT(0x40);
 
     private final int mask;
-    SkinLayer(int mask) {
-        this.mask = mask;
-    }
 
     public int getMask() {
         return mask;
