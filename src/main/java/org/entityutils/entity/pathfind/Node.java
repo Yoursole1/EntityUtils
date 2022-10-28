@@ -10,10 +10,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Getter
 public class Node {
@@ -124,6 +120,9 @@ public class Node {
     }
 
     /**
+     * This function ensures it is possible to reach the block at (x, y, z) in
+     * one step.  Reaching the target block should never make the NPC appear like
+     * it is clipping through a block.
      * @param x restricted to this.x +- 1 or 0
      * @param y restricted to this.y +- 1 or 0
      * @param z restricted to this.z +- 1 or 0
@@ -201,17 +200,30 @@ public class Node {
         return true;
     }
 
+    /**
+     * @param x
+     * @param y
+     * @param z
+     * @return is the block at this location not air
+     */
     private boolean isNotAir(int x, int y, int z){
         return this.world.getBlockAt(x, y, z).getType() != Material.AIR;
     }
+
+    /**
+     * Is the block at this location solid
+     * @param x
+     * @param y
+     * @param z
+     * @return
+     */
     private boolean isSolid(int x, int y, int z){
         Block b = this.world.getBlockAt(x, y, z);
         return b.isSolid();
     }
 
     /**
-     * Returns value of the best current path from starting node
-     * @return
+     * @return cost of the best current path from starting node
      */
     public int gCost(){
         Node parent = this.getParent();
@@ -236,6 +248,11 @@ public class Node {
         return adder + parent.gCost();
     }
 
+
+    /**
+     * @param node applicant parent node
+     * @return if this node was the parent, would the path to the starting node be shorter
+     */
     public boolean isBetterParent(Node node){
         Node thisNode = new Node(this.x, this.y, this.z, this.world, this.parent);
         this.parent = node;
@@ -247,6 +264,10 @@ public class Node {
         return pathA < pathB;
     }
 
+    /**
+     * Used to generate the final path
+     * @return a path from this node to the starting node
+     */
     public Path getPath(){
         Path p = new Path();
 
@@ -282,7 +303,7 @@ public class Node {
                 .filter(a -> a != 0)
                 .toList();
 
-        if(offsets.size() == 3){
+        if(offsets.size() == 3){ //move diagonal in 3d (x+1, y+1, z+1)
             int corner = Collections.min(offsets);
             hCost += corner * 17; //truncated sqrt(3) * 10
 
@@ -292,7 +313,7 @@ public class Node {
                     .toList();
         }
 
-        if(offsets.size() == 2){
+        if(offsets.size() == 2){ //move diagonal in 2d (x+1, y, z+1, or like x, y+1, z+1 ...ect)
             int edge = Collections.min(offsets);
             hCost += edge * 14; //truncated sqrt(2) * 10
 
@@ -302,7 +323,7 @@ public class Node {
                     .toList();
         }
 
-        if(offsets.size() == 1){
+        if(offsets.size() == 1){ //move in 1d (x+1, y, z ...)
             int face = Collections.max(offsets);
             hCost += face * 10; //truncated sqrt(1) * 10
         }
@@ -320,6 +341,10 @@ public class Node {
         return this.gCost() + this.hCost(ending);
     }
 
+    /**
+     * @param other node
+     * @return equals on values NOT equals on memory address
+     */
     public boolean equals(Node other){
         return (
                 this.x == other.x &&
