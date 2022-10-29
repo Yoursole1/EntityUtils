@@ -1,6 +1,7 @@
 package org.entityutils.entity.pathfind;
 
 import lombok.Getter;
+import org.entityutils.utils.math.Vector3;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,5 +23,9 @@ public class Path {
 
     public void reverse(){
         Collections.reverse(nodes);
+    }
+
+    public List<Vector3> generateMovementVectors(){
+        return null;
     }
 }

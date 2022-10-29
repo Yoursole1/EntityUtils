@@ -12,14 +12,14 @@ public class Vector3 {
     private double y;
     private double z;
 
-    public void normalize(){
+    public void normalize() {
         double oneOverMagnitude = this.invSqrt((float) (this.x * this.x + this.y * this.y + this.z * this.z));
         this.x *= oneOverMagnitude;
         this.y *= oneOverMagnitude;
         this.z *= oneOverMagnitude;
     }
 
-    public double distance(Vector3 other){
+    public double distance(Vector3 other) {
         return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2) + Math.pow(this.z - other.z, 2));
     }
 
