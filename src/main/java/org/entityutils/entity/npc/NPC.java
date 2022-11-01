@@ -13,7 +13,7 @@ public interface NPC extends Listener, EUEntity {
 
     void showName(boolean show);
 
-    void goTo(Location location);
+    void goTo(Location location, int speed);
     void teleport(Location location);
     void setDirection(float yaw, float pitch);
     int getID();

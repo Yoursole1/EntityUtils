@@ -34,6 +34,7 @@ public class Path {
             Node nxt = this.nodes.get(i + 1);
 
             Vector3 offset = new Vector3(nxt.getX() - curr.getX(), nxt.getY() - curr.getY(), nxt.getZ() - curr.getZ());
+            offset.multiply(152); //magic number, not exact TODO figure out
             movement.add(offset);
         }
 
