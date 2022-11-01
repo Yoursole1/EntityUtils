@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class NPCClickEvent extends Event {
 
-    private final Player p;
+    private final Player player;
     private final NPC npc;
     private final ServerboundInteractPacket.ActionType action;
 

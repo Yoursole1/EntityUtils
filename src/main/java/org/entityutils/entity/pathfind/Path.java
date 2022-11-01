@@ -1,6 +1,7 @@
 package org.entityutils.entity.pathfind;
 
 import lombok.Getter;
+import net.minecraft.server.level.ServerPlayer;
 import org.entityutils.utils.math.Vector3;
 
 import java.util.ArrayList;
@@ -26,6 +27,16 @@ public class Path {
     }
 
     public List<Vector3> generateMovementVectors(){
-        return null;
+        List<Vector3> movement = new ArrayList<>();
+
+        for(int i = 0; i < this.nodes.size() - 1; i++){
+            Node curr = this.nodes.get(i);
+            Node nxt = this.nodes.get(i + 1);
+
+            Vector3 offset = new Vector3(nxt.getX() - curr.getX(), nxt.getY() - curr.getY(), nxt.getZ() - curr.getZ());
+            movement.add(offset);
+        }
+
+        return movement;
     }
 }

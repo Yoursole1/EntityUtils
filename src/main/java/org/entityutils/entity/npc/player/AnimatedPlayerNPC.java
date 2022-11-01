@@ -5,12 +5,18 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.entityutils.EntityUtilsPlugin;
 import org.entityutils.entity.npc.EntityAnimation;
+import org.entityutils.entity.pathfind.Node;
+import org.entityutils.entity.pathfind.Path;
+import org.entityutils.entity.pathfind.Pathfinder;
 import org.entityutils.utils.PacketUtils;
 import org.entityutils.utils.math.Vector3;
 
@@ -19,6 +25,8 @@ import java.util.List;
 
 
 public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
+
+    private static final double gravity = 19.5; //b/s/s
 
     public AnimatedPlayerNPC(String name, Location loc, JavaPlugin plugin) {
         super(name, loc, plugin);
@@ -37,6 +45,17 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
         }
         this.locked = true;
 
+        Node starting = new Node(this.getState().getLocation());
+        Node ending = new Node(location);
+
+        Path toWalk = new Pathfinder(starting, ending).getPath();
+
+        if(toWalk == null){
+            return;
+        }
+
+        List<Vector3> movement = toWalk.generateMovementVectors();
+
         new BukkitRunnable(){
             @Override
             public void run(){
@@ -50,12 +69,6 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
     }
 
     private boolean moveOffset(Vector3 offset){
-        Location location = this.getState().getLocation();
-        Vector3 currentLoc = new Vector3(location.getX(), location.getY(), location.getZ());
-
-        if(offset.distance(currentLoc) > 8f){ //if distance is greater than 8 an EntityTeleportPacket should be used
-            return false;
-        }
 
         List<Packet<?>> packets = new ArrayList<>();
 

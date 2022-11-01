@@ -3,6 +3,7 @@ package org.entityutils.utils.math;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Location;
 
 @AllArgsConstructor
 @Getter
@@ -11,6 +12,12 @@ public class Vector3 {
     private double x;
     private double y;
     private double z;
+
+    public Vector3(Location loc){
+        this.x = loc.getX();
+        this.y = loc.getY();
+        this.z = loc.getZ();
+    }
 
     public void normalize() {
         double oneOverMagnitude = this.invSqrt((float) (this.x * this.x + this.y * this.y + this.z * this.z));
@@ -21,6 +28,20 @@ public class Vector3 {
 
     public double distance(Vector3 other) {
         return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2) + Math.pow(this.z - other.z, 2));
+    }
+
+    public double distance(Location to){
+        return Math.sqrt(Math.pow(this.x - to.getX(), 2) + Math.pow(this.y - to.getY(), 2) + Math.pow(this.z - to.getZ(), 2));
+    }
+
+    public void multiply(double c){
+        this.x *= c;
+        this.y *= c;
+        this.z *= c;
+    }
+
+    public double magnitude(){
+        return this.distance(new Vector3(0,0,0));
     }
 
     private float invSqrt(float x){ //this is from the graphics code in the game Quake, it's so awesome

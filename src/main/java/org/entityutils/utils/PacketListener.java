@@ -43,7 +43,7 @@ public class PacketListener {
             protected void decode(ChannelHandlerContext ctx, ServerboundInteractPacket packet, List<Object> out) {
                 out.add(packet);
 
-                double cooldownTime = 1;
+                double cooldownTime = 0.03;
                 if (clickDelay.containsKey(player.getUUID())) {
                     double secondsLeft = (clickDelay.get(player.getUUID()) / 1000D + cooldownTime - System.currentTimeMillis() / 1000D);
                     if (secondsLeft > 0) { return; }

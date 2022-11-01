@@ -3,6 +3,7 @@ package org.entityutils.entity.pathfind;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -56,6 +57,15 @@ public class Node {
             {-1,-1,1},
             {-1,-1,-1}
     };
+
+    public Node(Location loc){
+        this.x = loc.getBlockX();
+        this.y = loc.getBlockY();
+        this.z = loc.getBlockZ();
+
+        this.world = loc.getWorld();
+        this.parent = null;
+    }
 
     private final int x;
     private final int y;
