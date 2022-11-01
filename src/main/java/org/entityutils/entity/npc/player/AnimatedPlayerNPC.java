@@ -61,16 +61,17 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         packets.add(new ClientboundMoveEntityPacket.PosRot(
                 this.getID(),
-                (short)offset.getX(),
-                (short)offset.getY(), (short)offset.getZ(),
+                (short)(offset.getX() * 32),
+                (short)(offset.getY() * 32),
+                (short)(offset.getZ() * 32),
                 (byte) 0, (byte) 0,
                 true));
 
         packets.add(new ClientboundMoveEntityPacket.PosRot(
                 this.getState().getStand().getState().getHologram().getId(),
-                (short)offset.getX(),
-                (short)offset.getY(),
-                (short)offset.getZ(),
+                (short)(offset.getX() * 32),
+                (short)(offset.getY() * 32),
+                (short)(offset.getZ() * 32),
                 (byte) 0, (byte) 0,
                 true));
 
