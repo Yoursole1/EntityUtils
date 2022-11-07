@@ -107,7 +107,6 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
         PacketUtils.sendPackets(packets, this.getData().getViewers());
 
         //Update all internal locations, yes these should be updated in the getter and setter, no it doesn't yet
-        //TODO save updated location, which is not the offset added to current because offset is something else (to figure out)
         this.getData().getNpc().setPos(
                 new Vec3(
                         this.getData().getLocation().getX() + offset.getX(),
