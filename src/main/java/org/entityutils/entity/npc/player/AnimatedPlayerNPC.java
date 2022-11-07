@@ -17,6 +17,7 @@ import org.entityutils.entity.pathfind.Node;
 import org.entityutils.entity.pathfind.Path;
 import org.entityutils.entity.pathfind.Pathfinder;
 import org.entityutils.utils.PacketUtils;
+import org.entityutils.utils.math.MathUtils;
 import org.entityutils.utils.math.Vector3;
 
 import java.util.ArrayList;
@@ -38,22 +39,22 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
      */
     private boolean locked;
     @Override
-    public void goTo(Location location, int speed) {
+    public Path goTo(Location location, int speed) {
         if(this.locked){
-            return;
+            return null;
         }
         this.locked = true;
 
-        Node starting = new Node(this.getState().getLocation());
+        Node starting = new Node(this.getData().getLocation());
         Node ending = new Node(location);
 
         Path toWalk = new Pathfinder(starting, ending).getPath();
 
         if(toWalk == null){
-            return;
+            return null;
         }
 
-        List<Vector3> movement = toWalk.generateMovementVectors();
+        List<Vector3> movement = toWalk.generateMovementVectors(10);
 
         final int[] i = {0};
         new BukkitRunnable(){
@@ -69,6 +70,8 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
                 i[0]++;
             }
         }.runTaskTimer(EntityUtilsPlugin.getInstance(), 0, 100/speed);
+
+        return toWalk;
     }
 
     public void jump(){
@@ -79,21 +82,25 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         List<Packet<?>> packets = new ArrayList<>();
 
-        packets.add(new ClientboundMoveEntityPacket.PosRot(
+        Location l = new Location(this.getData().getLocation().getWorld(), 0, 0, 0).setDirection(new Vector(offset.getX(), offset.getY(), offset.getZ()));
+        double pitch = l.getPitch();
+        double yaw = l.getYaw();
+
+        packets.add(new ClientboundMoveEntityPacket.Pos(
                 this.getID(),
-                (short)Math.floor(offset.getX() * 32), // test if Math.floor === Mathhelper.floor
-                (short)Math.floor(offset.getY() * 32), //32 * 128
-                (short)Math.floor(offset.getZ() * 32),
-                (byte) 0, (byte) 0,
+                (short)Math.floor(offset.getX() * 32 * 128),
+                (short)Math.floor(offset.getY() * 32 * 128),
+                (short)Math.floor(offset.getZ() * 32 * 128),
                 true)
         );
 
-        packets.add(new ClientboundMoveEntityPacket.PosRot(
-                this.getState().getStand().getState().getHologram().getId(),
-                (short)Math.floor(offset.getX() * 32),
-                (short)Math.floor(offset.getY() * 32),
-                (short)Math.floor(offset.getZ() * 32),
-                (byte) 0, (byte) 0,
+        this.setDirection((float) yaw, (float) pitch);
+
+        packets.add(new ClientboundMoveEntityPacket.Pos(
+                this.getData().getStand().getState().getHologram().getId(),
+                (short)Math.floor(offset.getX() * 32 * 128),
+                (short)Math.floor(offset.getY() * 32 * 128),
+                (short)Math.floor(offset.getZ() * 32 * 128),
                 true)
         );
 
@@ -101,48 +108,53 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         //Update all internal locations, yes these should be updated in the getter and setter, no it doesn't yet
         //TODO save updated location, which is not the offset added to current because offset is something else (to figure out)
-//        this.getState().getNpc().setPos(
-//                new Vec3(
-//                        this.getState().getLocation().getX() + offset.getX(),
-//                        this.getState().getLocation().getY() + offset.getY(),
-//                        this.getState().getLocation().getZ() + offset.getZ()
-//                )
-//        );
-//        this.getState().setLocation(
-//                this.getState().getLocation().add(
-//                        new Vector(
-//                                offset.getX(),
-//                                offset.getY(),
-//                                offset.getZ()
-//                        )
-//                )
-//        );
-//        this.getState().getStand().getState().setLocation(
-//                this.getState().getStand().getState().getLocation().add(
-//                        new Vector(
-//                                offset.getX(),
-//                                offset.getY(),
-//                                offset.getZ()
-//                        )
-//                )
-//        );
-//        this.getState().getStand().getState().getHologram().setPos(
-//                this.getState().getStand().getState().getLocation().getX() + offset.getX(),
-//                this.getState().getStand().getState().getLocation().getY() + offset.getY(),
-//                this.getState().getStand().getState().getLocation().getZ() + offset.getZ()
-//        );
+        this.getData().getNpc().setPos(
+                new Vec3(
+                        this.getData().getLocation().getX() + offset.getX(),
+                        MathUtils.correctFloatingPoint(this.getData().getLocation().getY() + offset.getY()),
+                        this.getData().getLocation().getZ() + offset.getZ()
+                )
+        );
+        this.getData().setLocation(
+                this.getData().getLocation().add(
+                        new Vector(
+                                offset.getX(),
+                                offset.getY(),
+                                offset.getZ()
+                        )
+                )
+        );
+        this.getData().getStand().getState().setLocation(
+                this.getData().getStand().getState().getLocation().add(
+                        new Vector(
+                                offset.getX(),
+                                MathUtils.correctFloatingPoint(offset.getY()),
+                                offset.getZ()
+                        )
+                )
+        );
+        this.getData().getStand().getState().getHologram().setPos(
+                this.getData().getStand().getState().getLocation().getX() + offset.getX(),
+                MathUtils.correctFloatingPoint(this.getData().getStand().getState().getLocation().getY() + offset.getY()),
+                this.getData().getStand().getState().getLocation().getZ() + offset.getZ()
+        );
+
+        double y = this.getData().getLocation().getY();
+        y = MathUtils.correctFloatingPoint(y);
+        this.getData().getLocation().setY(y);
+
     }
 
     public void setPose(Pose pose) {
-        this.getState().getNpc().setPose(pose);
-        ClientboundSetEntityDataPacket p = new ClientboundSetEntityDataPacket(this.getID(), this.getState().getNpc().getEntityData(), true);
+        this.getData().getNpc().setPose(pose);
+        ClientboundSetEntityDataPacket p = new ClientboundSetEntityDataPacket(this.getID(), this.getData().getNpc().getEntityData(), true);
 
-        PacketUtils.sendPacket(p, this.getState().getViewers());
+        PacketUtils.sendPacket(p, this.getData().getViewers());
     }
 
     public void animate(EntityAnimation animation) {
-        ClientboundAnimatePacket p = new ClientboundAnimatePacket(this.getState().getNpc(), animation.getId());
+        ClientboundAnimatePacket p = new ClientboundAnimatePacket(this.getData().getNpc(), animation.getId());
 
-        PacketUtils.sendPacket(p, this.getState().getViewers());
+        PacketUtils.sendPacket(p, this.getData().getViewers());
     }
 }

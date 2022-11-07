@@ -40,6 +40,18 @@ public class Vector3 {
         this.z *= c;
     }
 
+    public void add(Vector3 other){
+        this.x += other.x;
+        this.y += other.y;
+        this.z += other.z;
+    }
+
+    public void add(Location loc){
+        this.x += loc.getX();
+        this.y += loc.getY();
+        this.z += loc.getZ();
+    }
+
     public double magnitude(){
         return this.distance(new Vector3(0,0,0));
     }

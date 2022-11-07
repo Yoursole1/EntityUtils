@@ -54,8 +54,6 @@ import java.util.stream.Collectors;
  *
  */
 public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPlayerNPC, StaticPlayerNPC {
-
-    @Getter
     private final PlayerNPCData state;
 
     public AbstractPlayerNPC(String name, Location loc, JavaPlugin plugin){
@@ -128,7 +126,7 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
             //-------------------------------|
 
             //send spawn packets
-            PacketUtils.sendPackets(this.getState().generateStatePackets(), p);
+            PacketUtils.sendPackets(this.getData().generateStatePackets(), p);
             //--
 
             this.state.getViewers().add(p.getUUID());
@@ -197,7 +195,7 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
 
         List<Packet<?>> packets = new ArrayList<>();
 
-        packets.add(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw()%360)*256/360))); //TODO test
+        packets.add(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw()%360)*256/360)));
         packets.add(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((this.state.getYaw()%360)*256/360), (byte) ((this.state.getPitch()%360)*256/360), false));
 
         PacketUtils.sendPackets(packets, Bukkit.getOnlinePlayers().stream().map(Entity::getUniqueId).toList());

@@ -4,6 +4,7 @@ package org.entityutils.entity.npc;
 import org.bukkit.Location;
 import org.bukkit.event.Listener;
 import org.entityutils.entity.EUEntity;
+import org.entityutils.entity.pathfind.Path;
 import org.entityutils.utils.EUState.AbstractNPCData;
 
 /**
@@ -13,7 +14,7 @@ public interface NPC extends Listener, EUEntity {
 
     void showName(boolean show);
 
-    void goTo(Location location, int speed);
+    Path goTo(Location location, int speed);
     void teleport(Location location);
     void setDirection(float yaw, float pitch);
     int getID();

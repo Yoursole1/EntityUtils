@@ -242,10 +242,9 @@ public class Node {
         int offsetSum = Math.abs(xOffset + yOffset + zOffset);
 
         int adder = switch (offsetSum){
-            case 0 -> 0; //shouldn't be 0 but for some reason it is???? todo fix
+            case 0, 3 -> 17; //shouldn't be 0 but for some reason it is?
             case 1 -> 10;
             case 2 -> 14;
-            case 3 -> 17;
             default -> throw new IllegalStateException("Offset is invalid: " + offsetSum);
         };
 
@@ -280,6 +279,7 @@ public class Node {
             p.addNode(current);
             current = current.getParent();
         }
+        p.addNode(current);
 
         p.reverse();
         return p;
