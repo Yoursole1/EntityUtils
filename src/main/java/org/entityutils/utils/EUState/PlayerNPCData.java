@@ -10,12 +10,10 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.entityutils.entity.npc.player.SkinLayer;
-import org.entityutils.utils.PacketUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +42,10 @@ public class PlayerNPCData extends AbstractNPCData {
 
         packets.add(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, this.getNpc()));
         packets.add(new ClientboundAddPlayerPacket(this.getNpc()));
-        packets.add(new ClientboundRotateHeadPacket(this.getNpc(), (byte) ((this.getYaw()%360)*256/360)));
-        packets.add(new ClientboundMoveEntityPacket.Rot(this.getNpc().getId(), (byte) ((this.getYaw()%360)*256/360), (byte) ((this.getPitch()%360)*256/360), false));
+        packets.add(new ClientboundRotateHeadPacket(this.getNpc(), (byte) ((this.getYaw() % 360) * 256 / 360)));
+        packets.add(new ClientboundMoveEntityPacket.Rot(this.getNpc().getId(), (byte) ((this.getYaw() % 360) * 256 / 360), (byte) ((this.getPitch() % 360) * 256 / 360), false));
 
-        for(Pair<EquipmentSlot, ItemStack> item: this.getInventory()){
+        for (Pair<EquipmentSlot, ItemStack> item : this.getInventory()) {
             packets.add(new ClientboundSetEquipmentPacket(this.getNpc().getId(), List.of(item)));
         }
 

@@ -12,14 +12,13 @@ import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.entityutils.entity.decoration.HologramEntity;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
-public abstract class AbstractNPCData implements EUEntityData{
+public abstract class AbstractNPCData implements EUEntityData {
 
     private Entity npc;
 
@@ -53,11 +52,10 @@ public abstract class AbstractNPCData implements EUEntityData{
     private HologramEntity stand;
 
 
-
-    private AbstractNPCData(){
+    private AbstractNPCData() {
 
         this.name = "new npc";
-        this.location = new Location(Bukkit.getWorlds().get(0), 0,0,0);
+        this.location = new Location(Bukkit.getWorlds().get(0), 0, 0, 0);
 
         this.showName = false;
         this.headTrack = false;
@@ -70,7 +68,7 @@ public abstract class AbstractNPCData implements EUEntityData{
         this.hologramText = "";
     }
 
-    public AbstractNPCData(String name, Location loc, JavaPlugin plugin){
+    public AbstractNPCData(String name, Location loc, JavaPlugin plugin) {
         this();
 
         this.name = name;

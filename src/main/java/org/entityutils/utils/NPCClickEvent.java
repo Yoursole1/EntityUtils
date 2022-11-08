@@ -13,18 +13,17 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class NPCClickEvent extends Event {
 
+    private static final HandlerList HANDLERS = new HandlerList();
     private final Player player;
     private final NPC npc;
     private final ServerboundInteractPacket.ActionType action;
 
-    private static final HandlerList HANDLERS = new HandlerList();
-
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return NPCClickEvent.HANDLERS;
     }
 
-    public static HandlerList getHandlerList(){
+    @Override
+    public @NotNull HandlerList getHandlers() {
         return NPCClickEvent.HANDLERS;
     }
 }

@@ -23,7 +23,7 @@ public class NPCManager implements Listener {
 
     public static NPCManager getInstance() {
         if (instance == null) {
-            synchronized(NPCManager.class) { //thread safe, just for you NotAdaam
+            synchronized (NPCManager.class) { //thread safe, just for you NotAdaam
                 if (instance == null) {
                     instance = new NPCManager();
                 }
@@ -33,8 +33,8 @@ public class NPCManager implements Listener {
         return instance;
     }
 
-    public void register(NPC npc){
-        if(!this.registered){
+    public void register(NPC npc) {
+        if (!this.registered) {
             Bukkit.getServer().getPluginManager().registerEvents(this, npc.getData().getPlugin());
             this.registered = true;
         }
@@ -44,6 +44,6 @@ public class NPCManager implements Listener {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
-        PacketListener.unRegisterPlayer(((CraftPlayer)e.getPlayer()).getHandle());
+        PacketListener.unRegisterPlayer(((CraftPlayer) e.getPlayer()).getHandle());
     }
 }

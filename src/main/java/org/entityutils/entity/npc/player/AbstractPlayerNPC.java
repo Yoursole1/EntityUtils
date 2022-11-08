@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import lombok.Getter;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -20,7 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
@@ -47,7 +45,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -56,7 +53,7 @@ import java.util.stream.Collectors;
 public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPlayerNPC, StaticPlayerNPC {
     private final PlayerNPCData state;
 
-    public AbstractPlayerNPC(String name, Location loc, JavaPlugin plugin){
+    public AbstractPlayerNPC(String name, Location loc, JavaPlugin plugin) {
 
         this.state = new PlayerNPCData(name, loc, plugin);
 
@@ -64,36 +61,36 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         //TODO test if moving the self listener registration to NPCManager works
     }
 
-    public AbstractPlayerNPC(PlayerNPCData data){
+    public AbstractPlayerNPC(PlayerNPCData data) {
         this.state = data;
     }
 
     @Override
-    public void setAlive(boolean alive){
-        if (alive){
-            if(this.state.getLocation() == null || this.state.getPlugin() == null) return;
+    public void setAlive(boolean alive) {
+        if (alive) {
+            if (this.state.getLocation() == null || this.state.getPlugin() == null) return;
 
-            for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()){
-                setAlive(((CraftPlayer)p).getHandle(), true);
+            for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()) {
+                setAlive(((CraftPlayer) p).getHandle(), true);
             }
 
             return;
         }
 
         //alive = false
-        for(org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()){
-            setAlive(((CraftPlayer)p).getHandle(), false);
+        for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()) {
+            setAlive(((CraftPlayer) p).getHandle(), false);
         }
 
         this.state.setViewers(new ArrayList<>());
     }
 
-    private void init(){
+    private void init() {
         MinecraftServer server = ((CraftServer) (Bukkit.getServer())).getServer();
-        ServerLevel level = ((CraftWorld)(this.state.getLocation().getWorld())).getHandle();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), this.state.isShowName()?this.state.getName():"");
+        ServerLevel level = ((CraftWorld) (this.state.getLocation().getWorld())).getHandle();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), this.state.isShowName() ? this.state.getName() : "");
 
-        if(this.state.getValue() != null){
+        if (this.state.getValue() != null) {
             profile.getProperties().put("textures", new Property("textures", this.state.getValue(), this.state.getSignature()));
         }
 
@@ -104,21 +101,22 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
 
         PacketListener.registerNPC(this);
     }
+
     @Override
     public void setAlive(Player p, boolean alive) {
 
-        if (alive){
-            if(this.state.getLocation() == null || this.state.getPlugin() == null) return;
+        if (alive) {
+            if (this.state.getLocation() == null || this.state.getPlugin() == null) return;
 
             //init NPC data
-            if(this.state.getNpc() == null){
+            if (this.state.getNpc() == null) {
                 this.init();
             }
 
             //------------------------------|
             //init hologram
-            if(this.state.getStand() == null){
-                this.state.setStand(new HologramEntity(this.state.getLocation().clone().add(new Vector(0,0.5,0)), this.state.getHologramText()));
+            if (this.state.getStand() == null) {
+                this.state.setStand(new HologramEntity(this.state.getLocation().clone().add(new Vector(0, 0.5, 0)), this.state.getHologramText()));
             }
 
             this.state.getStand().getState().setText(this.state.getHologramText());
@@ -131,8 +129,8 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
 
             this.state.getViewers().add(p.getUUID());
             PacketListener.registerPlayer(p, this.state.getPlugin());
-        }else{
-            if(!this.state.getViewers().contains(p.getUUID())) return;
+        } else {
+            if (!this.state.getViewers().contains(p.getUUID())) return;
 
             PacketUtils.sendPacket(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, this.state.getNpc()), p);
             PacketUtils.sendPacket(new ClientboundRemoveEntitiesPacket(this.state.getNpc().getId()), p);
@@ -144,7 +142,7 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
     }
 
     @Override
-    public int getID(){
+    public int getID() {
         return this.state.getNpc().getId();
     }
 
@@ -159,7 +157,7 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
     public void teleport(Location location) {
         this.state.getNpc().setPos(location.getX(), location.getY(), location.getZ());
 
-        if(this.state.getStand().getState().getHologram() != null){
+        if (this.state.getStand().getState().getHologram() != null) {
             this.state.getStand().getState().getHologram().setPos(location.getX(), location.getY() + 0.5, location.getZ());
         }
 
@@ -172,18 +170,18 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.state.setHologramText(text);
         this.state.getStand().getState().setText(text);
 
-        if(this.state.getNpc() == null) return; //---------
+        if (this.state.getNpc() == null) return; //---------
 
-        if(this.state.getStand().getState().getHologram() == null){
-            for(UUID uuid : this.state.getViewers()){
+        if (this.state.getStand().getState().getHologram() == null) {
+            for (UUID uuid : this.state.getViewers()) {
                 org.bukkit.entity.Player pl = Bukkit.getPlayer(uuid);
-                if(pl == null){
+                if (pl == null) {
                     continue;
                 }
 
-                this.state.getStand().setAlive(((CraftPlayer)pl).getHandle(), true);
+                this.state.getStand().setAlive(((CraftPlayer) pl).getHandle(), true);
             }
-        }else{
+        } else {
             this.state.getStand().refresh();
         }
     }
@@ -195,14 +193,14 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
 
         List<Packet<?>> packets = new ArrayList<>();
 
-        packets.add(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw()%360)*256/360)));
-        packets.add(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((this.state.getYaw()%360)*256/360), (byte) ((this.state.getPitch()%360)*256/360), false));
+        packets.add(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw() % 360) * 256 / 360)));
+        packets.add(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((this.state.getYaw() % 360) * 256 / 360), (byte) ((this.state.getPitch() % 360) * 256 / 360), false));
 
         PacketUtils.sendPackets(packets, Bukkit.getOnlinePlayers().stream().map(Entity::getUniqueId).toList());
     }
 
     @Override
-    public PlayerNPCData getData(){
+    public PlayerNPCData getData() {
         return this.state;
     }
 
@@ -223,31 +221,31 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         }
     }
 
-    public void headTrack(boolean track){
+    public void headTrack(boolean track) {
         this.state.setHeadTrack(track);
     }
 
-    public void setItem(ItemStack item, EquipmentSlot inventorySlot){
+    public void setItem(ItemStack item, EquipmentSlot inventorySlot) {
         this.state.getInventory().add(new com.mojang.datafixers.util.Pair<>(inventorySlot, CraftItemStack.asNMSCopy(item)));
-        if(this.state.getNpc() == null){
+        if (this.state.getNpc() == null) {
             return;
         }
 
         ClientboundSetEquipmentPacket eq = new ClientboundSetEquipmentPacket(this.state.getNpc().getId(), List.of(new com.mojang.datafixers.util.Pair<>(inventorySlot, CraftItemStack.asNMSCopy(item))));
         this.state.getNpc().setItemSlot(inventorySlot, CraftItemStack.asNMSCopy(item));
         for (UUID uuid : this.state.getViewers()) {
-            Player pl = ((CraftPlayer)(Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
+            Player pl = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();
             PacketUtils.sendPacket(eq, pl);
         }
     }
 
     private void setItem(com.mojang.datafixers.util.Pair<EquipmentSlot, net.minecraft.world.item.ItemStack> item, org.bukkit.entity.Player p) {
         ClientboundSetEquipmentPacket eq = new ClientboundSetEquipmentPacket(this.state.getNpc().getId(), List.of(item));
-        Player pl = ((CraftPlayer)(p)).getHandle();
+        Player pl = ((CraftPlayer) (p)).getHandle();
         PacketUtils.sendPacket(eq, pl);
     }
 
-    public void setSkin(UUID uuid, SkinLayer... layers){
+    public void setSkin(UUID uuid, SkinLayer... layers) {
         this.state.setSkin(uuid);
 
         this.state.setLayers(new ArrayList<>());
@@ -258,9 +256,11 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
             p = getSkinData(uuid);
             this.state.setValue(p.getA());
             this.state.setSignature(p.getB());
-        } catch (IOException ignored) {return;}
+        } catch (IOException ignored) {
+            return;
+        }
 
-        if(this.state.getNpc() != null){ //npc already spawned: Update skin
+        if (this.state.getNpc() != null) { //npc already spawned: Update skin
             GameProfile profile = this.state.getNpc().gameProfile;
             profile.getProperties().put("textures", new Property("textures", this.state.getValue(), this.state.getSignature()));
             this.state.getNpc().gameProfile = profile;
@@ -272,20 +272,20 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
             this.refresh();
 
             ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(this.state.getNpc().getId(), watcher, true);
-            for(org.bukkit.entity.Player pl : Bukkit.getOnlinePlayers()){
-                PacketUtils.sendPacket(packet4, ((CraftPlayer)(pl)).getHandle());
+            for (org.bukkit.entity.Player pl : Bukkit.getOnlinePlayers()) {
+                PacketUtils.sendPacket(packet4, ((CraftPlayer) (pl)).getHandle());
             }
         }
     }
 
     private oshi.util.tuples.Pair<String, String> getSkinData(UUID uuid) throws IOException {
-        JsonObject json = readJsonFromUrl("https://sessionserver.mojang.com/session/minecraft/profile/"+uuid.toString()+"?unsigned=false");
-        if(json.get("properties") != null){
+        JsonObject json = readJsonFromUrl("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid.toString() + "?unsigned=false");
+        if (json.get("properties") != null) {
             JsonArray properties = json.getAsJsonArray("properties");
             String value = properties.get(0).getAsJsonObject().get("value").getAsString();
-            String signature =properties.get(0).getAsJsonObject().get("signature").getAsString();
+            String signature = properties.get(0).getAsJsonObject().get("signature").getAsString();
             return new oshi.util.tuples.Pair<>(value, signature);
-        }else{
+        } else {
             throw new IOException("UUID Invalid");
         }
     }
@@ -317,8 +317,8 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
     public void onPlayerJoin(PlayerJoinEvent e) {
         if (!(this.state.getViewers().contains(e.getPlayer().getUniqueId()))) return;
 
-        PacketUtils.sendPackets(this.state.generateStatePackets(), ((CraftPlayer)e.getPlayer()).getHandle());
-        PacketUtils.sendPackets(this.state.getStand().getState().generateStatePackets(), ((CraftPlayer)e.getPlayer()).getHandle());
+        PacketUtils.sendPackets(this.state.generateStatePackets(), ((CraftPlayer) e.getPlayer()).getHandle());
+        PacketUtils.sendPackets(this.state.getStand().getState().generateStatePackets(), ((CraftPlayer) e.getPlayer()).getHandle());
     }
 
     @EventHandler
@@ -327,18 +327,18 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         if (!this.state.getLocation().getWorld().equals(e.getPlayer().getWorld())) return;
         if (this.state.getNpc() == null) return;
 
-        ServerPlayer pl = ((CraftPlayer)(e.getPlayer())).getHandle();
+        ServerPlayer pl = ((CraftPlayer) (e.getPlayer())).getHandle();
 
-        if(Math.abs(this.state.getLocation().distance(e.getPlayer().getLocation())) > 4){
-            PacketUtils.sendPacket(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw()%360)*256/360)), pl);
-            PacketUtils.sendPacket(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((this.state.getYaw()%360)*256/360), (byte) ((this.state.getPitch()%360)*256/360), false), pl);
+        if (Math.abs(this.state.getLocation().distance(e.getPlayer().getLocation())) > 4) {
+            PacketUtils.sendPacket(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw() % 360) * 256 / 360)), pl);
+            PacketUtils.sendPacket(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((this.state.getYaw() % 360) * 256 / 360), (byte) ((this.state.getPitch() % 360) * 256 / 360), false), pl);
             return;
         }
         Location loc = this.state.getNpc().getBukkitEntity().getLocation();
         loc.setDirection(e.getPlayer().getLocation().subtract(loc).toVector());
 
 
-        PacketUtils.sendPacket(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((loc.getYaw()%360)*256/360)), pl);
-        PacketUtils.sendPacket(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((loc.getYaw()%360)*256/360), (byte) ((loc.getPitch()%360)*256/360), false), pl);
+        PacketUtils.sendPacket(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((loc.getYaw() % 360) * 256 / 360)), pl);
+        PacketUtils.sendPacket(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((loc.getYaw() % 360) * 256 / 360), (byte) ((loc.getPitch() % 360) * 256 / 360), false), pl);
     }
 }

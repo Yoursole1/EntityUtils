@@ -15,15 +15,18 @@ public interface NPC extends Listener, EUEntity {
     void showName(boolean show);
 
     Path goTo(Location location, int speed);
+
     void teleport(Location location);
+
     void setDirection(float yaw, float pitch);
+
     int getID();
 
     void refresh();
+
     void setHologram(String text);
+
     AbstractNPCData getData();
-
-
 
 
 }

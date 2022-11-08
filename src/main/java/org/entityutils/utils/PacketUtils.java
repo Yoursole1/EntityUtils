@@ -23,7 +23,6 @@ public class PacketUtils {
      * Send a packet to a player.
      *
      * @param packet The packet to send
-     *
      * @param player The player to send the packet to
      */
     public static void sendPacket(Packet<?> packet, Player player) {
@@ -32,30 +31,30 @@ public class PacketUtils {
         packetStream.send(packet);
     }
 
-    public static void sendPacket(Packet<?> packet, List<UUID> players){
-        for(UUID uuid : players){
+    public static void sendPacket(Packet<?> packet, List<UUID> players) {
+        for (UUID uuid : players) {
             org.bukkit.entity.Player a = Bukkit.getPlayer(uuid);
-            if(a == null){
+            if (a == null) {
                 continue;
             }
-            Player p = ((CraftPlayer)(a)).getHandle();
+            Player p = ((CraftPlayer) (a)).getHandle();
             sendPacket(packet, p);
         }
     }
 
-    public static void sendPackets(List<Packet<?>> packets, Player player){
-        for(Packet<?> packet : packets){
+    public static void sendPackets(List<Packet<?>> packets, Player player) {
+        for (Packet<?> packet : packets) {
             sendPacket(packet, player);
         }
     }
 
-    public static void sendPackets(List<Packet<?>> packets, List<UUID> players){
-        for(UUID uuid : players){
+    public static void sendPackets(List<Packet<?>> packets, List<UUID> players) {
+        for (UUID uuid : players) {
             org.bukkit.entity.Player a = Bukkit.getPlayer(uuid);
-            if(a == null){
+            if (a == null) {
                 continue;
             }
-            Player p = ((CraftPlayer)(a)).getHandle();
+            Player p = ((CraftPlayer) (a)).getHandle();
             sendPackets(packets, p);
         }
     }

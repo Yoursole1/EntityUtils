@@ -11,9 +11,7 @@ public enum EntityAnimation {
     Leave_Bed(2),
     Swing_Offhand(3),
     Critical_Effect(4),
-    Magic_Critical_Effect(5)
-
-    ;
+    Magic_Critical_Effect(5);
 
     @Getter
     private final int id;

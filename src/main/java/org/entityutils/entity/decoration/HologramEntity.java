@@ -1,11 +1,8 @@
 package org.entityutils.entity.decoration;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
-import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -29,12 +26,13 @@ public class HologramEntity implements EUEntity {
 
     @Getter
     private final HologramData state;
+
     public HologramEntity(Location location, String text) {
         this.state = new HologramData(location, text);
     }
 
-    private void init(){
-        this.state.setHologram(new ArmorStand(EntityType.ARMOR_STAND, ((CraftWorld)(this.state.getLocation().getWorld())).getHandle()));
+    private void init() {
+        this.state.setHologram(new ArmorStand(EntityType.ARMOR_STAND, ((CraftWorld) (this.state.getLocation().getWorld())).getHandle()));
 
         this.state.getHologram().setPos(new Vec3(this.state.getLocation().getX(), this.state.getLocation().getY(), this.state.getLocation().getZ()));
         this.state.getHologram().setCustomNameVisible(true);
@@ -49,12 +47,12 @@ public class HologramEntity implements EUEntity {
     public void setAlive(boolean alive) {
         List<ServerPlayer> nmsPlayers = Bukkit.getOnlinePlayers().stream().map((player -> ((CraftPlayer) player).getHandle())).toList();
 
-        if(alive){
-            for(Player p : nmsPlayers){
+        if (alive) {
+            for (Player p : nmsPlayers) {
                 setAlive(p, true);
             }
-        }else{
-            for(Player p : nmsPlayers){
+        } else {
+            for (Player p : nmsPlayers) {
                 setAlive(p, false);
             }
         }
@@ -62,16 +60,16 @@ public class HologramEntity implements EUEntity {
 
     @Override
     public void setAlive(Player p, boolean alive) {
-        if(alive){
-            if(this.state.getHologram() == null){
+        if (alive) {
+            if (this.state.getHologram() == null) {
                 this.init();
             }
 
             PacketUtils.sendPackets(this.getState().generateStatePackets(), p);
 
             this.state.getViewers().add(p.getUUID());
-        }else{
-            if(!this.state.getViewers().contains(p.getUUID())){
+        } else {
+            if (!this.state.getViewers().contains(p.getUUID())) {
                 return;
             }
 

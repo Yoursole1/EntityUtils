@@ -20,10 +20,6 @@ public enum SkinLayer {
 
     private final int mask;
 
-    public int getMask() {
-        return mask;
-    }
-
     /**
      * Creates a bit mask from an array of layers.
      *
@@ -35,7 +31,11 @@ public enum SkinLayer {
         for (SkinLayer layer : layers) {
             out |= layer.getMask();
         }
-        return (byte)out;
+        return (byte) out;
+    }
+
+    public int getMask() {
+        return mask;
     }
 
     /**
