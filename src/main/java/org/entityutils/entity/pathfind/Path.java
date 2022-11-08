@@ -33,12 +33,7 @@ public class Path {
             Node nxt = this.nodes.get(i + 1);
 
             Vector3 offset = new Vector3(nxt.getX() - curr.getX(), nxt.getY() - curr.getY(), nxt.getZ() - curr.getZ());
-            offset.multiply(1D/ticksPerBlock);
-
-            for (int j = 0; j < ticksPerBlock; j++) {
-                movement.add(offset);
-            }
-
+            movement.addAll(offset.linearInt(ticksPerBlock));
         }
 
         return movement;

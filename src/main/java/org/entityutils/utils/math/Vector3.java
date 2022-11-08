@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @AllArgsConstructor
 @Getter
 @Setter
@@ -28,6 +31,18 @@ public class Vector3 {
 
     public double distance(Vector3 other) {
         return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2) + Math.pow(this.z - other.z, 2));
+    }
+
+    public List<Vector3> linearInt(int steps){
+        List<Vector3> out = new ArrayList<>();
+
+        Vector3 offset = new Vector3(this.x, this.y, this.z);
+        offset.multiply(1D/steps);
+
+        for (int j = 0; j < steps; j++) {
+            out.add(offset);
+        }
+        return out;
     }
 
     public double distance(Location to){

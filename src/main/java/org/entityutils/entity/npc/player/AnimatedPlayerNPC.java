@@ -27,6 +27,13 @@ import java.util.List;
 public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
     private static final double gravity = 19.5; //b/s/s
+    private static final int stepsPerBlock = 7; //movement accuracy
+
+
+    // coefficients of the derivative of the vertical jump quadratic
+    // which was originally c*(-(x-1)^2 + 1)
+    private static final double a = -1/1.2D; //slope term
+    private static final double b = 1/1.2D; //y intercept
 
     public AnimatedPlayerNPC(String name, Location loc, JavaPlugin plugin) {
         super(name, loc, plugin);
@@ -54,8 +61,19 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
             return null;
         }
 
-        List<Vector3> movement = toWalk.generateMovementVectors(10);
+        List<Vector3> movement = toWalk.generateMovementVectors(stepsPerBlock);
 
+        this.executeMovementVectors(movement, speed);
+
+        return toWalk;
+    }
+
+    public void jump(){
+
+    }
+
+
+    private void executeMovementVectors(List<Vector3> movement, int speed){
         final int[] i = {0};
         new BukkitRunnable(){
             @Override
@@ -70,12 +88,6 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
                 i[0]++;
             }
         }.runTaskTimer(EntityUtilsPlugin.getInstance(), 0, 100/speed);
-
-        return toWalk;
-    }
-
-    public void jump(){
-
     }
 
     private void moveOffset(Vector3 offset){ //movement distance should be less than 8
