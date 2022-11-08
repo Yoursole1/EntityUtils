@@ -26,8 +26,8 @@ import java.util.List;
 
 public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
-    private static final double gravity = 19.5; //b/s/s
-    private static final int stepsPerBlock = 7; //movement accuracy
+    private static final double GRAVITY = 19.5; //b/s/s
+    private static final int STEPS_PER_BLOCK = 7; //movement accuracy
 
 
     // coefficients of the derivative of the vertical jump quadratic
@@ -62,7 +62,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
             return null;
         }
 
-        List<Vector3> movement = toWalk.generateMovementVectors(stepsPerBlock);
+        List<Vector3> movement = toWalk.generateMovementVectors(STEPS_PER_BLOCK);
 
         this.executeMovementVectors(movement, speed);
 
@@ -75,7 +75,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
     public void jump(Vector3 directionBias) {
         List<Vector3> magnitudes = new ArrayList<>();
 
-        directionBias.multiply(2D / stepsPerBlock);
+        directionBias.multiply(2D / STEPS_PER_BLOCK);
         //assuming the original jump quadratic has a root at 0 and a root greater than 0
         //then since the root of the derivative is the vertex of the quadratic, two times
         //the root of the derivative is the root of the jump quadratic, which is where we

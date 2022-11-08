@@ -79,6 +79,7 @@ public class PacketListener {
             c.pipeline().remove("PacketListener");
             players.remove(player);
         } catch (Exception ignored) {
+            // Ignore
         }
     }
 }

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class NPCManager implements Listener {
 
-    private static volatile NPCManager instance = null;
+    private static NPCManager instance = null;
     @Getter
     private final ArrayList<NPC> registeredNPCs;
     private boolean registered = false;
@@ -21,15 +21,10 @@ public class NPCManager implements Listener {
         this.registeredNPCs = new ArrayList<>();
     }
 
-    public static NPCManager getInstance() {
+    public static synchronized NPCManager getInstance() {
         if (instance == null) {
-            synchronized (NPCManager.class) { //thread safe, just for you NotAdaam
-                if (instance == null) {
-                    instance = new NPCManager();
-                }
-            }
+            instance = new NPCManager();
         }
-
         return instance;
     }
 

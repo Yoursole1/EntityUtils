@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -110,7 +111,7 @@ public class Node {
                 Node n = new Node(offsetX, offsetY, offsetZ, this.world, this);
 
                 //Ensure there is no backtrack in the pathfinding, since the parent is certainly already explored
-                if (this.getParent() != null && n.equals(this.getParent())) {
+                if (this.getParent() != null && n.nodeEquals(this.getParent())) {
                     continue;
                 }
 
@@ -297,11 +298,7 @@ public class Node {
         int yOffset = Math.abs(this.y - ending.getY());
         int zOffset = Math.abs(this.z - ending.getZ());
 
-        List<Integer> offsets = new ArrayList<>() {{ //we use double brace init around here, don't shoot (memory leaks are fake news)
-            add(xOffset);
-            add(yOffset);
-            add(zOffset);
-        }};
+        List<Integer> offsets = Arrays.asList(xOffset, yOffset, zOffset);
 
         int hCost = 0;
 
@@ -352,7 +349,7 @@ public class Node {
      * @param other node
      * @return equals on values NOT equals on memory address
      */
-    public boolean equals(Node other) {
+    public boolean nodeEquals(Node other) {
         return (
                 this.x == other.x &&
                         this.y == other.y &&

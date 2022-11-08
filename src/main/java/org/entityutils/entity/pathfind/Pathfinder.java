@@ -25,7 +25,7 @@ public record Pathfinder(Node starting, Node ending) {
             open.remove(current);
             closed.add(current);
 
-            if (current.equals(this.ending)) {
+            if (current.nodeEquals(this.ending)) {
                 return current.getPath();
             }
 

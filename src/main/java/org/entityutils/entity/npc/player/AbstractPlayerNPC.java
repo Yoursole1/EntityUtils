@@ -50,10 +50,10 @@ import java.util.*;
 /**
  *
  */
-public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPlayerNPC, StaticPlayerNPC {
+public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPlayerNPC, StaticPlayerNPC {
     private final PlayerNPCData state;
 
-    public AbstractPlayerNPC(String name, Location loc, JavaPlugin plugin) {
+    protected AbstractPlayerNPC(String name, Location loc, JavaPlugin plugin) {
 
         this.state = new PlayerNPCData(name, loc, plugin);
 
@@ -61,7 +61,7 @@ public sealed abstract class AbstractPlayerNPC implements NPC permits AnimatedPl
         //TODO test if moving the self listener registration to NPCManager works
     }
 
-    public AbstractPlayerNPC(PlayerNPCData data) {
+    protected AbstractPlayerNPC(PlayerNPCData data) {
         this.state = data;
     }
 

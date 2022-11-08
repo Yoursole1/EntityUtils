@@ -6,12 +6,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum EntityAnimation {
 
-    Swing_Main_Arm(0),
-    Take_Damage(1),
-    Leave_Bed(2),
-    Swing_Offhand(3),
-    Critical_Effect(4),
-    Magic_Critical_Effect(5);
+    SWING_MAIN_ARM(0),
+    TAKE_DAMAGE(1),
+    LEAVE_BED(2),
+    SWING_OFFHAND(3),
+    CRITICAL_EFFECT(4),
+    MAGIC_CRITICAL_EFFECT(5);
 
     @Getter
     private final int id;

@@ -68,7 +68,7 @@ public abstract class AbstractNPCData implements EUEntityData {
         this.hologramText = "";
     }
 
-    public AbstractNPCData(String name, Location loc, JavaPlugin plugin) {
+    protected AbstractNPCData(String name, Location loc, JavaPlugin plugin) {
         this();
 
         this.name = name;
