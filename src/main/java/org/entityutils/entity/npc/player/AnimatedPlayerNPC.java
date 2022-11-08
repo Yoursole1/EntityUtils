@@ -68,7 +68,20 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
         return toWalk;
     }
 
-    public void jump(){
+    /**
+     *
+     * @param directionBias y is ignored because this is a direction for the jump to "move" in
+     */
+    public void jump(Vector3 directionBias) {
+        List<Vector3> magnitudes = new ArrayList<>();
+
+        directionBias.multiply(2D / stepsPerBlock);
+        //assuming the original jump quadratic has a root at 0 and a root greater than 0
+        //then since the root of the derivative is the vertex of the quadratic, two times
+        //the root of the derivative is the root of the jump quadratic, which is where we
+        //want to evaluate the jump to (from root a to root b, which is 0 -> b)
+        double derivativeRoot = -b / a;
+        double evaluationRange = derivativeRoot * 2;
 
     }
 
