@@ -297,48 +297,4 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         JsonElement root = JsonParser.parseReader(new InputStreamReader((InputStream) request.getContent()));
         return root.getAsJsonObject();
     }
-
-    //LISTENERS
-
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent e) {
-        if (isInsideChunk(this.state.getLocation(), e.getChunk())) {
-            this.refresh();
-        }
-    }
-
-    private boolean isInsideChunk(Location loc, Chunk chunky) {
-        return chunky.getX() == loc.getBlockX() >> 4
-                && chunky.getZ() == loc.getBlockZ() >> 4;
-    }
-
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerJoin(PlayerJoinEvent e) {
-        if (!(this.state.getViewers().contains(e.getPlayer().getUniqueId()))) return;
-
-        PacketUtils.sendPackets(this.state.generateStatePackets(), ((CraftPlayer) e.getPlayer()).getHandle());
-        PacketUtils.sendPackets(this.state.getStand().getState().generateStatePackets(), ((CraftPlayer) e.getPlayer()).getHandle());
-    }
-
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        if (!this.state.isHeadTrack()) return;
-        if (!this.state.getLocation().getWorld().equals(e.getPlayer().getWorld())) return;
-        if (this.state.getNpc() == null) return;
-
-        ServerPlayer pl = ((CraftPlayer) (e.getPlayer())).getHandle();
-
-        if (Math.abs(this.state.getLocation().distance(e.getPlayer().getLocation())) > 4) {
-            PacketUtils.sendPacket(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw() % 360) * 256 / 360)), pl);
-            PacketUtils.sendPacket(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((this.state.getYaw() % 360) * 256 / 360), (byte) ((this.state.getPitch() % 360) * 256 / 360), false), pl);
-            return;
-        }
-        Location loc = this.state.getNpc().getBukkitEntity().getLocation();
-        loc.setDirection(e.getPlayer().getLocation().subtract(loc).toVector());
-
-
-        PacketUtils.sendPacket(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((loc.getYaw() % 360) * 256 / 360)), pl);
-        PacketUtils.sendPacket(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((loc.getYaw() % 360) * 256 / 360), (byte) ((loc.getPitch() % 360) * 256 / 360), false), pl);
-    }
 }

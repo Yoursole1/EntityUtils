@@ -10,7 +10,7 @@ import org.entityutils.utils.EUState.AbstractNPCData;
 /**
  * An NPC is an entity that can be interacted with
  */
-public interface NPC extends Listener, EUEntity {
+public interface NPC extends EUEntity {
 
     void showName(boolean show);
 

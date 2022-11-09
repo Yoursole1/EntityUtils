@@ -16,7 +16,7 @@ public class EntityUtilsPlugin extends JavaPlugin {
         getLogger().info("EntityUtils enabled!");
         instance = this;
 
-//        this.getServer().getPluginManager().registerEvents(new Test(), this);
+        //this.getServer().getPluginManager().registerEvents(new Test(), this);
 
     }
 
