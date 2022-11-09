@@ -26,29 +26,28 @@ import java.util.List;
 
 public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
-    private static final double GRAVITY = 19.5; //b/s/s
-    private static final int STEPS_PER_BLOCK = 7; //movement accuracy
+    private static final double gravity = 19.5; //b/s/s
+    private static final int stepsPerBlock = 7; //movement accuracy
 
 
     // coefficients of the derivative of the vertical jump quadratic
     // which was originally c*(-(x-1)^2 + 1)
-    private static final double a = -1 / 1.2D; //slope term
-    private static final double b = 1 / 1.2D; //y intercept
-    /**
-     * Walk with pathfinding
-     *
-     * @param location
-     */
-    private boolean locked;
+    private static final double a = -1/1.2D; //slope term
+    private static final double b = 1/1.2D; //y intercept
 
     public AnimatedPlayerNPC(String name, Location loc, JavaPlugin plugin) {
         super(name, loc, plugin);
         this.locked = false;
     }
 
+    /**
+     * Walk with pathfinding
+     * @param location
+     */
+    private boolean locked;
     @Override
     public Path goTo(Location location, int speed) {
-        if (this.locked) {
+        if(this.locked){
             return null;
         }
         this.locked = true;
@@ -58,11 +57,11 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         Path toWalk = new Pathfinder(starting, ending).getPath();
 
-        if (toWalk == null) {
+        if(toWalk == null){
             return null;
         }
 
-        List<Vector3> movement = toWalk.generateMovementVectors(STEPS_PER_BLOCK);
+        List<Vector3> movement = toWalk.generateMovementVectors(stepsPerBlock);
 
         this.executeMovementVectors(movement, speed);
 
@@ -70,12 +69,13 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
     }
 
     /**
+     *
      * @param directionBias y is ignored because this is a direction for the jump to "move" in
      */
     public void jump(Vector3 directionBias) {
         List<Vector3> magnitudes = new ArrayList<>();
 
-        directionBias.multiply(2D / STEPS_PER_BLOCK);
+        directionBias.multiply(2D / stepsPerBlock);
         //assuming the original jump quadratic has a root at 0 and a root greater than 0
         //then since the root of the derivative is the vertex of the quadratic, two times
         //the root of the derivative is the root of the jump quadratic, which is where we
@@ -86,12 +86,12 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
     }
 
 
-    private void executeMovementVectors(List<Vector3> movement, int speed) {
+    private void executeMovementVectors(List<Vector3> movement, int speed){
         final int[] i = {0};
-        new BukkitRunnable() {
+        new BukkitRunnable(){
             @Override
-            public void run() {
-                if (i[0] >= movement.size() - 1) {
+            public void run(){
+                if(i[0] >= movement.size() - 1){
                     locked = false;
                     this.cancel();
                 }
@@ -100,10 +100,10 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
                 i[0]++;
             }
-        }.runTaskTimer(EntityUtilsPlugin.getInstance(), 0, 100 / speed);
+        }.runTaskTimer(EntityUtilsPlugin.getInstance(), 0, 100/speed);
     }
 
-    private void moveOffset(Vector3 offset) { //movement distance should be less than 8
+    private void moveOffset(Vector3 offset){ //movement distance should be less than 8
 
         List<Packet<?>> packets = new ArrayList<>();
 
@@ -113,9 +113,9 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         packets.add(new ClientboundMoveEntityPacket.Pos(
                 this.getID(),
-                (short) Math.floor(offset.getX() * 32 * 128),
-                (short) Math.floor(offset.getY() * 32 * 128),
-                (short) Math.floor(offset.getZ() * 32 * 128),
+                (short)Math.floor(offset.getX() * 32 * 128),
+                (short)Math.floor(offset.getY() * 32 * 128),
+                (short)Math.floor(offset.getZ() * 32 * 128),
                 true)
         );
 
@@ -123,9 +123,9 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         packets.add(new ClientboundMoveEntityPacket.Pos(
                 this.getData().getStand().getState().getHologram().getId(),
-                (short) Math.floor(offset.getX() * 32 * 128),
-                (short) Math.floor(offset.getY() * 32 * 128),
-                (short) Math.floor(offset.getZ() * 32 * 128),
+                (short)Math.floor(offset.getX() * 32 * 128),
+                (short)Math.floor(offset.getY() * 32 * 128),
+                (short)Math.floor(offset.getZ() * 32 * 128),
                 true)
         );
 
