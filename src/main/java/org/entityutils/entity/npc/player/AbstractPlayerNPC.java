@@ -59,6 +59,10 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.state = data;
     }
 
+    /**
+     * Show or hide from all players
+     * @param alive alive?
+     */
     @Override
     public void setAlive(boolean alive) {
         if (alive) {
@@ -79,23 +83,13 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.state.setViewers(new ArrayList<>());
     }
 
-    private void init() {
-        MinecraftServer server = ((CraftServer) (Bukkit.getServer())).getServer();
-        ServerLevel level = ((CraftWorld) (this.state.getLocation().getWorld())).getHandle();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), this.state.isShowName() ? this.state.getName() : "");
-
-        if (this.state.getValue() != null) {
-            profile.getProperties().put("textures", new Property("textures", this.state.getValue(), this.state.getSignature()));
-        }
-
-        this.state.setNpc(new ServerPlayer(server, level, profile));
-        this.state.getNpc().setPos(this.state.getLocation().getX(), this.state.getLocation().getY(), this.state.getLocation().getZ());
-
-        this.state.getNpc().setRot(this.state.getYaw(), this.state.getPitch());
-
-        PacketListener.registerNPC(this);
-    }
-
+    /**
+     * Sets the NPC as viewable and interact-able for the given player
+     * This function also calls init() to set up the NPC info if the ServerPlayer
+     * object is null (AKA not created yet)
+     * @param p the player to change the alive state for
+     * @param alive alive?
+     */
     @Override
     public void setAlive(Player p, boolean alive) {
 
@@ -135,11 +129,36 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         }
     }
 
+    /**
+     * Initialize ServerPlayer and all NPC data
+     */
+    private void init() {
+        MinecraftServer server = ((CraftServer) (Bukkit.getServer())).getServer();
+        ServerLevel level = ((CraftWorld) (this.state.getLocation().getWorld())).getHandle();
+        GameProfile profile = new GameProfile(UUID.randomUUID(), this.state.isShowName() ? this.state.getName() : "");
+
+        if (this.state.getValue() != null) {
+            profile.getProperties().put("textures", new Property("textures", this.state.getValue(), this.state.getSignature()));
+        }
+
+        this.state.setNpc(new ServerPlayer(server, level, profile));
+        this.state.getNpc().setPos(this.state.getLocation().getX(), this.state.getLocation().getY(), this.state.getLocation().getZ());
+
+        this.state.getNpc().setRot(this.state.getYaw(), this.state.getPitch());
+
+        PacketListener.registerNPC(this);
+    }
+
     @Override
     public int getID() {
         return this.state.getNpc().getId();
     }
 
+    /**
+     * This is both a setter and an updater
+     * TODO remove call to refresh by updating this with the correct packets
+     * @param show show name?
+     */
     @Override
     public void showName(boolean show) {
         this.state.setShowName(show);
@@ -147,6 +166,13 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     }
 
 
+    /**
+     * Updates the NPC's location without animating the movement
+     * Note that the NPC flashes when it gets to the new location because
+     * it is refreshed
+     * TODO make the teleportation use ClientboundTeleportEntityPacket so there is no flash
+     * @param location location to teleport the NPC to
+     */
     @Override
     public void teleport(Location location) {
         this.state.getNpc().setPos(location.getX(), location.getY(), location.getZ());
@@ -159,6 +185,17 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.refresh();
     }
 
+    /**
+     * This function creates and updates the text that hovers
+     * above the NPC's name text.  This text can be used to display
+     * NPC status, extra information, or more.  The extra text is an
+     * invisible armorstand, created with the HologramEntity class
+     *
+     * Note that the refresh call to the HologramEntity is not a problem
+     * here because the flicker created by using refresh is expected when
+     * updating the name.
+     * @param text the text to show over the NPC
+     */
     @Override
     public void setHologram(String text) {
         this.state.setHologramText(text);
@@ -180,6 +217,15 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         }
     }
 
+    /**
+     * Sets the direction of the NPC, and updates the body rotation to match.
+     * Note that the yaw and pitch are NOT calculated normally because minecraft
+     * is special.  If you have a vector and want the NPC to face that way my suggestion
+     * is to make look at the #setDirection(Vector) method in the Bukkit Location class,
+     * which has the minecraft calculation for pitch and yaw.
+     * @param yaw minecraft yaw
+     * @param pitch minecraft pitch
+     */
     @Override
     public void setDirection(float yaw, float pitch) {
         this.state.setYaw(yaw);
@@ -198,8 +244,14 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         return this.state;
     }
 
+    /**
+     * Despawns and respawns the NPC for all viewers
+     * It has the effect of updating all un-shown changes to the NPC's internal data
+     * note: This method creates an unideal flicker when used, and is not recommended.
+     */
+    @Deprecated
     @Override
-    public void refresh() { //unideal to use, creates a flicker when the NPC respawns
+    public void refresh() {
         ArrayList<UUID> view = new ArrayList<>(this.state.getViewers()); //to avoid a CME ):
 
         for (UUID uuid : view) {
