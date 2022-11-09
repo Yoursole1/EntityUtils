@@ -2,7 +2,6 @@ package org.entityutils.entity.npc;
 
 
 import org.bukkit.Location;
-import org.bukkit.event.Listener;
 import org.entityutils.entity.EUEntity;
 import org.entityutils.entity.pathfind.Path;
 import org.entityutils.utils.EUState.AbstractNPCData;
