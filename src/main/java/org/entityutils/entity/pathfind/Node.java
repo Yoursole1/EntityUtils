@@ -231,14 +231,14 @@ public class Node {
      * @return cost of the best current path from starting node
      */
     public int gCost() {
-        Node parent = this.getParent();
-        if (parent == null) { //this node is the starting node
+        Node parentNode = this.getParent();
+        if (parentNode == null) { //this node is the starting node
             return 0;
         }
 
-        int xOffset = this.x - parent.getX();
-        int yOffset = this.y - parent.getY();
-        int zOffset = this.z - parent.getZ();
+        int xOffset = this.x - parentNode.getX();
+        int yOffset = this.y - parentNode.getY();
+        int zOffset = this.z - parentNode.getZ();
 
         int offsetSum = Math.abs(xOffset + yOffset + zOffset);
 
@@ -249,7 +249,7 @@ public class Node {
             default -> throw new IllegalStateException("Offset is invalid: " + offsetSum);
         };
 
-        return adder + parent.gCost();
+        return adder + parentNode.gCost();
     }
 
 
@@ -298,36 +298,36 @@ public class Node {
         int yOffset = Math.abs(this.y - ending.getY());
         int zOffset = Math.abs(this.z - ending.getZ());
 
-        List<Integer> offsets = Arrays.asList(xOffset, yOffset, zOffset);
+        List<Integer> shiftedOffsets = Arrays.asList(xOffset, yOffset, zOffset);
 
         int hCost = 0;
 
-        offsets = offsets.stream()
+        shiftedOffsets = shiftedOffsets.stream()
                 .filter(a -> a != 0)
                 .toList();
 
-        if (offsets.size() == 3) { //move diagonal in 3d (x+1, y+1, z+1)
-            int corner = Collections.min(offsets);
+        if (shiftedOffsets.size() == 3) { //move diagonal in 3d (x+1, y+1, z+1)
+            int corner = Collections.min(shiftedOffsets);
             hCost += corner * 17; //truncated sqrt(3) * 10
 
-            offsets = offsets.stream()
+            shiftedOffsets = shiftedOffsets.stream()
                     .map(a -> a - corner)
                     .filter(a -> a != 0)
                     .toList();
         }
 
-        if (offsets.size() == 2) { //move diagonal in 2d (x+1, y, z+1, or like x, y+1, z+1 ...ect)
-            int edge = Collections.min(offsets);
+        if (shiftedOffsets.size() == 2) { //move diagonal in 2d (x+1, y, z+1, or like x, y+1, z+1 ...ect)
+            int edge = Collections.min(shiftedOffsets);
             hCost += edge * 14; //truncated sqrt(2) * 10
 
-            offsets = offsets.stream()
+            shiftedOffsets = shiftedOffsets.stream()
                     .map(a -> a - edge)
                     .filter(a -> a != 0)
                     .toList();
         }
 
-        if (offsets.size() == 1) { //move in 1d (x+1, y, z ...)
-            int face = Collections.max(offsets);
+        if (shiftedOffsets.size() == 1) { //move in 1d (x+1, y, z ...)
+            int face = Collections.max(shiftedOffsets);
             hCost += face * 10; //truncated sqrt(1) * 10
         }
 

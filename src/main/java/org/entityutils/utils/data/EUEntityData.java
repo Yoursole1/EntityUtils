@@ -1,4 +1,4 @@
-package org.entityutils.utils.EUState;
+package org.entityutils.utils.data;
 
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;

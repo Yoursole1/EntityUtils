@@ -1,4 +1,4 @@
-package org.entityutils.utils.EUState;
+package org.entityutils.utils.data;
 
 import com.mojang.datafixers.util.Pair;
 import lombok.Getter;
