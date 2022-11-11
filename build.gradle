@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'org.entityutils'
-version '0.1.3-SNAPSHOT'
+version '0.1.4-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -53,7 +53,7 @@ tasks {
 
 task wrapReobfJar(type: Jar) {
     dependsOn reobfJar
-    archiveClassifier.set("reobf")
+    archiveClassifier.set("")
     from reobfJar.outputJar.get().asFile
 }
 
@@ -84,7 +84,7 @@ publishing {
             groupId = "org.entityutils"
             artifactId = "entity-utils"
             artifact wrapReobfJar
-//            from components.java
+            from components.java
         }
     }
 }
