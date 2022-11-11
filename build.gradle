@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'checkstyle'
+    id 'maven-publish'
     id 'io.papermc.paperweight.userdev' version libs.versions.paperweight
     id 'com.github.johnrengelman.shadow' version libs.versions.shadow
     id 'xyz.jpenilla.run-paper' version '1.0.6'
@@ -51,6 +52,24 @@ tasks {
 
 checkstyle {
     configFile file("${rootDir}/config/checkstyle/checkstyle.xml")
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Yoursole1/EntityUtils")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }
 
 bukkit {
