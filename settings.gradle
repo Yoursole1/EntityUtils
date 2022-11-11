@@ -7,5 +7,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'EntityUtils'
+rootProject.name = 'entity-utils'
 
