@@ -1,5 +1,6 @@
 package org.entityutils.utils;
 
+import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -42,7 +43,7 @@ public class PacketUtils {
         }
     }
 
-    public static void sendPackets(List<Packet<?>> packets, Player player) {
+    public static void sendPackets(List<Packet<? extends PacketListener>> packets, Player player) {
         for (Packet<?> packet : packets) {
             sendPacket(packet, player);
         }

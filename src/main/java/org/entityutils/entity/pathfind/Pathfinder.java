@@ -4,10 +4,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-//todo optimise with a nav mesh (https://en.wikipedia.org/wiki/Navigation_mesh)
+// TODO: optimise with a nav mesh (https://en.wikipedia.org/wiki/Navigation_mesh)
 public record Pathfinder(Node starting, Node ending) {
 
-    private static final int maxDepth = 5000; //arbitrary, todo find good value
+    private static final int maxDepth = 5000; //arbitrary, TODO: find good value
 
     /**
      * @return an optimal path using A* pathfinding

@@ -2,21 +2,24 @@ package org.entityutils.utils.EUState;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
 public class HologramData implements EUEntityData {
 
-    private ArmorStand hologram;
-    private Location location;
+    private transient ArmorStand hologram;
+    private transient Location location;
     private String text;
     private ArrayList<UUID> viewers;
 
@@ -28,8 +31,8 @@ public class HologramData implements EUEntityData {
     }
 
     @Override
-    public ArrayList<Packet<?>> generateStatePackets() {
-        ArrayList<Packet<?>> packets = new ArrayList<>();
+    public List<Packet<? extends PacketListener>> generateStatePackets() {
+        List<Packet<? extends PacketListener>> packets = new ArrayList<>();
 
         if (this.getHologram() != null) {
             packets.add(new ClientboundAddEntityPacket(this.getHologram()));

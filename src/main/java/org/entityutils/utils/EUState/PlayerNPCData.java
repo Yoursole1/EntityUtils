@@ -3,6 +3,7 @@ package org.entityutils.utils.EUState;
 import com.mojang.datafixers.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -29,7 +30,7 @@ public class PlayerNPCData extends AbstractNPCData {
 
     private ArrayList<SkinLayer> layers;
 
-    private ServerPlayer npc;
+    private transient ServerPlayer npc;
 
     public PlayerNPCData(String name, Location loc, JavaPlugin plugin) {
         super(name, loc, plugin);
@@ -37,8 +38,8 @@ public class PlayerNPCData extends AbstractNPCData {
     }
 
     @Override
-    public ArrayList<Packet<?>> generateStatePackets() {
-        ArrayList<Packet<?>> packets = new ArrayList<>();
+    public List<Packet<? extends PacketListener>> generateStatePackets() {
+        List<Packet<? extends PacketListener>> packets = new ArrayList<>();
 
         packets.add(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, this.getNpc()));
         packets.add(new ClientboundAddPlayerPacket(this.getNpc()));

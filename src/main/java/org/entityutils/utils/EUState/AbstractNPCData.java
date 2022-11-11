@@ -20,7 +20,7 @@ import java.util.UUID;
 @Setter
 public abstract class AbstractNPCData implements EUEntityData {
 
-    private Entity npc;
+    private transient Entity npc;
 
     private ArrayList<Pose> pose;
 
@@ -28,7 +28,7 @@ public abstract class AbstractNPCData implements EUEntityData {
     private String name;
 
     //The location of the NPC
-    private Location location;
+    private transient Location location;
 
     //determines if the player's name is shown above their head
     private boolean showName;
@@ -36,12 +36,12 @@ public abstract class AbstractNPCData implements EUEntityData {
     //determines if the NPC's head follows the player
     private boolean headTrack;
 
-    private List<Pair<EquipmentSlot, ItemStack>> inventory;
+    private transient List<Pair<EquipmentSlot, ItemStack>> inventory;
 
     //players that can see the npc
     private ArrayList<UUID> viewers;
 
-    private JavaPlugin plugin;
+    private transient JavaPlugin plugin;
 
     //Skin data strings
 
@@ -49,7 +49,7 @@ public abstract class AbstractNPCData implements EUEntityData {
     private float pitch;
 
     private String hologramText;
-    private HologramEntity stand;
+    private transient HologramEntity stand;
 
 
     private AbstractNPCData() {
@@ -76,5 +76,5 @@ public abstract class AbstractNPCData implements EUEntityData {
         this.plugin = plugin;
     }
 
-    //Todo:  clone, serialize
+    // TODO:  clone, serialize
 }
