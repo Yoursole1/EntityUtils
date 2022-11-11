@@ -8,8 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -19,12 +17,11 @@ import org.entityutils.utils.PacketUtils;
 
 import java.util.ArrayList;
 
-public class NPCManager implements Listener {
+public class NPCManager {
 
     private static NPCManager instance = null;
     @Getter
     private final ArrayList<NPC> registeredNPCs;
-    private boolean registered = false;
 
     private NPCManager() {
         this.registeredNPCs = new ArrayList<>();
@@ -38,20 +35,15 @@ public class NPCManager implements Listener {
     }
 
     public void register(NPC npc) {
-        if (!this.registered) {
-            Bukkit.getServer().getPluginManager().registerEvents(this, npc.getData().getPlugin());
-            this.registered = true;
-        }
         this.registeredNPCs.add(npc);
-        //Bukkit.getServer().getPluginManager().registerEvents(npc, npc.getData().getPlugin());
     }
 
-    @EventHandler
+
     public void onPlayerLeave(PlayerQuitEvent e) {
         PacketListener.unRegisterPlayer(((CraftPlayer) e.getPlayer()).getHandle());
     }
 
-    @EventHandler
+
     public void onChunkLoad(ChunkLoadEvent e) {
         for(NPC npc : this.registeredNPCs){
             if (isInsideChunk(npc.getData().getLocation(), e.getChunk())) {
@@ -60,7 +52,6 @@ public class NPCManager implements Listener {
         }
     }
 
-    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         for(NPC npc : this.registeredNPCs){
             if (!(npc.getData().getViewers().contains(e.getPlayer().getUniqueId()))) return;
@@ -70,7 +61,6 @@ public class NPCManager implements Listener {
         }
     }
 
-    @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
         for(NPC npc : this.registeredNPCs){
 

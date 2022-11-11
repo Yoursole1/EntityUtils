@@ -1,10 +1,9 @@
-package org.entityutils.utils.EUState;
+package org.entityutils.utils.data;
 
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.world.entity.decoration.ArmorStand;

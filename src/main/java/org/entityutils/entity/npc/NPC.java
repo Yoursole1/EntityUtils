@@ -4,7 +4,7 @@ package org.entityutils.entity.npc;
 import org.bukkit.Location;
 import org.entityutils.entity.EUEntity;
 import org.entityutils.entity.pathfind.Path;
-import org.entityutils.utils.EUState.AbstractNPCData;
+import org.entityutils.utils.data.AbstractNPCData;
 
 /**
  * An NPC is an entity that can be interacted with

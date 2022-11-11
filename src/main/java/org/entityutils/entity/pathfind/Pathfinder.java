@@ -7,7 +7,7 @@ import java.util.List;
 // TODO: optimise with a nav mesh (https://en.wikipedia.org/wiki/Navigation_mesh)
 public record Pathfinder(Node starting, Node ending) {
 
-    private static final int maxDepth = 5000; //arbitrary, TODO: find good value
+    private static final int MAX_DEPTH = 5000;
 
     /**
      * @return an optimal path using A* pathfinding
@@ -19,7 +19,7 @@ public record Pathfinder(Node starting, Node ending) {
 
         open.add(starting);
 
-        for (int i = 0; i < Pathfinder.maxDepth; i++) {
+        for (int i = 0; i < Pathfinder.MAX_DEPTH; i++) {
 
             Node current = this.minimal(open);
             open.remove(current);

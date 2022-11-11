@@ -29,7 +29,7 @@ import org.bukkit.util.Vector;
 import org.entityutils.entity.decoration.HologramEntity;
 import org.entityutils.entity.npc.NPC;
 import org.entityutils.entity.npc.NPCManager;
-import org.entityutils.utils.EUState.PlayerNPCData;
+import org.entityutils.utils.data.PlayerNPCData;
 import org.entityutils.utils.PacketListener;
 import org.entityutils.utils.PacketUtils;
 
@@ -248,6 +248,8 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
      * Despawns and respawns the NPC for all viewers
      * It has the effect of updating all un-shown changes to the NPC's internal data
      * note: This method creates an unideal flicker when used, and is not recommended.
+     *
+     * @deprecated because it's bad
      */
     @Deprecated
     @Override
