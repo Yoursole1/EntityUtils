@@ -13,8 +13,8 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.entityutils.entity.EUEntity;
-import org.entityutils.utils.data.HologramData;
 import org.entityutils.utils.PacketUtils;
+import org.entityutils.utils.data.HologramData;
 
 import java.util.ArrayList;
 import java.util.List;

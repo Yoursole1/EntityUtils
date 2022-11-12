@@ -29,9 +29,9 @@ import org.bukkit.util.Vector;
 import org.entityutils.entity.decoration.HologramEntity;
 import org.entityutils.entity.npc.NPC;
 import org.entityutils.entity.npc.NPCManager;
-import org.entityutils.utils.data.PlayerNPCData;
 import org.entityutils.utils.PacketListener;
 import org.entityutils.utils.PacketUtils;
+import org.entityutils.utils.data.PlayerNPCData;
 
 import java.io.IOException;
 import java.io.InputStream;
