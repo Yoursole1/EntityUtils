@@ -84,7 +84,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
         double evaluationRange = derivativeRoot * 2;
 
         for (double i = 0; i <= evaluationRange; i += (2D / stepsPerBlock)) {
-            magnitudes.add(new Vector3(directionBias.getX(), (i * a) + b ,directionBias.getZ()));
+            magnitudes.add(new Vector3(directionBias.getX() / stepsPerBlock, (i * a) + b ,directionBias.getZ() / stepsPerBlock));
             i = MathUtils.correctFloatingPoint(i);
         }
 
