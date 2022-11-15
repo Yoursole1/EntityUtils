@@ -30,5 +30,4 @@ public class EntityUtilsPlugin extends JavaPlugin {
         getLogger().info("EntityUtils disabled!");
     }
 
-
 }
