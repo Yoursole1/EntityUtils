@@ -33,7 +33,7 @@ public class Vector3 {
         return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2) + Math.pow(this.z - other.z, 2));
     }
 
-    public List<Vector3> linearInt(int steps) {
+    public List<Vector3> lerp(int steps) {
         List<Vector3> out = new ArrayList<>();
 
         Vector3 offset = new Vector3(this.x, this.y, this.z);

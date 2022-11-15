@@ -32,8 +32,8 @@ public class Path {
             Node curr = this.nodes.get(i);
             Node nxt = this.nodes.get(i + 1);
 
-            Vector3 offset = new Vector3(nxt.getX() - curr.getX(), nxt.getY() - curr.getY(), nxt.getZ() - curr.getZ());
-            movement.addAll(offset.linearInt(ticksPerBlock));
+            Vector3 offset = new Vector3((double)nxt.getX() - curr.getX(), (double)nxt.getY() - curr.getY(), (double)nxt.getZ() - curr.getZ());
+            movement.addAll(offset.lerp(ticksPerBlock));
         }
 
         return movement;

@@ -168,6 +168,7 @@ public class Node {
                         return false;
                     }
                 }
+                default -> throw new IllegalStateException("should be -1 or 1");
             }
         }
 
@@ -196,6 +197,7 @@ public class Node {
                             return false;
                         }
                     }
+                    default -> throw new IllegalStateException("should be -1 or 1");
                 }
             }
         }
