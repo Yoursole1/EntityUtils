@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,10 @@ public class Vector3 {
 
     public double magnitude() {
         return this.distance(new Vector3(0, 0, 0));
+    }
+
+    public Location toLocation(World world){
+        return new Location(world, this.x, this.y, this.z);
     }
 
     private float invSqrt(float x) { //this is from the graphics code in the game Quake, it's so awesome
