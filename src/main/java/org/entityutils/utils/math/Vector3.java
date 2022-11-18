@@ -45,6 +45,10 @@ public class Vector3 {
         return out;
     }
 
+    public double get(int index){
+        return (index == 0) ? x : (index == 1) ? y : (index == 2) ? z : Double.MIN_VALUE;
+    }
+
     public double distance(Location to) {
         return Math.sqrt(Math.pow(this.x - to.getX(), 2) + Math.pow(this.y - to.getY(), 2) + Math.pow(this.z - to.getZ(), 2));
     }
