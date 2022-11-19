@@ -1,8 +1,11 @@
 package org.entityutils.entity.npc.movement;
 
+import org.entityutils.utils.math.Matrix3;
 import org.entityutils.utils.math.Vector3;
 import org.entityutils.utils.math.function.Quadratic;
+import org.entityutils.utils.math.function.QuadraticBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JumpInstruction implements Instruction{
@@ -16,26 +19,48 @@ public class JumpInstruction implements Instruction{
      */
 
     /**
-     * @param a the current location
-     * @param b the end location (end of arc)
+     * @param offset the location to move to (relative)
      * @param steps steps per block (rate)
      */
-    public JumpInstruction(Vector3 a, Vector3 b, int steps){
-
-        double xDist = new Vector3(a.getX(), 0 , a.getZ())
-                .distance(new Vector3(b.getX(), 0, b.getZ()));
-
-        double yDist = b.getY() - a.getY();
-
-//        Quadratic q = new Quadratic(0, 0, xDist, yDist, 19.5 * (1/400D));
-//        double[] derivative = q.derivative();
-//        Quadratic derivativeFunc = new Quadratic(0, derivative[0], derivative[1]);
+    private final Quadratic q;
+    private final int steps;
+    private final double xDist;
 
 
+    private final Vector3 offset;
+    public JumpInstruction(Vector3 offset, int steps){
+        this.offset = offset;
+
+        this.xDist = new Vector3(this.offset.getX(), 0, this.offset.getZ()).magnitude();
+        this.q = QuadraticBuilder.getQuadratic(this.xDist, this.offset.getY());
+
+        this.steps = steps;
     }
 
     @Override
     public List<Vector3> generateMovementVectors() {
-        return null;
+        List<Vector3> movementVectors = new ArrayList<>();
+
+        Vector3 flattened = new Vector3(this.offset.getX(), 0, this.offset.getZ());
+        double angle = flattened.angleRad(new Vector3(1,0,0));
+
+        Matrix3 rotationMatrix = new Matrix3(new double[][]{
+                {Math.cos(angle), 0, Math.sin(angle)},
+                {0, 1, 0},
+                {-Math.sin(angle), 0, Math.cos(angle)}
+        });
+
+        double xDiff = 1D / steps;
+        for(double i = 0; i < this.xDist; i += xDiff){
+            double currY = this.q.evaluate(i);
+            double nextY = this.q.evaluate(i + xDiff);
+
+            double yDiff = nextY - currY;
+
+            Vector3 transformed = rotationMatrix.transform(new Vector3(xDiff, yDiff, 0));
+            movementVectors.add(transformed);
+        }
+
+        return movementVectors;
     }
 }

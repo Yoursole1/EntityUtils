@@ -54,6 +54,19 @@ public class Vector3 {
         return Math.sqrt(Math.pow(this.x - to.getX(), 2) + Math.pow(this.y - to.getY(), 2) + Math.pow(this.z - to.getZ(), 2));
     }
 
+    public double angleRad(Vector3 other){
+        double dotProd = this.dot(other);
+
+        double magA = this.magnitude();
+        double magB = other.magnitude();
+
+        return Math.acos(dotProd/ (magA * magB));
+    }
+
+    public double dot(Vector3 other){
+        return this.x * other.x + this.y * other.y + this.z * other.z;
+    }
+
     public void multiply(double c) {
         this.x *= c;
         this.y *= c;
@@ -91,6 +104,11 @@ public class Vector3 {
         }
 
         return Math.abs(x);
+    }
+
+    @Override
+    public String toString(){
+        return "(" + this.x + ", " + this.y + ", " + this.z + ")";
     }
 
 }

@@ -3,11 +3,13 @@ package org.entityutils;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.entityutils.entity.event.EventManager;
-import org.entityutils.utils.math.Matrix3;
+import org.entityutils.entity.npc.movement.JumpInstruction;
+import org.entityutils.utils.math.Vector3;
 import org.entityutils.utils.math.function.Quadratic;
 import org.entityutils.utils.math.function.QuadraticBuilder;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * The main entry point for the EntityUtils Plugin.
@@ -24,8 +26,16 @@ public class EntityUtilsPlugin extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new EventManager(), this);
 
-        Quadratic q = QuadraticBuilder.getQuadratic(1, 1);
-        System.out.println(Arrays.toString(q.getCoefficients()));
+        JumpInstruction instruction = new JumpInstruction(new Vector3(1,0,1), 5);
+        List<Vector3> movementVectors = instruction.generateMovementVectors();
+
+        Vector3 sum = new Vector3(0,0,0);
+
+        for(Vector3 v : movementVectors){
+            sum.add(v);
+        }
+
+        System.out.println(sum);
 
         // this.getServer().getPluginManager().registerEvents(new Test(), this);
     }
