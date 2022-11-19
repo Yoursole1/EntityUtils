@@ -24,7 +24,7 @@ public class EntityUtilsPlugin extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new EventManager(), this);
 
-        Quadratic q = QuadraticBuilder.getQuadratic(4, 0);
+        Quadratic q = QuadraticBuilder.getQuadratic(1, 1);
         System.out.println(Arrays.toString(q.getCoefficients()));
 
         // this.getServer().getPluginManager().registerEvents(new Test(), this);
