@@ -67,6 +67,14 @@ public class Vector3 {
         return this.x * other.x + this.y * other.y + this.z * other.z;
     }
 
+    public Vector3 cross(Vector3 other){
+        double a = this.y * other.z - this.z * other.y;
+        double b = this.z * other.x - this.x * other.z;
+        double c = this.x * other.y - this.y * other.x;
+
+        return new Vector3(a, b, c);
+    }
+
     public void multiply(double c) {
         this.x *= c;
         this.y *= c;

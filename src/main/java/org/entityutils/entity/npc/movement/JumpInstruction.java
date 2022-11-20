@@ -1,11 +1,13 @@
 package org.entityutils.entity.npc.movement;
 
+import org.entityutils.utils.math.MathUtils;
 import org.entityutils.utils.math.Matrix3;
 import org.entityutils.utils.math.Vector3;
 import org.entityutils.utils.math.function.Quadratic;
 import org.entityutils.utils.math.function.QuadraticBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class JumpInstruction implements Instruction{
@@ -41,8 +43,7 @@ public class JumpInstruction implements Instruction{
     public List<Vector3> generateMovementVectors() {
         List<Vector3> movementVectors = new ArrayList<>();
 
-        Vector3 flattened = new Vector3(this.offset.getX(), 0, this.offset.getZ());
-        double angle = flattened.angleRad(new Vector3(1,0,0));
+        double angle = -Math.PI / 2D + Math.atan2(this.offset.getX(), this.offset.getZ());
 
         Matrix3 rotationMatrix = new Matrix3(new double[][]{
                 {Math.cos(angle), 0, Math.sin(angle)},
@@ -50,15 +51,17 @@ public class JumpInstruction implements Instruction{
                 {-Math.sin(angle), 0, Math.cos(angle)}
         });
 
-        double xDiff = 1D / steps;
-        for(double i = 0; i < this.xDist; i += xDiff){
+        double xDiff = this.xDist / steps;
+
+        for(double i = 0; i <= this.xDist - xDiff; i += xDiff){
             double currY = this.q.evaluate(i);
             double nextY = this.q.evaluate(i + xDiff);
 
-            double yDiff = nextY - currY;
+            double yDiff = MathUtils.correctFloatingPoint(nextY - currY);
 
             Vector3 transformed = rotationMatrix.transform(new Vector3(xDiff, yDiff, 0));
             movementVectors.add(transformed);
+            i = MathUtils.correctFloatingPoint(i);
         }
 
         return movementVectors;

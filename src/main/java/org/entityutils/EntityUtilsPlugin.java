@@ -26,16 +26,8 @@ public class EntityUtilsPlugin extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new EventManager(), this);
 
-        JumpInstruction instruction = new JumpInstruction(new Vector3(1,0,1), 5);
+        JumpInstruction instruction = new JumpInstruction(new Vector3(-1,1,0), 5);
         List<Vector3> movementVectors = instruction.generateMovementVectors();
-
-        Vector3 sum = new Vector3(0,0,0);
-
-        for(Vector3 v : movementVectors){
-            sum.add(v);
-        }
-
-        System.out.println(sum);
 
         // this.getServer().getPluginManager().registerEvents(new Test(), this);
     }
