@@ -26,10 +26,7 @@ public class EntityUtilsPlugin extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new EventManager(), this);
 
-        JumpInstruction instruction = new JumpInstruction(new Vector3(-1,1,0), 5);
-        List<Vector3> movementVectors = instruction.generateMovementVectors();
-
-        // this.getServer().getPluginManager().registerEvents(new Test(), this);
+        this.getServer().getPluginManager().registerEvents(new Test(), this);
     }
 
     @Override

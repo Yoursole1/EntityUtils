@@ -13,6 +13,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.entityutils.EntityUtilsPlugin;
 import org.entityutils.entity.npc.EntityAnimation;
+import org.entityutils.entity.npc.movement.Instruction;
 import org.entityutils.entity.pathfind.Node;
 import org.entityutils.entity.pathfind.Path;
 import org.entityutils.entity.pathfind.Pathfinder;
@@ -61,9 +62,9 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
             return null;
         }
 
-        List<Vector3> movement = toWalk.generateMovementVectors(stepsPerBlock);
+        List<Instruction> movement = toWalk.generateInstructions(stepsPerBlock);
 
-        this.executeMovementVectors(movement, speed);
+        this.executeMovementInstructions(movement, 100);
 
         return toWalk;
     }
@@ -90,6 +91,17 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
 
         this.executeMovementVectors(magnitudes, 100);
+    }
+
+
+    public void executeMovementInstructions(List<Instruction> asm, int speed){
+        List<Vector3> vectors = new ArrayList<>();
+
+        for(Instruction ins : asm){
+            vectors.addAll(ins.generateMovementVectors());
+        }
+
+        executeMovementVectors(vectors, speed);
     }
 
 

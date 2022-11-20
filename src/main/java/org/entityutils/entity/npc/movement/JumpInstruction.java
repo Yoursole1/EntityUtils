@@ -45,24 +45,44 @@ public class JumpInstruction implements Instruction{
 
         double angle = -Math.PI / 2D + Math.atan2(this.offset.getX(), this.offset.getZ());
 
-        Matrix3 rotationMatrix = new Matrix3(new double[][]{
-                {Math.cos(angle), 0, Math.sin(angle)},
+        double sin =  Math.sin(angle);
+        double cos =  Math.cos(angle);
+
+        Matrix3 rotationMatrix = new Matrix3(new double[][] {
+                {cos, 0, sin},
                 {0, 1, 0},
-                {-Math.sin(angle), 0, Math.cos(angle)}
+                {-sin, 0, cos}
         });
 
         double xDiff = this.xDist / steps;
 
-        for(double i = 0; i <= this.xDist - xDiff; i += xDiff){
-            double currY = this.q.evaluate(i);
-            double nextY = this.q.evaluate(i + xDiff);
+        double x = 0;
+        for(double i = 0; i < this.steps; i++) {
+            double currY = this.q.evaluate(x);
+            double nextY = this.q.evaluate(x + xDiff);
 
             double yDiff = MathUtils.correctFloatingPoint(nextY - currY);
 
             Vector3 transformed = rotationMatrix.transform(new Vector3(xDiff, yDiff, 0));
             movementVectors.add(transformed);
-            i = MathUtils.correctFloatingPoint(i);
+
+            x += xDiff;
+            x = MathUtils.correctFloatingPoint(x);
         }
+
+        // Correct floating point error
+        Vector3 sum = new Vector3(0, 0, 0);
+
+        for(Vector3 vec : movementVectors){
+            sum.add(vec);
+        }
+
+        double err = sum.getY() - this.offset.getY();
+
+        Vector3 finalMovement = movementVectors.get(movementVectors.size() - 1);
+        finalMovement.add(new Vector3(0, -err, 0));
+
+        movementVectors.set(movementVectors.size() - 1, finalMovement);
 
         return movementVectors;
     }
