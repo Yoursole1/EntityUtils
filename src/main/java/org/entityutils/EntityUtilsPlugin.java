@@ -3,13 +3,6 @@ package org.entityutils;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.entityutils.entity.event.EventManager;
-import org.entityutils.entity.npc.movement.JumpInstruction;
-import org.entityutils.utils.math.Vector3;
-import org.entityutils.utils.math.function.Quadratic;
-import org.entityutils.utils.math.function.QuadraticBuilder;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The main entry point for the EntityUtils Plugin.
@@ -26,7 +19,7 @@ public class EntityUtilsPlugin extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new EventManager(), this);
 
-        //this.getServer().getPluginManager().registerEvents(new Test(), this);
+//        this.getServer().getPluginManager().registerEvents(new Test(), this);
     }
 
     @Override

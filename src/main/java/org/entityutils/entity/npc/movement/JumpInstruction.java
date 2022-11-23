@@ -7,7 +7,6 @@ import org.entityutils.utils.math.function.Quadratic;
 import org.entityutils.utils.math.function.QuadraticBuilder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class JumpInstruction implements Instruction{
