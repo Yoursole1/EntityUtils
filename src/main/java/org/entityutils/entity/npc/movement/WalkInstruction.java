@@ -18,7 +18,10 @@ public class WalkInstruction implements Instruction {
 
     @Override
     public List<Vector3> generateMovementVectors() {
+        // Calculate the offset between the starting and ending points
         Vector3 offset = new Vector3(this.b.getX() - this.a.getX(), this.b.getY() - this.a.getY(), this.b.getZ() - this.a.getZ());
+
+        // Generate a list of evenly distributed points along the line between A and B
         return offset.lerp(this.steps);
     }
 }

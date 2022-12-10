@@ -38,38 +38,37 @@ public class PacketListener {
      * @param p      plugin to register with
      */
     public static void registerPlayer(Player player, JavaPlugin p) {
-        if (players.contains(player)) return;
+        if (players.contains(player)) return; // Return if the player is already registered
 
-        Channel c = ((ServerPlayer) (player)).connection.getConnection().channel;
+        Channel c = ((ServerPlayer) (player)).connection.getConnection().channel; // Get the player's channel
         c.pipeline().addAfter("decoder", "PacketListener", new MessageToMessageDecoder<ServerboundInteractPacket>() {
             @Override
             protected void decode(ChannelHandlerContext ctx, ServerboundInteractPacket packet, List<Object> out) {
                 out.add(packet);
 
-                double timeout = 0.03;
-                if (clickDelay.containsKey(player.getUUID())) {
+                double timeout = 0.03; // Set the click delay to 30 milliseconds
+                if (clickDelay.containsKey(player.getUUID())) { // If the player has clicked before
                     double secondsLeft = (clickDelay.get(player.getUUID()) / 1000D + timeout - System.currentTimeMillis() / 1000D);
-                    if (secondsLeft > 0) {
-                        return;
+                    if (secondsLeft > 0) { // If the delay has not expired
+                        return; // Return and do not process the packet
                     }
                 }
 
-                if (!npcIds.containsKey(packet.getEntityId())) return;
-                NPC npc = npcIds.get(packet.getEntityId());
+                if (!npcIds.containsKey(packet.getEntityId())) return; // Return if the clicked entity is not an NPC
+                NPC npc = npcIds.get(packet.getEntityId()); // Get the NPC
 
                 new BukkitRunnable() {
                     @Override
                     public void run() {
                         ServerboundInteractPacket.ActionType action = packet.getActionType();
-                        Bukkit.getPluginManager().callEvent(new
-                                NPCClickEvent((org.bukkit.entity.Player) player.getBukkitEntity(), npc, action));
+                        Bukkit.getPluginManager().callEvent(new NPCClickEvent((org.bukkit.entity.Player) player.getBukkitEntity(), npc, action)); // Fire the NPCClickEvent
                     }
                 }.runTask(p);
 
-                clickDelay.put(player.getUUID(), System.currentTimeMillis());
+                clickDelay.put(player.getUUID(), System.currentTimeMillis()); // Update the click delay for the player
             }
         });
-        players.add(player);
+        players.add(player); // Add the player to the list of registered players
     }
 
 
