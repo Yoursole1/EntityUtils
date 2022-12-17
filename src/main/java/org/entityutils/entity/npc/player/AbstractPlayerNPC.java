@@ -236,12 +236,15 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.state.setYaw(yaw);
         this.state.setPitch(pitch);
 
-        List<Packet<?>> packets = new ArrayList<>();
+        if(this.state.getNpc() != null){
+            List<Packet<?>> packets = new ArrayList<>();
 
-        packets.add(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw() % 360) * 256 / 360)));
-        packets.add(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((this.state.getYaw() % 360) * 256 / 360), (byte) ((this.state.getPitch() % 360) * 256 / 360), false));
+            packets.add(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw() % 360) * 256 / 360)));
+            packets.add(new ClientboundMoveEntityPacket.Rot(this.state.getNpc().getId(), (byte) ((this.state.getYaw() % 360) * 256 / 360), (byte) ((this.state.getPitch() % 360) * 256 / 360), false));
 
-        PacketUtils.sendPackets(packets, Bukkit.getOnlinePlayers().stream().map(Entity::getUniqueId).toList());
+            PacketUtils.sendPackets(packets, this.getData().getViewers());
+        }
+
     }
 
     @Override
