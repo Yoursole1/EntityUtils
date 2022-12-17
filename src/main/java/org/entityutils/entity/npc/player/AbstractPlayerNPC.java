@@ -18,10 +18,10 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -120,13 +120,18 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         } else {
             if (!this.state.getViewers().contains(p.getUUID())) return;
 
-            PacketUtils.sendPacket(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.REMOVE_PLAYER, this.state.getNpc()), p);
+            PacketUtils.sendPacket(new ClientboundPlayerInfoRemovePacket(Collections.singletonList(this.state.getNpc().getUUID())), p);
             PacketUtils.sendPacket(new ClientboundRemoveEntitiesPacket(this.state.getNpc().getId()), p);
 
             this.state.getStand().setAlive(p, false);
 
             this.state.getViewers().remove(p.getUUID());
         }
+    }
+
+
+    public void setAlive2(org.bukkit.entity.Player p, boolean alive){
+        this.setAlive(((CraftPlayer)p).getHandle(), alive);
     }
 
     /**
@@ -319,7 +324,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
 
             this.refresh();
 
-            ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(this.state.getNpc().getId(), watcher, true);
+            ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(this.state.getNpc().getId(), watcher.packDirty());
             for (org.bukkit.entity.Player pl : Bukkit.getOnlinePlayers()) {
                 PacketUtils.sendPacket(packet4, ((CraftPlayer) (pl)).getHandle());
             }

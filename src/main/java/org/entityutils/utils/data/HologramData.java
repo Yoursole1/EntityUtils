@@ -35,7 +35,7 @@ public class HologramData implements EUEntityData {
 
         if (this.getHologram() != null) {
             packets.add(new ClientboundAddEntityPacket(this.getHologram()));
-            packets.add(new ClientboundSetEntityDataPacket(this.getHologram().getId(), this.getHologram().getEntityData(), true));
+            packets.add(new ClientboundSetEntityDataPacket(this.getHologram().getId(), this.getHologram().getEntityData().packDirty()));
         }
 
         return packets;

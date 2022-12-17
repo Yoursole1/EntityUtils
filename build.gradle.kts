@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    paperDevBundle("1.18.2-R0.1-SNAPSHOT")
+    paperDevBundle("1.19.3-R0.1-SNAPSHOT")
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
 }
@@ -78,7 +78,7 @@ bukkit {
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.STARTUP
     main = "org.entityutils.EntityUtilsPlugin"
     prefix = "EntityUtils"
-    apiVersion = "1.18"
+    apiVersion = "1.19"
     authors = listOf("MarvelousAnything", "Yoursole")
 }
 

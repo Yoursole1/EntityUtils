@@ -55,7 +55,6 @@ public abstract class AbstractNPCData implements EUEntityData {
     private AbstractNPCData() {
 
         this.name = "new npc";
-        this.location = new Location(Bukkit.getWorlds().get(0), 0, 0, 0);
 
         this.showName = false;
         this.headTrack = false;

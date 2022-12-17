@@ -41,7 +41,7 @@ public class PlayerNPCData extends AbstractNPCData {
     public List<Packet<? extends PacketListener>> generateStatePackets() {
         List<Packet<? extends PacketListener>> packets = new ArrayList<>();
 
-        packets.add(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, this.getNpc()));
+        packets.add(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, this.getNpc()));
         packets.add(new ClientboundAddPlayerPacket(this.getNpc()));
         packets.add(new ClientboundRotateHeadPacket(this.getNpc(), (byte) ((this.getYaw() % 360) * 256 / 360)));
         packets.add(new ClientboundMoveEntityPacket.Rot(this.getNpc().getId(), (byte) ((this.getYaw() % 360) * 256 / 360), (byte) ((this.getPitch() % 360) * 256 / 360), false));
@@ -53,7 +53,7 @@ public class PlayerNPCData extends AbstractNPCData {
         SynchedEntityData watcher = this.getNpc().getEntityData();
         watcher.set(new EntityDataAccessor<>(17, EntityDataSerializers.BYTE), SkinLayer.createMask(this.getLayers().toArray(new SkinLayer[0])));
 
-        packets.add(new ClientboundSetEntityDataPacket(this.getNpc().getId(), watcher, true));
+        packets.add(new ClientboundSetEntityDataPacket(this.getNpc().getId(), watcher.packDirty()));
 
         return packets;
     }
