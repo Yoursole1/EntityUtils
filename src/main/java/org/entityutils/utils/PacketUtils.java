@@ -1,13 +1,17 @@
 package org.entityutils.utils;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.network.PacketListener;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.player.Player;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,6 +61,25 @@ public class PacketUtils {
             }
             Player p = ((CraftPlayer) (a)).getHandle();
             sendPackets(packets, p);
+        }
+    }
+
+
+    public static void fixDirtyField(SynchedEntityData watcher){
+        try {
+            Field dirty = watcher.getClass().getDeclaredField("g");
+            dirty.setAccessible(true);
+            dirty.setBoolean(watcher, true);
+
+            Field items = watcher.getClass().getDeclaredField("e");
+            items.setAccessible(true);
+            Int2ObjectMap<SynchedEntityData.DataItem<?>> data = (Int2ObjectMap<SynchedEntityData.DataItem<?>>) items.get(watcher);
+            for (SynchedEntityData.DataItem<?> datum : data.values()){
+                datum.setDirty(true);
+            }
+
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

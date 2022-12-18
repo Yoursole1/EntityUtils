@@ -8,9 +8,12 @@ import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
+import org.entityutils.utils.PacketUtils;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -35,7 +38,8 @@ public class HologramData implements EUEntityData {
 
         if (this.getHologram() != null) {
             packets.add(new ClientboundAddEntityPacket(this.getHologram()));
-            packets.add(new ClientboundSetEntityDataPacket(this.getHologram().getId(), this.getHologram().getEntityData().packDirty()));
+            PacketUtils.fixDirtyField(this.getHologram().getEntityData());
+            packets.add(new ClientboundSetEntityDataPacket(this.getHologram().getId(), Objects.requireNonNull(this.getHologram().getEntityData().packDirty())));
         }
 
         return packets;

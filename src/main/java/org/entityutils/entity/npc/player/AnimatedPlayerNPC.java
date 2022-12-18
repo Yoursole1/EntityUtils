@@ -23,6 +23,7 @@ import org.entityutils.utils.math.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
@@ -190,7 +191,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
     public void setPose(Pose pose) {
         this.getData().getNpc().setPose(pose);
-        ClientboundSetEntityDataPacket p = new ClientboundSetEntityDataPacket(this.getID(), this.getData().getNpc().getEntityData().packDirty());
+        ClientboundSetEntityDataPacket p = new ClientboundSetEntityDataPacket(this.getID(), Objects.requireNonNull(this.getData().getNpc().getEntityData().packDirty()));
 
         PacketUtils.sendPacket(p, this.getData().getViewers());
     }

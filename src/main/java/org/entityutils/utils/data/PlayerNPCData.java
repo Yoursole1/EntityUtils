@@ -15,10 +15,10 @@ import net.minecraft.world.item.ItemStack;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.entityutils.entity.npc.player.SkinLayer;
+import org.entityutils.utils.PacketUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.lang.reflect.Field;
+import java.util.*;
 
 @Getter
 @Setter
@@ -53,7 +53,11 @@ public class PlayerNPCData extends AbstractNPCData {
         SynchedEntityData watcher = this.getNpc().getEntityData();
         watcher.set(new EntityDataAccessor<>(17, EntityDataSerializers.BYTE), SkinLayer.createMask(this.getLayers().toArray(new SkinLayer[0])));
 
-        packets.add(new ClientboundSetEntityDataPacket(this.getNpc().getId(), watcher.packDirty()));
+        //update the isDirty field so that this can be repacked
+        PacketUtils.fixDirtyField(watcher);
+        packets.add(new ClientboundSetEntityDataPacket(this.getNpc().getId(), Objects.requireNonNull(watcher.packDirty())));
+
+
 
         return packets;
     }

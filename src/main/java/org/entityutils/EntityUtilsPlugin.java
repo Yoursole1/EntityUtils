@@ -19,7 +19,7 @@ public class EntityUtilsPlugin extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new EventManager(), this);
 
-        //this.getServer().getPluginManager().registerEvents(new Test(), this);
+        this.getServer().getPluginManager().registerEvents(new Test(), this);
     }
 
     @Override
