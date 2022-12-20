@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R2.entity.CraftPlayer;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,7 +33,9 @@ public class PacketUtils {
         ServerPlayer pl = (ServerPlayer) player;
         ServerGamePacketListenerImpl packetStream = pl.connection;
         packetStream.send(packet);
+
     }
+
 
     public static void sendPacket(Packet<?> packet, List<UUID> players) {
         for (UUID uuid : players) {
