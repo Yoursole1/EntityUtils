@@ -1,8 +1,8 @@
 package org.entityutils.entity.npc.movement;
 
 import org.entityutils.utils.math.MathUtils;
-import org.entityutils.utils.math.Matrix3;
-import org.entityutils.utils.math.Vector3;
+import org.entityutils.utils.math.Math3D.Matrix3;
+import org.entityutils.utils.math.Math3D.Vector3;
 import org.entityutils.utils.math.function.Quadratic;
 import org.entityutils.utils.math.function.QuadraticBuilder;
 

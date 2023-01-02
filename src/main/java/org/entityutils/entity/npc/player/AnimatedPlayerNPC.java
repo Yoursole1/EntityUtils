@@ -19,7 +19,7 @@ import org.entityutils.entity.pathfind.Path;
 import org.entityutils.entity.pathfind.Pathfinder;
 import org.entityutils.utils.PacketUtils;
 import org.entityutils.utils.math.MathUtils;
-import org.entityutils.utils.math.Vector3;
+import org.entityutils.utils.math.Math3D.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;

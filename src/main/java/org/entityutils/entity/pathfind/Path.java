@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.entityutils.entity.npc.movement.Instruction;
 import org.entityutils.entity.npc.movement.JumpInstruction;
 import org.entityutils.entity.npc.movement.WalkInstruction;
-import org.entityutils.utils.math.Vector3;
+import org.entityutils.utils.math.Math3D.Vector3;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package org.entityutils.utils.math;
+package org.entityutils.utils.math.Math3D;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
