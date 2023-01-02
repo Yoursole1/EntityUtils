@@ -80,5 +80,12 @@ bukkit {
     prefix = "EntityUtils"
     apiVersion = "1.19"
     authors = listOf("MarvelousAnything", "Yoursole")
+    commands {
+        register("test") {
+            description = "Test command"
+            usage = "/test"
+            aliases = listOf("t")
+        }
+    }
 }
 

@@ -1,37 +1,30 @@
-package org.entityutils.utils.data;
+package org.entityutils.entity.hologram;
 
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.network.PacketListener;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import org.bukkit.Location;
 import org.entityutils.utils.PacketUtils;
+import org.entityutils.utils.data.EUEntityData;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Getter
 @Setter
-public class HologramData implements EUEntityData {
-
+public class HologramComponentData implements EUEntityData {
     private transient ArmorStand hologram;
-    private transient Location location;
-    private String text;
-    private ArrayList<UUID> viewers;
+    private transient Component component;
 
-    public HologramData(Location location, String text) {
-        this.location = location;
-        this.text = text;
-
-        this.viewers = new ArrayList<>();
+    public HologramComponentData(Component component) {
+        this.component = component;
     }
-
     @Override
     public List<Packet<? extends PacketListener>> generateStatePackets() {
         List<Packet<? extends PacketListener>> packets = new ArrayList<>();

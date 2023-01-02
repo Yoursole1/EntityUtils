@@ -4,6 +4,8 @@ import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.entityutils.entity.event.EventManager;
 
+import java.util.Objects;
+
 /**
  * The main entry point for the EntityUtils Plugin.
  */
@@ -19,7 +21,8 @@ public class EntityUtilsPlugin extends JavaPlugin {
 
         this.getServer().getPluginManager().registerEvents(new EventManager(), this);
 
-        //this.getServer().getPluginManager().registerEvents(new Test(), this);
+        this.getServer().getPluginManager().registerEvents(new TestListener(), this);
+        Objects.requireNonNull(this.getCommand("test")).setExecutor(new TestCommand());
     }
 
     @Override
