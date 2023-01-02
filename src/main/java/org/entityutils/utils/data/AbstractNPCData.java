@@ -7,10 +7,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.entityutils.entity.decoration.HologramEntity;
+import org.entityutils.entity.hologram.HologramEntity;
 
 import java.util.ArrayList;
 import java.util.List;

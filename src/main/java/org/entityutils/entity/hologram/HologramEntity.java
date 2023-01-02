@@ -1,4 +1,4 @@
-package org.entityutils.entity.decoration;
+package org.entityutils.entity.hologram;
 
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.Getter;

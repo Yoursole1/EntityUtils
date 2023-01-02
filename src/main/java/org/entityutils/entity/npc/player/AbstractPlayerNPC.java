@@ -25,7 +25,7 @@ import org.bukkit.craftbukkit.v1_19_R2.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
-import org.entityutils.entity.decoration.HologramEntity;
+import org.entityutils.entity.hologram.HologramEntity;
 import org.entityutils.entity.npc.NPC;
 import org.entityutils.entity.npc.NPCManager;
 import org.entityutils.utils.PacketListener;
