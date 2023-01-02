@@ -3,7 +3,7 @@ package org.entityutils.entity.npc;
 
 import org.bukkit.Location;
 import org.entityutils.entity.EUEntity;
-import org.entityutils.entity.pathfind.Path;
+import org.entityutils.entity.pathfind.AbstractPath;
 import org.entityutils.utils.data.AbstractNPCData;
 
 /**
@@ -13,7 +13,7 @@ public interface NPC extends EUEntity {
 
     void showName(boolean show);
 
-    Path goTo(Location location, int speed);
+    AbstractPath goTo(Location location, int speed);
 
     void teleport(Location location);
 

@@ -18,7 +18,7 @@ public record Pathfinder(Node starting, Node ending) {
      * If a path is found, it is returned, otherwise `null` is returned to indicate that no path could be found.
      */
     @Nullable
-    public Path getPath() {
+    public AbstractPath getPath() {
         List<Node> open = new ArrayList<>(); // List of nodes to be considered for the path
         List<Node> closed = new ArrayList<>(); // List of nodes that have already been evaluated
 
@@ -32,7 +32,7 @@ public record Pathfinder(Node starting, Node ending) {
             closed.add(current); // Add the current node to the closed list
 
             if (current.nodeEquals(this.ending)) { // If we have reached the ending node
-                return current.getPath(); // Return the path leading to the ending node
+                return current.getPath(HardPath.class); // Return the path leading to the ending node
             }
 
             // Consider each neighboring node of the current node

@@ -275,8 +275,19 @@ public class Node {
      *
      * @return a path from this node to the starting node
      */
-    public Path getPath() {
-        Path p = new Path();
+    public AbstractPath getPath(Class<? extends AbstractPath> type) {
+
+        AbstractPath p = null;
+
+        if(type == HardPath.class){
+            p = new HardPath();
+        } else if (type == CatmullRomPath.class) {
+            p = new CatmullRomPath();
+        }
+
+        if(p == null){
+            throw new IllegalStateException("PathType does not match");
+        }
 
         Node current = this;
         while (current.getParent() != null) {

@@ -15,7 +15,7 @@ import org.entityutils.EntityUtilsPlugin;
 import org.entityutils.entity.npc.EntityAnimation;
 import org.entityutils.entity.npc.movement.Instruction;
 import org.entityutils.entity.pathfind.Node;
-import org.entityutils.entity.pathfind.Path;
+import org.entityutils.entity.pathfind.AbstractPath;
 import org.entityutils.entity.pathfind.Pathfinder;
 import org.entityutils.utils.PacketUtils;
 import org.entityutils.utils.math.MathUtils;
@@ -48,7 +48,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
      */
     private boolean locked;
     @Override
-    public Path goTo(Location location, int speed) {
+    public AbstractPath goTo(Location location, int speed) {
         if(this.locked){
             return null;
         }
@@ -57,7 +57,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
         Node starting = new Node(this.getData().getLocation());
         Node ending = new Node(location);
 
-        Path toWalk = new Pathfinder(starting, ending).getPath();
+        AbstractPath toWalk = new Pathfinder(starting, ending).getPath();
 
         if(toWalk == null){
             return null;

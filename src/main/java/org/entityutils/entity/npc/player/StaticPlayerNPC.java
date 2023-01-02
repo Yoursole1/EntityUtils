@@ -2,7 +2,7 @@ package org.entityutils.entity.npc.player;
 
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.entityutils.entity.pathfind.Path;
+import org.entityutils.entity.pathfind.AbstractPath;
 
 public non-sealed class StaticPlayerNPC extends AbstractPlayerNPC {
 
@@ -12,7 +12,7 @@ public non-sealed class StaticPlayerNPC extends AbstractPlayerNPC {
     }
 
     @Override
-    public Path goTo(Location location, int speed) {
+    public AbstractPath goTo(Location location, int speed) {
         super.teleport(location);
         return null;
     }
