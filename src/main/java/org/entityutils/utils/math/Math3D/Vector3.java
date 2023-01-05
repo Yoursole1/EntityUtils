@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.entityutils.entity.pathfind.Node;
+import org.entityutils.utils.math.Matrix;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,16 +93,18 @@ public class Vector3 {
         return new Vector3(a, b, c);
     }
 
-    public void multiply(double c) {
+    public Vector3 multiply(double c) {
         this.x *= c;
         this.y *= c;
         this.z *= c;
+        return this;
     }
 
-    public void add(Vector3 other) {
+    public Vector3 add(Vector3 other) {
         this.x += other.x;
         this.y += other.y;
         this.z += other.z;
+        return this;
     }
 
     public void add(Location loc) {
@@ -137,6 +141,18 @@ public class Vector3 {
 
         // Return the absolute value of the final approximation
         return Math.abs(x);
+    }
+
+    public Node toNode(World world){
+        return new Node(new Location(world, this.x, this.y, this.z));
+    }
+
+    public Matrix toMatrix(){
+        return new Matrix(new double[][]{
+                {this.x},
+                {this.y},
+                {this.z}
+        });
     }
 
     @Override

@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.entityutils.utils.math.Math3D.Vector3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -369,6 +370,10 @@ public class Node {
                         this.z == other.z &&
                         this.world.getName().equals(other.world.getName())
         );
+    }
+
+    public Vector3 toVector3(){
+        return new Vector3(this.x, this.y, this.z);
     }
 
 }
