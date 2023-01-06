@@ -3,13 +3,13 @@ package org.entityutils.utils.math.linearAlg;
 import lombok.Getter;
 import lombok.Setter;
 
-public class OperableInteger implements Operable{
+public class OperableDouble implements Operable{
 
     @Getter
     @Setter
-    private int value;
+    private double value;
 
-    public OperableInteger(int value) {
+    public OperableDouble(double value) {
         this.value = value;
     }
 
@@ -20,7 +20,7 @@ public class OperableInteger implements Operable{
      */
     @Override
     public Operable add(Operable other) {
-        if(other instanceof Matrix m){
+        if(other instanceof Matrix m) {
             Operable[][] values = m.getValues();
             for(Operable[] a : values){
                 for(Operable operable : a){
@@ -31,7 +31,7 @@ public class OperableInteger implements Operable{
             return m;
         }
 
-        if(other instanceof OperableInteger i){
+        if(other instanceof OperableDouble i){
             i.setValue(this.getValue() + i.getValue());
             return i;
         }
@@ -57,7 +57,7 @@ public class OperableInteger implements Operable{
             return m;
         }
 
-        if(other instanceof OperableInteger i){
+        if(other instanceof OperableDouble i){
             i.setValue(this.getValue() * i.getValue());
             return i;
         }
@@ -76,5 +76,10 @@ public class OperableInteger implements Operable{
             return new Operable[]{this};
         }
         throw new IndexOutOfBoundsException(location + " out of bounds for length 1");
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(this.value);
     }
 }

@@ -3,6 +3,8 @@ package org.entityutils.entity.npc.movement;
 import org.entityutils.entity.pathfind.Node;
 import org.entityutils.utils.math.linearAlg.Math3D.Vector3;
 import org.entityutils.utils.math.linearAlg.Matrix;
+import org.entityutils.utils.math.linearAlg.Operable;
+import org.entityutils.utils.math.linearAlg.OperableDouble;
 
 import java.util.List;
 
@@ -10,11 +12,11 @@ public class CatmullRomInstruction implements Instruction {
 
     private static final double tension = 1D/2;
 
-    private static final Matrix catmullMatrix = new Matrix(new double[][]{
-            {0, 1, 0, 0},
-            {-tension, 0, tension ,0},
-            {2*tension, tension - 3, 3 - 2*tension, -tension},
-            {-tension, 2 - tension, tension - 2, tension}
+    private static final Matrix catmullMatrix = new Matrix(new Operable[][]{
+            {new OperableDouble(0), new OperableDouble(1), new OperableDouble(0), new OperableDouble(0)},
+            {new OperableDouble(-tension), new OperableDouble(0), new OperableDouble(tension), new OperableDouble(0)},
+            {new OperableDouble(2*tension), new OperableDouble(tension - 3), new OperableDouble(3 - 2*tension), new OperableDouble(-tension)},
+            {new OperableDouble(-tension), new OperableDouble(2 - tension), new OperableDouble(tension - 2), new OperableDouble(tension)}
     });
 
     private final List<Node> nodes;

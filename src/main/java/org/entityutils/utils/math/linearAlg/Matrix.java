@@ -66,7 +66,7 @@ public class Matrix implements Operable {
      */
     @Override
     public Operable[] getGroup(int location, boolean v) {
-        Operable[] values = new Operable[v ? this.getDimension()[0] : this.getDimension()[1]];
+        Operable[] group = new Operable[v ? this.getDimension()[0] : this.getDimension()[1]];
 
         for (int i = 0; i < this.values.length; i++) {
             for (int j = 0; j < this.values[i].length; j++) {
@@ -74,17 +74,17 @@ public class Matrix implements Operable {
                     if(j != location){
                         continue;
                     }
-                    values[i] = this.values[i][j];
+                    group[i] = this.values[i][j];
                 }else{
                     if(i != location){
                         continue;
                     }
-                    values[j] = this.values[i][j];
+                    group[j] = this.values[i][j];
                 }
             }
         }
 
-        return values;
+        return group;
     }
 
 

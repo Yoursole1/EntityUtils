@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.entityutils.entity.pathfind.Node;
 import org.entityutils.utils.math.linearAlg.Matrix;
+import org.entityutils.utils.math.linearAlg.Operable;
+import org.entityutils.utils.math.linearAlg.OperableDouble;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,10 +150,10 @@ public class Vector3 {
     }
 
     public Matrix toMatrix(){
-        return new Matrix(new double[][]{
-                {this.x},
-                {this.y},
-                {this.z}
+        return new Matrix(new Operable[][]{
+                {new OperableDouble(this.x)},
+                {new OperableDouble(this.y)},
+                {new OperableDouble(this.z)}
         });
     }
 
