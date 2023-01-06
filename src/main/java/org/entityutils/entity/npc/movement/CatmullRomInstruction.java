@@ -1,8 +1,8 @@
 package org.entityutils.entity.npc.movement;
 
 import org.entityutils.entity.pathfind.Node;
-import org.entityutils.utils.math.Math3D.Vector3;
-import org.entityutils.utils.math.Matrix;
+import org.entityutils.utils.math.linearAlg.Math3D.Vector3;
+import org.entityutils.utils.math.linearAlg.Matrix;
 
 import java.util.List;
 

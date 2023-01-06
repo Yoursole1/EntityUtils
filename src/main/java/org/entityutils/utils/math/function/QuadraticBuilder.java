@@ -1,7 +1,7 @@
 package org.entityutils.utils.math.function;
 
-import org.entityutils.utils.math.Math3D.Matrix3;
-import org.entityutils.utils.math.Math3D.Vector3;
+import org.entityutils.utils.math.linearAlg.Math3D.Matrix3;
+import org.entityutils.utils.math.linearAlg.Math3D.Vector3;
 
 public class QuadraticBuilder {
 

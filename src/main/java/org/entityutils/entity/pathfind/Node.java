@@ -7,7 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.entityutils.utils.math.Math3D.Vector3;
+import org.entityutils.utils.math.linearAlg.Math3D.Vector3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

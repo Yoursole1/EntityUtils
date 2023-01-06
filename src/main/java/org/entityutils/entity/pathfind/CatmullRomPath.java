@@ -2,7 +2,6 @@ package org.entityutils.entity.pathfind;
 
 
 import org.entityutils.entity.npc.movement.Instruction;
-import org.entityutils.utils.math.Matrix;
 
 import java.util.List;
 

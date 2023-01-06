@@ -1,4 +1,4 @@
-package org.entityutils.utils.math.Math3D;
+package org.entityutils.utils.math.linearAlg.Math3D;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.entityutils.entity.pathfind.Node;
-import org.entityutils.utils.math.Matrix;
+import org.entityutils.utils.math.linearAlg.Matrix;
 
 import java.util.ArrayList;
 import java.util.List;
