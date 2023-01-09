@@ -20,11 +20,12 @@ public class OperableDouble implements Operable{
      */
     @Override
     public Operable add(Operable other) {
-        if(other instanceof Matrix m) {
+        if(other instanceof Matrix q) {
+            Matrix m = new Matrix(q.getValues());
             Operable[][] values = m.getValues();
-            for(Operable[] a : values){
-                for(Operable operable : a){
-                    operable.add(other);
+            for(int i = 0; i < values.length; i++){
+                for(int j = 0; j < values[i].length; j++){
+                    values[i][j] = this.add(values[i][j]);
                 }
             }
             m.setValues(values);
@@ -32,8 +33,7 @@ public class OperableDouble implements Operable{
         }
 
         if(other instanceof OperableDouble i){
-            i.setValue(this.getValue() + i.getValue());
-            return i;
+            return new OperableDouble(this.getValue() + i.getValue());
         }
 
         throw new IllegalStateException("No operable of type :" + other.getClass().getName());
@@ -46,11 +46,13 @@ public class OperableDouble implements Operable{
      */
     @Override
     public Operable multiply(Operable other) {
-        if(other instanceof Matrix m){
+        if(other instanceof Matrix q) {
+            Matrix m = new Matrix(q.getValues());
+
             Operable[][] values = m.getValues();
-            for(Operable[] a : values){
-                for(Operable operable : a){
-                    operable.multiply(other);
+            for(int i = 0; i < values.length; i++){
+                for(int j = 0; j < values[i].length; j++){
+                    values[i][j] = this.multiply(values[i][j]);
                 }
             }
             m.setValues(values);
@@ -58,8 +60,7 @@ public class OperableDouble implements Operable{
         }
 
         if(other instanceof OperableDouble i){
-            i.setValue(this.getValue() * i.getValue());
-            return i;
+            return new OperableDouble(this.getValue() * i.getValue());
         }
 
         throw new IllegalStateException("No operable of type :" + other.getClass().getName());

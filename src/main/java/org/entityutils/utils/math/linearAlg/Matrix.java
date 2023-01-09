@@ -3,6 +3,8 @@ package org.entityutils.utils.math.linearAlg;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
+
 
 public class Matrix implements Operable {
 
@@ -25,7 +27,7 @@ public class Matrix implements Operable {
     @Override
     public Operable multiply(Operable other) {
 
-        if(this.getDimension()[1] != other.getDimension()[0]){
+        if(this.getDimension()[1] != other.getDimension()[0]) {
             throw new IllegalArgumentException("Mismatched matrix dimensions");
         }
 
@@ -52,7 +54,7 @@ public class Matrix implements Operable {
         Operable sum = a[0].multiply(b[0]);
 
         for (int i = 1; i < a.length; i++) {
-            sum.add(a[i].multiply(b[i]));
+            sum = sum.add(a[i].multiply(b[i]));
         }
 
         return sum;
@@ -90,7 +92,39 @@ public class Matrix implements Operable {
 
     @Override
     public Operable add(Operable other) {
-        return null;
+        Operable[][] newValues = this.getValues().clone();
+
+        if(other instanceof OperableDouble d){
+            for(int i = 0; i < newValues.length; i++){
+                for(int j = 0; j < newValues.length; j++){
+                    Operable o = newValues[i][j];
+                    newValues[i][j] = o.add(d);
+                }
+            }
+            return new Matrix(newValues);
+        }
+
+        if(other instanceof Matrix m){
+            Operable[][] otherValues = m.getValues();
+            if(!Arrays.equals(this.getDimension(), other.getDimension())){
+                throw new IllegalArgumentException("Mismatched matrix dimensions");
+            }
+
+            for(int i = 0; i < newValues.length; i++){
+                for(int j = 0; j < newValues.length; j++){
+                    Operable o = newValues[i][j];
+                    newValues[i][j] = o.add(otherValues[i][j]);
+                }
+            }
+
+            return new Matrix(newValues);
+        }
+
+        throw new IllegalStateException("No operable of type :" + other.getClass().getName());
     }
 
+    @Override
+    public String toString() {
+        return Arrays.deepToString(this.getValues());
+    }
 }

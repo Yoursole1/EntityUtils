@@ -25,15 +25,50 @@ public class EntityUtilsPlugin extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new EventManager(), this);
 
 
-        Matrix m = new Matrix(new Operable[][]{
-                {new OperableDouble(1), new OperableDouble(2)},
-                {new OperableDouble(3), new OperableDouble(4)}
+        Matrix m = new Matrix(new Matrix[][]{
+                {new Matrix(new OperableDouble[][]{
+                        {
+                            new OperableDouble(1)
+                        }
+                }), new Matrix(new OperableDouble[][]{
+                        {
+                            new OperableDouble(2)
+                        }
+                })},
+                {new Matrix(new OperableDouble[][]{
+                        {
+                                new OperableDouble(3)
+                        }
+                }), new Matrix(new OperableDouble[][]{
+                        {
+                                new OperableDouble(4)
+                        }
+                })}
         });
 
-        OperableDouble adder = new OperableDouble(1);
-        adder.add(m);
+        Matrix m2 = new Matrix(new Matrix[][]{
+                {new Matrix(new OperableDouble[][]{
+                        {
+                                new OperableDouble(1)
+                        }
+                }), new Matrix(new OperableDouble[][]{
+                        {
+                                new OperableDouble(2)
+                        }
+                })},
+                {new Matrix(new OperableDouble[][]{
+                        {
+                                new OperableDouble(3)
+                        }
+                }), new Matrix(new OperableDouble[][]{
+                        {
+                                new OperableDouble(4)
+                        }
+                })}
+        });
 
-        System.out.println(Arrays.deepToString(m.getValues()));
+
+        System.out.println(Arrays.deepToString(((Matrix)m.multiply(m2)).getValues()));
 
         //this.getServer().getPluginManager().registerEvents(new Test(), this);
     }
