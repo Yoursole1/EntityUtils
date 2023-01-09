@@ -20,16 +20,18 @@ public class CatmullRomInstruction implements Instruction {
     });
 
     private final List<Node> nodes;
+    private int stepsPerNode;
     private final int pathLength; //not needed, just clarity
 
 
-    public CatmullRomInstruction(List<Node> nodes){
+    public CatmullRomInstruction(List<Node> nodes, int stepsPerNode){
         //ensure all nodes are on the same Y level
         boolean isValid = nodes.stream().map(Node::getY).allMatch(n -> n == nodes.get(0).getY());
 
         if(!isValid){
             throw new IllegalArgumentException("Nodes must be on the same Y level");
         }
+        this.stepsPerNode = stepsPerNode;
 
         this.nodes = nodes;
         this.pathLength = nodes.size();
@@ -62,7 +64,43 @@ public class CatmullRomInstruction implements Instruction {
             Matrix p2 = this.nodes.get(i + 1).toVector3().toMatrix();
             Matrix p3 = this.nodes.get(i + 2).toVector3().toMatrix();
 
+            Matrix pointMatrix = new Matrix(new Operable[][]{
+                    {p0},
+                    {p1},
+                    {p2},
+                    {p3}
+            });
 
+            Operable evaluation = CatmullRomInstruction.catmullMatrix.multiply(pointMatrix);
+
+            for (double j = 0; j < 1 - 1D/this.stepsPerNode; j += 1D/this.stepsPerNode) {
+                Matrix independent = new Matrix(new Operable[][]{
+                        {
+                            new OperableDouble(1D),
+                                new OperableDouble(j),
+                                new OperableDouble(Math.pow(j, 2)),
+                                new OperableDouble(Math.pow(j, 3))
+                        }
+                });
+
+                Matrix dependant = (Matrix) independent.multiply(evaluation);
+                //dependant should be a 1x3 Matrix (Point)
+
+                double nxt = j + 1D/this.stepsPerNode;
+
+                independent = new Matrix(new Operable[][]{
+                        {
+                                new OperableDouble(1D),
+                                new OperableDouble(nxt),
+                                new OperableDouble(Math.pow(nxt, 2)),
+                                new OperableDouble(Math.pow(nxt, 3))
+                        }
+                });
+
+                Matrix dependant2 = (Matrix) independent.multiply(evaluation);
+
+                //lerp between dependant and dependant2
+            }
         }
 
 
