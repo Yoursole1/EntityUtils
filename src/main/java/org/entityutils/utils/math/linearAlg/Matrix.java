@@ -12,7 +12,7 @@ public class Matrix implements Operable {
     @Setter
     private Operable[][] values;
 
-    public Matrix(Operable[][] values){
+    public Matrix(Operable[][] values) {
         this.values = values;
     }
 
@@ -27,7 +27,7 @@ public class Matrix implements Operable {
     @Override
     public Operable multiply(Operable other) {
 
-        if(this.getDimension()[1] != other.getDimension()[0]) {
+        if (this.getDimension()[1] != other.getDimension()[0]) {
             throw new IllegalArgumentException("Mismatched matrix dimensions");
         }
 
@@ -47,7 +47,7 @@ public class Matrix implements Operable {
     }
 
     private Operable productSum(Operable[] a, Operable[] b) {
-        if(a.length != b.length) {
+        if (a.length != b.length) {
             throw new IllegalArgumentException("Mismatched vector dimensions");
         }
 
@@ -62,8 +62,9 @@ public class Matrix implements Operable {
 
     /**
      * Gets a vector from a matrix
+     *
      * @param location edge location of the vector
-     * @param v vertical or horizontal
+     * @param v        vertical or horizontal
      * @return
      */
     @Override
@@ -72,13 +73,13 @@ public class Matrix implements Operable {
 
         for (int i = 0; i < this.values.length; i++) {
             for (int j = 0; j < this.values[i].length; j++) {
-                if(v){
-                    if(j != location){
+                if (v) {
+                    if (j != location) {
                         continue;
                     }
                     group[i] = this.values[i][j];
-                }else{
-                    if(i != location){
+                } else {
+                    if (i != location) {
                         continue;
                     }
                     group[j] = this.values[i][j];
@@ -94,9 +95,9 @@ public class Matrix implements Operable {
     public Operable add(Operable other) {
         Operable[][] newValues = this.getValues().clone();
 
-        if(other instanceof OperableDouble d){
-            for(int i = 0; i < newValues.length; i++){
-                for(int j = 0; j < newValues.length; j++){
+        if (other instanceof OperableDouble d) {
+            for (int i = 0; i < newValues.length; i++) {
+                for (int j = 0; j < newValues.length; j++) {
                     Operable o = newValues[i][j];
                     newValues[i][j] = o.add(d);
                 }
@@ -104,14 +105,14 @@ public class Matrix implements Operable {
             return new Matrix(newValues);
         }
 
-        if(other instanceof Matrix m){
+        if (other instanceof Matrix m) {
             Operable[][] otherValues = m.getValues();
-            if(!Arrays.equals(this.getDimension(), other.getDimension())){
+            if (!Arrays.equals(this.getDimension(), other.getDimension())) {
                 throw new IllegalArgumentException("Mismatched matrix dimensions");
             }
 
-            for(int i = 0; i < newValues.length; i++){
-                for(int j = 0; j < newValues.length; j++){
+            for (int i = 0; i < newValues.length; i++) {
+                for (int j = 0; j < newValues.length; j++) {
                     Operable o = newValues[i][j];
                     newValues[i][j] = o.add(otherValues[i][j]);
                 }
