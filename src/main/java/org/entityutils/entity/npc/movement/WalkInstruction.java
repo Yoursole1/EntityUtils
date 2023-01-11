@@ -10,7 +10,7 @@ public class WalkInstruction implements Instruction {
     Vector3 b; //point B
     int steps; //steps per block
 
-    public WalkInstruction(Vector3 a, Vector3 b, int steps){
+    public WalkInstruction(Vector3 a, Vector3 b, int steps) {
         this.a = a;
         this.b = b;
         this.steps = steps;

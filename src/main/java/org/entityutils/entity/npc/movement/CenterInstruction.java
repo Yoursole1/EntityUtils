@@ -11,7 +11,7 @@ public class CenterInstruction implements Instruction {
 
     private final Vector3 currentLocation;
 
-    public CenterInstruction(Vector3 currentLocation){
+    public CenterInstruction(Vector3 currentLocation) {
         this.currentLocation = currentLocation;
     }
 

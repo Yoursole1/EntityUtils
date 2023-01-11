@@ -1,15 +1,15 @@
 package org.entityutils.entity.npc.movement;
 
 import org.entityutils.utils.math.MathUtils;
-import org.entityutils.utils.math.linearAlg.Math3D.Matrix3;
-import org.entityutils.utils.math.linearAlg.Math3D.Vector3;
 import org.entityutils.utils.math.function.Quadratic;
 import org.entityutils.utils.math.function.QuadraticBuilder;
+import org.entityutils.utils.math.linearAlg.Math3D.Matrix3;
+import org.entityutils.utils.math.linearAlg.Math3D.Vector3;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class JumpInstruction implements Instruction{
+public class JumpInstruction implements Instruction {
 
     /**
      * @param offset the location to move to (relative)
@@ -21,7 +21,8 @@ public class JumpInstruction implements Instruction{
 
 
     private final Vector3 offset;
-    public JumpInstruction(Vector3 offset, int steps){
+
+    public JumpInstruction(Vector3 offset, int steps) {
         this.offset = offset;
 
         this.xDist = new Vector3(this.offset.getX(), 0, this.offset.getZ()).magnitude();
@@ -39,11 +40,11 @@ public class JumpInstruction implements Instruction{
         double angle = -Math.PI / 2D + Math.atan2(this.offset.getX(), this.offset.getZ());
 
         // Calculate the sine and cosine of the angle
-        double sin =  Math.sin(angle);
-        double cos =  Math.cos(angle);
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
 
         // Create a rotation matrix to rotate the movement vectors
-        Matrix3 rotationMatrix = new Matrix3(new double[][] {
+        Matrix3 rotationMatrix = new Matrix3(new double[][]{
                 {cos, 0, sin},
                 {0, 1, 0},
                 {-sin, 0, cos}
@@ -54,7 +55,7 @@ public class JumpInstruction implements Instruction{
 
         // Loop through the steps
         double x = 0;
-        for(double i = 0; i < this.steps; i++) {
+        for (double i = 0; i < this.steps; i++) {
             // Evaluate the quadratic equation at the current and next x values
             double currY = this.q.evaluate(x);
             double nextY = this.q.evaluate(x + xDiff);
@@ -73,7 +74,7 @@ public class JumpInstruction implements Instruction{
 
         // Correct floating point error by summing the movement vectors and adjusting the final vector
         Vector3 sum = new Vector3(0, 0, 0);
-        for(Vector3 vec : movementVectors){
+        for (Vector3 vec : movementVectors) {
             sum.add(vec);
         }
         double err = sum.getY() - this.offset.getY();

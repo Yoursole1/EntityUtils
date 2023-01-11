@@ -1,9 +1,7 @@
 package org.entityutils.entity.decoration;
 
-import io.papermc.paper.adventure.AdventureComponent;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;

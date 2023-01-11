@@ -66,7 +66,7 @@ public class PacketUtils {
     }
 
 
-    public static void fixDirtyField(SynchedEntityData watcher){
+    public static void fixDirtyField(SynchedEntityData watcher) {
         try {
             Field dirty = watcher.getClass().getDeclaredField("g");
             dirty.setAccessible(true);
@@ -75,7 +75,7 @@ public class PacketUtils {
             Field items = watcher.getClass().getDeclaredField("e");
             items.setAccessible(true);
             Int2ObjectMap<SynchedEntityData.DataItem<?>> data = (Int2ObjectMap<SynchedEntityData.DataItem<?>>) items.get(watcher);
-            for (SynchedEntityData.DataItem<?> datum : data.values()){
+            for (SynchedEntityData.DataItem<?> datum : data.values()) {
                 datum.setDirty(true);
             }
 

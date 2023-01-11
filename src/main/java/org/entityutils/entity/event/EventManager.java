@@ -11,7 +11,7 @@ import org.entityutils.entity.npc.NPCManager;
 public class EventManager implements Listener {
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
+    public void onPlayerJoin(PlayerJoinEvent e) {
         NPCManager.getInstance().onPlayerJoin(e);
     }
 
@@ -21,12 +21,12 @@ public class EventManager implements Listener {
     }
 
     @EventHandler
-    public void onChunkLoad(ChunkLoadEvent e){
+    public void onChunkLoad(ChunkLoadEvent e) {
         NPCManager.getInstance().onChunkLoad(e);
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e){
+    public void onPlayerMove(PlayerMoveEvent e) {
         NPCManager.getInstance().onPlayerMove(e);
     }
 }

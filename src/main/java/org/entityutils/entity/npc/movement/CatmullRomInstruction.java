@@ -10,25 +10,25 @@ import java.util.List;
 
 public class CatmullRomInstruction implements Instruction {
 
-    private static final double tension = 1D/2;
+    private static final double tension = 1D / 2;
 
     private static final Matrix catmullMatrix = new Matrix(new Operable[][]{
             {new OperableDouble(0), new OperableDouble(1), new OperableDouble(0), new OperableDouble(0)},
             {new OperableDouble(-tension), new OperableDouble(0), new OperableDouble(tension), new OperableDouble(0)},
-            {new OperableDouble(2*tension), new OperableDouble(tension - 3), new OperableDouble(3 - 2*tension), new OperableDouble(-tension)},
+            {new OperableDouble(2 * tension), new OperableDouble(tension - 3), new OperableDouble(3 - 2 * tension), new OperableDouble(-tension)},
             {new OperableDouble(-tension), new OperableDouble(2 - tension), new OperableDouble(tension - 2), new OperableDouble(tension)}
     });
 
     private final List<Node> nodes;
-    private int stepsPerNode;
     private final int pathLength; //not needed, just clarity
+    private final int stepsPerNode;
 
 
-    public CatmullRomInstruction(List<Node> nodes, int stepsPerNode){
+    public CatmullRomInstruction(List<Node> nodes, int stepsPerNode) {
         //ensure all nodes are on the same Y level
         boolean isValid = nodes.stream().map(Node::getY).allMatch(n -> n == nodes.get(0).getY());
 
-        if(!isValid){
+        if (!isValid) {
             throw new IllegalArgumentException("Nodes must be on the same Y level");
         }
         this.stepsPerNode = stepsPerNode;
@@ -44,10 +44,10 @@ public class CatmullRomInstruction implements Instruction {
                 )
                 .toNode(this.nodes.get(0).getWorld());
 
-        Node end = this.nodes.get(this.nodes.size()-1).toVector3()
+        Node end = this.nodes.get(this.nodes.size() - 1).toVector3()
                 .multiply(2)
                 .add(
-                        this.nodes.get(this.nodes.size()-1).toVector3().multiply(-1)
+                        this.nodes.get(this.nodes.size() - 1).toVector3().multiply(-1)
                 )
                 .toNode(this.nodes.get(0).getWorld());
 
@@ -73,10 +73,10 @@ public class CatmullRomInstruction implements Instruction {
 
             Operable evaluation = CatmullRomInstruction.catmullMatrix.multiply(pointMatrix);
 
-            for (double j = 0; j < 1 - 1D/this.stepsPerNode; j += 1D/this.stepsPerNode) {
+            for (double j = 0; j < 1 - 1D / this.stepsPerNode; j += 1D / this.stepsPerNode) {
                 Matrix independent = new Matrix(new Operable[][]{
                         {
-                            new OperableDouble(1D),
+                                new OperableDouble(1D),
                                 new OperableDouble(j),
                                 new OperableDouble(Math.pow(j, 2)),
                                 new OperableDouble(Math.pow(j, 3))
@@ -86,7 +86,7 @@ public class CatmullRomInstruction implements Instruction {
                 Matrix dependant = (Matrix) independent.multiply(evaluation);
                 //dependant should be a 1x3 Matrix (Point)
 
-                double nxt = j + 1D/this.stepsPerNode;
+                double nxt = j + 1D / this.stepsPerNode;
 
                 independent = new Matrix(new Operable[][]{
                         {

@@ -6,10 +6,10 @@ import java.util.List;
 
 /**
  * Teleports the NPC
- *
+ * <p>
  * Might not work well with the current Instruction system
  */
-public class TeleportInstruction implements Instruction{
+public class TeleportInstruction implements Instruction {
     @Override
     public List<Vector3> generateMovementVectors() {
         return null;

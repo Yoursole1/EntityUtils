@@ -60,6 +60,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
 
     /**
      * Show or hide from all players
+     *
      * @param alive alive?
      */
     @Override
@@ -86,7 +87,8 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
      * Sets the NPC as viewable and interact-able for the given player
      * This function also calls init() to set up the NPC info if the ServerPlayer
      * object is null (AKA not created yet)
-     * @param p the player to change the alive state for
+     *
+     * @param p     the player to change the alive state for
      * @param alive alive?
      */
     @Override
@@ -129,8 +131,8 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     }
 
 
-    public void setAlive2(org.bukkit.entity.Player p, boolean alive){
-        this.setAlive(((CraftPlayer)p).getHandle(), alive);
+    public void setAlive2(org.bukkit.entity.Player p, boolean alive) {
+        this.setAlive(((CraftPlayer) p).getHandle(), alive);
     }
 
     /**
@@ -161,6 +163,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     /**
      * This is both a setter and an updater
      * TODO remove call to refresh by updating this with the correct packets
+     *
      * @param show show name?
      */
     @Override
@@ -175,6 +178,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
      * Note that the NPC flashes when it gets to the new location because
      * it is refreshed
      * TODO make the teleportation use ClientboundTeleportEntityPacket so there is no flash
+     *
      * @param location location to teleport the NPC to
      */
     @Override
@@ -194,10 +198,11 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
      * above the NPC's name text.  This text can be used to display
      * NPC status, extra information, or more.  The extra text is an
      * invisible armorstand, created with the HologramEntity class
-     *
+     * <p>
      * Note that the refresh call to the HologramEntity is not a problem
      * here because the flicker created by using refresh is expected when
      * updating the name.
+     *
      * @param text the text to show over the NPC
      */
     @Override
@@ -227,7 +232,8 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
      * is special.  If you have a vector and want the NPC to face that way my suggestion
      * is to make look at the #setDirection(Vector) method in the Bukkit Location class,
      * which has the minecraft calculation for pitch and yaw.
-     * @param yaw minecraft yaw
+     *
+     * @param yaw   minecraft yaw
      * @param pitch minecraft pitch
      */
     @Override
@@ -235,7 +241,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.state.setYaw(yaw);
         this.state.setPitch(pitch);
 
-        if(this.state.getNpc() != null){
+        if (this.state.getNpc() != null) {
             List<Packet<?>> packets = new ArrayList<>();
 
             packets.add(new ClientboundRotateHeadPacket(this.state.getNpc(), (byte) ((this.state.getYaw() % 360) * 256 / 360)));

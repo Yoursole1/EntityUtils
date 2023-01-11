@@ -12,8 +12,6 @@ public class CatmullRomPath extends AbstractPath {
     public List<Instruction> generateInstructions(int ticksPerBlock) {
 
 
-
-
         return null;
     }
 }

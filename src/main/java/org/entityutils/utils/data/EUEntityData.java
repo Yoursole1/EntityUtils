@@ -16,6 +16,7 @@ public interface EUEntityData extends Serializable, Cloneable {
     /**
      * Slow method, uses reflection D:
      * TODO test
+     *
      * @return
      */
     default Map<String, Object> toDatabaseFormat() {
@@ -23,13 +24,13 @@ public interface EUEntityData extends Serializable, Cloneable {
 
         Class<? extends EUEntityData> thisClass = this.getClass();
 
-        for (Field f : thisClass.getFields()){
-            try{
+        for (Field f : thisClass.getFields()) {
+            try {
 
                 Object fVal = f.get(this);
                 database.put(f.getName(), fVal);
 
-            }catch (IllegalAccessException e){
+            } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
 

@@ -67,6 +67,7 @@ public class Node {
     @Setter
     //Only null if starting node
     private Node parent;
+
     public Node(Location loc) {
         this.x = loc.getBlockX();
         this.y = loc.getBlockY();
@@ -280,13 +281,13 @@ public class Node {
 
         AbstractPath p = null;
 
-        if(type == HardPath.class){
+        if (type == HardPath.class) {
             p = new HardPath();
         } else if (type == CatmullRomPath.class) {
             p = new CatmullRomPath();
         }
 
-        if(p == null){
+        if (p == null) {
             throw new IllegalStateException("PathType does not match");
         }
 
@@ -372,7 +373,7 @@ public class Node {
         );
     }
 
-    public Vector3 toVector3(){
+    public Vector3 toVector3() {
         return new Vector3(this.x, this.y, this.z);
     }
 

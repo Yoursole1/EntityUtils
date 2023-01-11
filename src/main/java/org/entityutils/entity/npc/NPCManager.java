@@ -44,7 +44,7 @@ public class NPCManager {
 
 
     public void onChunkLoad(ChunkLoadEvent e) {
-        for(NPC npc : this.registeredNPCs){
+        for (NPC npc : this.registeredNPCs) {
             if (isInsideChunk(npc.getData().getLocation(), e.getChunk())) {
                 npc.refresh();
             }
@@ -52,7 +52,7 @@ public class NPCManager {
     }
 
     public void onPlayerJoin(PlayerJoinEvent e) {
-        for(NPC npc : this.registeredNPCs){
+        for (NPC npc : this.registeredNPCs) {
             if (!(npc.getData().getViewers().contains(e.getPlayer().getUniqueId()))) return;
 
             PacketUtils.sendPackets(npc.getData().generateStatePackets(), ((CraftPlayer) e.getPlayer()).getHandle());
@@ -61,7 +61,7 @@ public class NPCManager {
     }
 
     public void onPlayerMove(PlayerMoveEvent e) {
-        for(NPC npc : this.registeredNPCs){
+        for (NPC npc : this.registeredNPCs) {
 
             if (!npc.getData().isHeadTrack()) return;
             if (!npc.getData().getLocation().getWorld().equals(e.getPlayer().getWorld())) return;

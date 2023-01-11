@@ -12,7 +12,7 @@ public record Pathfinder(Node starting, Node ending) {
 
     /**
      * @return an optimal path using A* pathfinding
-     *
+     * <p>
      * The A* pathfinding algorithm is used to find the shortest path between the starting and ending nodes.
      * The `MAX_DEPTH` variable is used as a stopping condition to prevent the algorithm from running indefinitely.
      * If a path is found, it is returned, otherwise `null` is returned to indicate that no path could be found.

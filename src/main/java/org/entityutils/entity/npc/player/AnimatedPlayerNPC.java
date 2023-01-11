@@ -14,8 +14,8 @@ import org.bukkit.util.Vector;
 import org.entityutils.EntityUtilsPlugin;
 import org.entityutils.entity.npc.EntityAnimation;
 import org.entityutils.entity.npc.movement.Instruction;
-import org.entityutils.entity.pathfind.Node;
 import org.entityutils.entity.pathfind.AbstractPath;
+import org.entityutils.entity.pathfind.Node;
 import org.entityutils.entity.pathfind.Pathfinder;
 import org.entityutils.utils.PacketUtils;
 import org.entityutils.utils.math.MathUtils;
@@ -34,22 +34,23 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
     // coefficients of the derivative of the vertical jump quadratic
     // which was originally c*(-(x-1)^2 + 1)
-    private static final double a = -1/1.2D; //slope term
-    private static final double b = 1/1.2D; //y intercept
+    private static final double a = -1 / 1.2D; //slope term
+    private static final double b = 1 / 1.2D; //y intercept
+    /**
+     * Walk with pathfinding
+     *
+     * @param location
+     */
+    private boolean locked;
 
     public AnimatedPlayerNPC(String name, Location loc, JavaPlugin plugin) {
         super(name, loc, plugin);
         this.locked = false;
     }
 
-    /**
-     * Walk with pathfinding
-     * @param location
-     */
-    private boolean locked;
     @Override
     public AbstractPath goTo(Location location, int speed) {
-        if(this.locked){
+        if (this.locked) {
             return null;
         }
         this.locked = true;
@@ -59,7 +60,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         AbstractPath toWalk = new Pathfinder(starting, ending).getPath();
 
-        if(toWalk == null){
+        if (toWalk == null) {
             return null;
         }
 
@@ -71,7 +72,6 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
     }
 
     /**
-     *
      * @param directionBias y is ignored because this is a direction for the jump to "move" in
      */
     public void jump(Vector3 directionBias) {
@@ -86,7 +86,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
         double evaluationRange = derivativeRoot * 2;
 
         for (double i = 0; i <= evaluationRange; i += (2D / stepsPerBlock)) {
-            magnitudes.add(new Vector3(directionBias.getX() / stepsPerBlock, (i * a) + b ,directionBias.getZ() / stepsPerBlock));
+            magnitudes.add(new Vector3(directionBias.getX() / stepsPerBlock, (i * a) + b, directionBias.getZ() / stepsPerBlock));
             i = MathUtils.correctFloatingPoint(i);
         }
 
@@ -95,10 +95,10 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
     }
 
 
-    public void executeMovementInstructions(List<Instruction> asm, int speed){
+    public void executeMovementInstructions(List<Instruction> asm, int speed) {
         List<Vector3> vectors = new ArrayList<>();
 
-        for(Instruction ins : asm){
+        for (Instruction ins : asm) {
             vectors.addAll(ins.generateMovementVectors());
         }
 
@@ -106,12 +106,12 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
     }
 
 
-    private void executeMovementVectors(List<Vector3> movement, int speed){
+    private void executeMovementVectors(List<Vector3> movement, int speed) {
         final int[] i = {0};
-        new BukkitRunnable(){
+        new BukkitRunnable() {
             @Override
-            public void run(){
-                if(i[0] >= movement.size() - 1){
+            public void run() {
+                if (i[0] >= movement.size() - 1) {
                     locked = false;
                     this.cancel();
                 }
@@ -120,10 +120,10 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
                 i[0]++;
             }
-        }.runTaskTimer(EntityUtilsPlugin.getInstance(), 0, 100/speed);
+        }.runTaskTimer(EntityUtilsPlugin.getInstance(), 0, 100 / speed);
     }
 
-    private void moveOffset(Vector3 offset){ //movement distance should be less than 8
+    private void moveOffset(Vector3 offset) { //movement distance should be less than 8
 
         List<Packet<?>> packets = new ArrayList<>();
 
@@ -133,9 +133,9 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         packets.add(new ClientboundMoveEntityPacket.Pos(
                 this.getID(),
-                (short)Math.floor(offset.getX() * 32 * 128),
-                (short)Math.floor(offset.getY() * 32 * 128),
-                (short)Math.floor(offset.getZ() * 32 * 128),
+                (short) Math.floor(offset.getX() * 32 * 128),
+                (short) Math.floor(offset.getY() * 32 * 128),
+                (short) Math.floor(offset.getZ() * 32 * 128),
                 true)
         );
 
@@ -143,9 +143,9 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         packets.add(new ClientboundMoveEntityPacket.Pos(
                 this.getData().getStand().getState().getHologram().getId(),
-                (short)Math.floor(offset.getX() * 32 * 128),
-                (short)Math.floor(offset.getY() * 32 * 128),
-                (short)Math.floor(offset.getZ() * 32 * 128),
+                (short) Math.floor(offset.getX() * 32 * 128),
+                (short) Math.floor(offset.getY() * 32 * 128),
+                (short) Math.floor(offset.getZ() * 32 * 128),
                 true)
         );
 

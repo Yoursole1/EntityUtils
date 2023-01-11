@@ -61,7 +61,7 @@ public class Vector3 {
         return out;
     }
 
-    public double get(int index){
+    public double get(int index) {
         return (index == 0) ? x : (index == 1) ? y : (index == 2) ? z : Double.MIN_VALUE;
     }
 
@@ -70,7 +70,7 @@ public class Vector3 {
     }
 
     // This method returns the angle between this vector and another vector in radians
-    public double angleRad(Vector3 other){
+    public double angleRad(Vector3 other) {
         // Calculate the dot product of the two vectors
         double dotProd = this.dot(other);
 
@@ -80,14 +80,14 @@ public class Vector3 {
 
         // Return the arc-cosine of the dot product of the vectors divided by the product of their magnitudes
         // This is used to calculate the angle between the two vectors because the dot product of two vectors is equal to the product of their magnitudes times the cosine of the angle between them
-        return Math.acos(dotProd/ (magA * magB));
+        return Math.acos(dotProd / (magA * magB));
     }
 
-    public double dot(Vector3 other){
+    public double dot(Vector3 other) {
         return this.x * other.x + this.y * other.y + this.z * other.z;
     }
 
-    public Vector3 cross(Vector3 other){
+    public Vector3 cross(Vector3 other) {
         double a = this.y * other.z - this.z * other.y;
         double b = this.z * other.x - this.x * other.z;
         double c = this.x * other.y - this.y * other.x;
@@ -119,7 +119,7 @@ public class Vector3 {
         return this.distance(new Vector3(0, 0, 0));
     }
 
-    public Location toLocation(World world){
+    public Location toLocation(World world) {
         return new Location(world, this.x, this.y, this.z);
     }
 
@@ -145,11 +145,11 @@ public class Vector3 {
         return Math.abs(x);
     }
 
-    public Node toNode(World world){
+    public Node toNode(World world) {
         return new Node(new Location(world, this.x, this.y, this.z));
     }
 
-    public Matrix toMatrix(){
+    public Matrix toMatrix() {
         return new Matrix(new Operable[][]{
                 {new OperableDouble(this.x)},
                 {new OperableDouble(this.y)},
@@ -158,7 +158,7 @@ public class Vector3 {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "(" + this.x + ", " + this.y + ", " + this.z + ")";
     }
 

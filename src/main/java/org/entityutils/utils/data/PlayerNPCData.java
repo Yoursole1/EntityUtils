@@ -17,8 +17,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.entityutils.entity.npc.player.SkinLayer;
 import org.entityutils.utils.PacketUtils;
 
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -56,7 +58,6 @@ public class PlayerNPCData extends AbstractNPCData {
         //update the isDirty field so that this can be repacked
         PacketUtils.fixDirtyField(watcher);
         packets.add(new ClientboundSetEntityDataPacket(this.getNpc().getId(), Objects.requireNonNull(watcher.packDirty())));
-
 
 
         return packets;
