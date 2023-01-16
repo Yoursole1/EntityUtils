@@ -6,6 +6,7 @@ import org.entityutils.utils.math.linearAlg.Matrix;
 import org.entityutils.utils.math.linearAlg.Operable;
 import org.entityutils.utils.math.linearAlg.OperableDouble;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CatmullRomInstruction implements Instruction {
@@ -58,6 +59,8 @@ public class CatmullRomInstruction implements Instruction {
     @Override
     public List<Vector3> generateMovementVectors() {
 
+        List<Vector3> outputVectors = new ArrayList<>();
+
         for (int i = 1; i < this.pathLength - 1; i++) { //i = 1 to start on second element
             Matrix p0 = this.nodes.get(i - 1).toVector3().toMatrix();
             Matrix p1 = this.nodes.get(i).toVector3().toMatrix();
@@ -99,11 +102,36 @@ public class CatmullRomInstruction implements Instruction {
 
                 Matrix dependant2 = (Matrix) independent.multiply(evaluation);
 
+                if(!
+                (dependant.getValues()[0][0] instanceof OperableDouble ||
+                        dependant.getValues()[1][0] instanceof OperableDouble ||
+                        dependant.getValues()[2][0] instanceof OperableDouble ||
+                        dependant2.getValues()[0][0] instanceof OperableDouble ||
+                        dependant2.getValues()[1][0] instanceof OperableDouble ||
+                        dependant2.getValues()[2][0] instanceof OperableDouble)
+                ){
+                    throw new IllegalStateException("dependant and dependant2 should be 1x3 matrices of doubles");
+                }
+
+                Vector3 vDependant = new Vector3(
+                        ((OperableDouble)dependant.getValues()[0][0]).getValue(),
+                        ((OperableDouble)dependant.getValues()[1][0]).getValue(),
+                        ((OperableDouble)dependant.getValues()[2][0]).getValue()
+                );
+
+                Vector3 vDependant2 = new Vector3(
+                        ((OperableDouble)dependant2.getValues()[0][0]).getValue(),
+                        ((OperableDouble)dependant2.getValues()[1][0]).getValue(),
+                        ((OperableDouble)dependant2.getValues()[2][0]).getValue()
+                );
+
                 //lerp between dependant and dependant2
+                WalkInstruction ins = new WalkInstruction(vDependant, vDependant2, this.stepsPerNode);
+                outputVectors.addAll(ins.generateMovementVectors());
             }
         }
 
 
-        return null;
+        return outputVectors;
     }
 }
