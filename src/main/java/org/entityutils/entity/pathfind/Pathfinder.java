@@ -32,7 +32,7 @@ public record Pathfinder(Node starting, Node ending) {
             closed.add(current); // Add the current node to the closed list
 
             if (current.nodeEquals(this.ending)) { // If we have reached the ending node
-                return current.getPath(HardPath.class); // Return the path leading to the ending node
+                return current.getPath(CatmullRomPath.class); // Return the path leading to the ending node
             }
 
             // Consider each neighboring node of the current node
