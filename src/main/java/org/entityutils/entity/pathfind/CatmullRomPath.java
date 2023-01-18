@@ -39,6 +39,11 @@ public class CatmullRomPath extends AbstractPath {
             instructions.add(new JumpInstruction(offset, 8));
         }
 
+        //do finally sort of pattern
+        if(linkedNodesCatmull.size() != 0) {
+            instructions.add(new CatmullRomInstruction(linkedNodesCatmull, 8));
+        }
+
         return instructions;
     }
 }
