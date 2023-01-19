@@ -1,7 +1,7 @@
 package org.entityutils.utils.math.linearAlg;
 
 
-public interface Operable {
+public interface Operable extends Cloneable {
 
     Operable add(Operable other);
 

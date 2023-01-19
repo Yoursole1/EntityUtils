@@ -97,7 +97,7 @@ public class Matrix implements Operable {
 
         if (other instanceof OperableDouble d) {
             for (int i = 0; i < newValues.length; i++) {
-                for (int j = 0; j < newValues.length; j++) {
+                for (int j = 0; j < newValues[i].length; j++) {
                     Operable o = newValues[i][j];
                     newValues[i][j] = o.add(d);
                 }
@@ -112,7 +112,7 @@ public class Matrix implements Operable {
             }
 
             for (int i = 0; i < newValues.length; i++) {
-                for (int j = 0; j < newValues.length; j++) {
+                for (int j = 0; j < newValues[i].length; j++) {
                     Operable o = newValues[i][j];
                     newValues[i][j] = o.add(otherValues[i][j]);
                 }
@@ -127,5 +127,20 @@ public class Matrix implements Operable {
     @Override
     public String toString() {
         return Arrays.deepToString(this.getValues());
+    }
+
+
+    @Override
+    public Object clone(){
+        Matrix m;
+
+        try {
+            m = (Matrix) super.clone();
+        } catch (CloneNotSupportedException e) {
+            m = new Matrix(this.getValues().clone());
+        }
+
+        m.values = this.getValues().clone();
+        return m;
     }
 }

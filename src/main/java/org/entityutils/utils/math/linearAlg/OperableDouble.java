@@ -3,6 +3,8 @@ package org.entityutils.utils.math.linearAlg;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
+
 public class OperableDouble implements Operable {
 
     @Getter
@@ -49,9 +51,10 @@ public class OperableDouble implements Operable {
     @Override
     public Operable multiply(Operable other) {
         if (other instanceof Matrix q) {
-            Matrix m = new Matrix(q.getValues());
+            Matrix m = new Matrix(q.getValues().clone());
 
-            Operable[][] values = m.getValues();
+            Operable[][] values = deepCopy(m.getValues());
+
             for (int i = 0; i < values.length; i++) {
                 for (int j = 0; j < values[i].length; j++) {
                     values[i][j] = this.multiply(values[i][j]);
@@ -66,6 +69,10 @@ public class OperableDouble implements Operable {
         }
 
         throw new IllegalStateException("No operable of type :" + other.getClass().getName());
+    }
+
+    private <T> T[][] deepCopy(T[][] matrix) {
+        return java.util.Arrays.stream(matrix).map(el -> el.clone()).toArray($ -> matrix.clone());
     }
 
     @Override
@@ -84,5 +91,11 @@ public class OperableDouble implements Operable {
     @Override
     public String toString() {
         return String.valueOf(this.value);
+    }
+
+
+    @Override
+    public Object clone(){
+        return new OperableDouble(this.value);
     }
 }

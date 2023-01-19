@@ -114,6 +114,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
                 if (i[0] >= movement.size() - 1) {
                     locked = false;
                     this.cancel();
+                    return;
                 }
 
                 moveOffset(movement.get(i[0]));
@@ -141,13 +142,15 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
         this.setDirection((float) yaw, (float) pitch);
 
-        packets.add(new ClientboundMoveEntityPacket.Pos(
-                this.getData().getStand().getState().getHologram().getId(),
-                (short) Math.floor(offset.getX() * 32 * 128),
-                (short) Math.floor(offset.getY() * 32 * 128),
-                (short) Math.floor(offset.getZ() * 32 * 128),
-                true)
-        );
+        if(this.getData().getStand().getState().getHologram() != null){
+            packets.add(new ClientboundMoveEntityPacket.Pos(
+                    this.getData().getStand().getState().getHologram().getId(),
+                    (short) Math.floor(offset.getX() * 32 * 128),
+                    (short) Math.floor(offset.getY() * 32 * 128),
+                    (short) Math.floor(offset.getZ() * 32 * 128),
+                    true)
+            );
+        }
 
         PacketUtils.sendPackets(packets, this.getData().getViewers());
 
@@ -177,11 +180,14 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
                         )
                 )
         );
-        this.getData().getStand().getState().getHologram().setPos(
-                this.getData().getStand().getState().getLocation().getX() + offset.getX(),
-                MathUtils.correctFloatingPoint(this.getData().getStand().getState().getLocation().getY() + offset.getY()),
-                this.getData().getStand().getState().getLocation().getZ() + offset.getZ()
-        );
+
+        if(this.getData().getStand().getState().getHologram() != null){
+            this.getData().getStand().getState().getHologram().setPos(
+                    this.getData().getStand().getState().getLocation().getX() + offset.getX(),
+                    MathUtils.correctFloatingPoint(this.getData().getStand().getState().getLocation().getY() + offset.getY()),
+                    this.getData().getStand().getState().getLocation().getZ() + offset.getZ()
+            );
+        }
 
         double y = this.getData().getLocation().getY();
         y = MathUtils.correctFloatingPoint(y);

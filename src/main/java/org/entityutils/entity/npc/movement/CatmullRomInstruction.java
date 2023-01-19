@@ -103,26 +103,26 @@ public class CatmullRomInstruction implements Instruction {
                 Matrix dependant2 = (Matrix) independent.multiply(evaluation);
 
                 if(!
-                (dependant.getValues()[0][0] instanceof OperableDouble ||
-                        dependant.getValues()[1][0] instanceof OperableDouble ||
-                        dependant.getValues()[2][0] instanceof OperableDouble ||
-                        dependant2.getValues()[0][0] instanceof OperableDouble ||
-                        dependant2.getValues()[1][0] instanceof OperableDouble ||
-                        dependant2.getValues()[2][0] instanceof OperableDouble)
+                (((Matrix)(dependant.getValues()[0][0])).getValues()[0][0] instanceof OperableDouble ||
+                        ((Matrix)(dependant.getValues()[0][0])).getValues()[1][0] instanceof OperableDouble ||
+                        ((Matrix)(dependant.getValues()[0][0])).getValues()[2][0] instanceof OperableDouble ||
+                        ((Matrix)(dependant2.getValues()[0][0])).getValues()[0][0] instanceof OperableDouble ||
+                        ((Matrix)(dependant2.getValues()[0][0])).getValues()[1][0] instanceof OperableDouble ||
+                        ((Matrix)(dependant2.getValues()[0][0])).getValues()[2][0] instanceof OperableDouble)
                 ){
                     throw new IllegalStateException("dependant and dependant2 should be 1x3 matrices of doubles");
                 }
 
                 Vector3 vDependant = new Vector3(
-                        ((OperableDouble)dependant.getValues()[0][0]).getValue(),
-                        ((OperableDouble)dependant.getValues()[1][0]).getValue(),
-                        ((OperableDouble)dependant.getValues()[2][0]).getValue()
+                        ((OperableDouble)((Matrix)(dependant.getValues()[0][0])).getValues()[0][0]).getValue(),
+                        ((OperableDouble)((Matrix)(dependant.getValues()[0][0])).getValues()[1][0]).getValue(),
+                        ((OperableDouble)((Matrix)(dependant.getValues()[0][0])).getValues()[2][0]).getValue()
                 );
 
                 Vector3 vDependant2 = new Vector3(
-                        ((OperableDouble)dependant2.getValues()[0][0]).getValue(),
-                        ((OperableDouble)dependant2.getValues()[1][0]).getValue(),
-                        ((OperableDouble)dependant2.getValues()[2][0]).getValue()
+                        ((OperableDouble)((Matrix)(dependant2.getValues()[0][0])).getValues()[0][0]).getValue(),
+                        ((OperableDouble)((Matrix)(dependant2.getValues()[0][0])).getValues()[1][0]).getValue(),
+                        ((OperableDouble) ((Matrix)(dependant2.getValues()[0][0])).getValues()[2][0]).getValue()
                 );
 
                 //lerp between dependant and dependant2
