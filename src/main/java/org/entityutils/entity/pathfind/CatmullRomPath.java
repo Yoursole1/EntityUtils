@@ -30,7 +30,7 @@ public class CatmullRomPath extends AbstractPath {
 
             //save current catmull path and add a jump instruction
             if(linkedNodesCatmull.size() != 0){
-                instructions.add(new CatmullRomInstruction(linkedNodesCatmull, 4));
+                instructions.add(new CatmullRomInstruction(linkedNodesCatmull, 2));
                 linkedNodesCatmull = new LinkedList<>();
             }
 
@@ -41,7 +41,7 @@ public class CatmullRomPath extends AbstractPath {
 
         //do finally sort of pattern
         if(linkedNodesCatmull.size() != 0) {
-            instructions.add(new CatmullRomInstruction(linkedNodesCatmull, 4));
+            instructions.add(new CatmullRomInstruction(linkedNodesCatmull, 2));
         }
 
         return instructions;

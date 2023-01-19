@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CatmullRomInstruction implements Instruction {
 
-    private static final double tension = 1D / 2;
+    private static final double tension = 1D / 1.2;
 
     private static final Matrix catmullMatrix = new Matrix(new Operable[][]{
             {new OperableDouble(0), new OperableDouble(1), new OperableDouble(0), new OperableDouble(0)},
@@ -76,7 +76,7 @@ public class CatmullRomInstruction implements Instruction {
 
             Operable evaluation = CatmullRomInstruction.catmullMatrix.multiply(pointMatrix);
 
-            for (double j = 0; j < 1 - 1D / this.stepsPerNode; j += 1D / this.stepsPerNode) {
+            for (double j = 0; j <= 1 - 1D / this.stepsPerNode; j += 1D / this.stepsPerNode) {
                 Matrix independent = new Matrix(new Operable[][]{
                         {
                                 new OperableDouble(1D),

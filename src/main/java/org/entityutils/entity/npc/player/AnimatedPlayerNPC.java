@@ -107,6 +107,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
 
     private void executeMovementVectors(List<Vector3> movement, int speed) {
+
         final int[] i = {0};
         new BukkitRunnable() {
             @Override
