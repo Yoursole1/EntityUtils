@@ -8,7 +8,7 @@ A papermc plugin that adds various quality of life features for entities.
 EntityUtils is broken into two main packages: an entity package and a utils package (pun intended!).  
 The entity package contains the code for creating, managing, and modifying entities, while the utils package
 contains more general utilities that most entities need, like a packet listener, data classes, math utilities, 
-and custom event classes.  In a future update the math utilities should be replaced with [MathUtils]    (https://github.com/Yoursole1/MathUtils), 
+and custom event classes.  In a future update the math utilities should be replaced with [MathUtils] (https://github.com/Yoursole1/MathUtils), 
 a more polished version created for more than just this project.  
 
 # Features
