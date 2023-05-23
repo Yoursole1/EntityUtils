@@ -13,7 +13,7 @@ a more polished version created for more than just this project.
 
 # Features
 
-The main feature is an player-model NPC system.  This system includes managing static NPCs, teleporting, making the NPC headtrack, 
+The main feature is a player-model NPC system.  This system includes managing static NPCs, teleporting, making the NPC headtrack, 
 setting skins (with any combination of skin layers), and making the NPC walk, complete with custom pathfinding and animations.  
 The pathfinding is done with a slightly modified version of the A* algorithm, which works very well since minecraft is already seperated into nodes (blocks).  The pathfinding code is totally seperate from minecraft though, so in theory it could be moved to another java project successfully.  
 
