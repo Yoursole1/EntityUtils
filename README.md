@@ -1,5 +1,6 @@
 
 # Entity Utils
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
 A papermc plugin that adds various quality of life features for entities.  
 
@@ -22,11 +23,6 @@ Another feature is the hologram system, currently living on the hologram-board b
 # Getting Started
 
 Clone this repository and move the code into your project (no need to put it in a jar, I really don't care if you use it decompiled). Copy the code from the main class here into your plugins main class, making sure that all the event registration stuff is good to go. Now just make an instance of the static or animated PlayerNpc class you're good to go!
-
-
-## Badges
-
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
 
 ## Run Locally
 
