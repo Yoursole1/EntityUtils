@@ -40,7 +40,7 @@ public class PacketListener {
     public static void registerPlayer(Player player, JavaPlugin p) {
         if (players.contains(player)) return; // Return if the player is already registered
 
-        Channel c = ((ServerPlayer) (player)).connection.getConnection().channel; // Get the player's channel
+        Channel c = ((ServerPlayer) (player)).connection.connection.channel; // Get the player's channel
         c.pipeline().addAfter("decoder", "PacketListener", new MessageToMessageDecoder<ServerboundInteractPacket>() {
             @Override
             protected void decode(ChannelHandlerContext ctx, ServerboundInteractPacket packet, List<Object> out) {
@@ -60,8 +60,13 @@ public class PacketListener {
                 new BukkitRunnable() {
                     @Override
                     public void run() {
-                        ServerboundInteractPacket.ActionType action = packet.getActionType();
-                        Bukkit.getPluginManager().callEvent(new NPCClickEvent((org.bukkit.entity.Player) player.getBukkitEntity(), npc, action)); // Fire the NPCClickEvent
+                        Bukkit.getPluginManager().callEvent(
+                                new NPCClickEvent(
+                                        (org.bukkit.entity.Player) player.getBukkitEntity(),
+                                        npc,
+                                        packet.isAttack(),
+                                        packet.isUsingSecondaryAction())
+                        ); // Fire the NPCClickEvent
                     }
                 }.runTask(p);
 
@@ -74,7 +79,7 @@ public class PacketListener {
 
     public static void unRegisterPlayer(Player player) {
         try {
-            Channel c = ((ServerPlayer) (player)).connection.getConnection().channel;
+            Channel c = ((ServerPlayer) (player)).connection.connection.channel;
             c.pipeline().remove("PacketListener");
             players.remove(player);
         } catch (Exception ignored) {

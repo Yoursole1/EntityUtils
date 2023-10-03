@@ -16,7 +16,8 @@ public class NPCClickEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player player;
     private final NPC npc;
-    private final ServerboundInteractPacket.ActionType action;
+    private final boolean isAttack;
+    private final boolean isSecondaryAction; // sneaking TODO test
 
     public static HandlerList getHandlerList() {
         return NPCClickEvent.HANDLERS;
