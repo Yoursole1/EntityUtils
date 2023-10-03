@@ -16,7 +16,7 @@ public class NPCClickEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
     private final Player player;
     private final NPC npc;
-    private final boolean isAttack;
+    private final boolean isAttack; // Test if this means left click, I suspect it does though.  This would mean right click is !isAttack
     private final boolean isSecondaryAction; // sneaking TODO test
 
     public static HandlerList getHandlerList() {

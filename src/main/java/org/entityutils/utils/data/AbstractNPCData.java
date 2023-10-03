@@ -56,7 +56,7 @@ public abstract class AbstractNPCData implements EUEntityData {
 
         this.name = "new npc";
 
-        this.showName = false;
+        this.showName = true;
         this.headTrack = false;
         viewers = new ArrayList<>();
 
