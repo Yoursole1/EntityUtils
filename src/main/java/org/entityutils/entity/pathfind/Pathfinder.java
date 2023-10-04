@@ -37,7 +37,16 @@ public record Pathfinder(Node starting, Node ending) {
 
             // Consider each neighboring node of the current node
             for (Node neighbour : current.getAdj()) {
-                if (closed.contains(neighbour)) { // Skip already evaluated nodes
+                boolean cont = false;
+
+                for (Node n : closed){
+                    if (n.nodeEquals(neighbour)){
+                        cont = true;
+                        break;
+                    }
+                }
+
+                if(cont){
                     continue;
                 }
 

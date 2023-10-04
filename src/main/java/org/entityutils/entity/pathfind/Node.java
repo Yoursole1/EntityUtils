@@ -360,4 +360,8 @@ public class Node {
         );
     }
 
+    public Location toLocation(){
+        return new Location(this.world, this.x, this.y, this.z);
+    }
+
 }
