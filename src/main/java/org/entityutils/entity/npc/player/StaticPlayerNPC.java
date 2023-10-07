@@ -12,8 +12,7 @@ public non-sealed class StaticPlayerNPC extends AbstractPlayerNPC {
     }
 
     @Override
-    public Path goTo(Location location, int speed) {
+    public void goTo(Location location, int speed) {
         super.teleport(location);
-        return null;
     }
 }

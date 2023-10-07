@@ -1,8 +1,14 @@
 package org.entityutils.entity.pathfind;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 // TODO: optimise with a nav mesh (https://en.wikipedia.org/wiki/Navigation_mesh)
 public record Pathfinder(Node starting, Node ending) {
@@ -17,8 +23,8 @@ public record Pathfinder(Node starting, Node ending) {
      * The `MAX_DEPTH` variable is used as a stopping condition to prevent the algorithm from running indefinitely.
      * If a path is found, it is returned, otherwise `null` is returned to indicate that no path could be found.
      */
-    @Nullable
     public Path getPath() {
+
         List<Node> open = new ArrayList<>(); // List of nodes to be considered for the path
         List<Node> closed = new ArrayList<>(); // List of nodes that have already been evaluated
 
@@ -62,7 +68,7 @@ public record Pathfinder(Node starting, Node ending) {
             }
         }
 
-        return null; //if no path can be found, returns null
+        return null;
     }
 
     // Finds the node in the provided list of nodes with the lowest f cost

@@ -1,6 +1,7 @@
 package org.entityutils.entity.npc.player;
 
 
+import lombok.SneakyThrows;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
@@ -24,6 +25,7 @@ import org.entityutils.utils.math.Vector3;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 
 public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
@@ -48,26 +50,28 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
      */
     private boolean locked;
     @Override
-    public Path goTo(Location location, int speed) {
+    public void goTo(Location location, int speed) {
         if(this.locked){
-            return null;
+            return;
         }
         this.locked = true;
 
         Node starting = new Node(this.getData().getLocation());
         Node ending = new Node(location);
 
-        Path toWalk = new Pathfinder(starting, ending).getPath();
 
-        if(toWalk == null){
-            return null;
-        }
+        CompletableFuture.supplyAsync(
+                () -> new Pathfinder(starting, ending).getPath()).thenAccept(toWalk -> {
 
-        List<Instruction> movement = toWalk.generateInstructions(stepsPerBlock);
+            if(toWalk == null){
+                return;
+            }
 
-        this.executeMovementInstructions(movement, 100);
+            List<Instruction> movement = toWalk.generateInstructions(stepsPerBlock);
 
-        return toWalk;
+            this.executeMovementInstructions(movement, 100);
+
+        });
     }
 
     /**

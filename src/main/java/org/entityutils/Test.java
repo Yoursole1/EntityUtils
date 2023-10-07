@@ -13,6 +13,8 @@ import org.entityutils.entity.pathfind.Path;
 import org.entityutils.entity.pathfind.Pathfinder;
 import org.entityutils.utils.NPCClickEvent;
 
+import java.util.concurrent.CompletableFuture;
+
 public class Test implements Listener {
 
     AnimatedPlayerNPC npc;
@@ -23,31 +25,16 @@ public class Test implements Listener {
         npc.showName(true);
     }
 
-    Location a;
-    Location b;
-    boolean c = true;
     @EventHandler
-    public void onShift(PlayerToggleSneakEvent e){
+    public void onShift(PlayerToggleSneakEvent e) {
         if (e.isSneaking()){
             return;
         }
-        if(c){
-            a = e.getPlayer().getLocation();
-        }else{
-            b = e.getPlayer().getLocation();
-            Path p = new Pathfinder(new Node(a), new Node(b)).getPath();
-
-            assert p != null;
-            for (Node n : p.getNodes()){
-                n.toLocation().getBlock().setType(Material.DIAMOND_BLOCK);
-            }
-        }
-        c =! c;
-
+        npc.goTo(e.getPlayer().getLocation(), 8);
     }
     @EventHandler
     public void onNpcClick(NPCClickEvent e){
-        System.out.println(e.isAttack());
-        System.out.println(e.isSecondaryAction());
+        System.out.println(e.isLeftClick());
+        System.out.println(e.isSneaking());
     }
 }

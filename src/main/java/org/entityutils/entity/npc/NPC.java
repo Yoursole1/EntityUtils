@@ -13,7 +13,7 @@ public interface NPC extends EUEntity {
 
     void showName(boolean show);
 
-    Path goTo(Location location, int speed);
+    void goTo(Location location, int speed);
 
     void teleport(Location location);
 
