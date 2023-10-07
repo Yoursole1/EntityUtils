@@ -68,6 +68,7 @@ public class PacketUtils {
 
     public static void fixDirtyField(SynchedEntityData watcher){
         try {
+
             Field dirty = watcher.getClass().getDeclaredField("g");
             dirty.setAccessible(true);
             dirty.setBoolean(watcher, true);

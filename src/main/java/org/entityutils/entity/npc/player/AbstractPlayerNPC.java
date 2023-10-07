@@ -326,6 +326,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
 
             this.refresh();
 
+            PacketUtils.fixDirtyField(watcher);
             ClientboundSetEntityDataPacket packet4 = new ClientboundSetEntityDataPacket(this.state.getNpc().getId(), Objects.requireNonNull(watcher.packDirty()));
             for (org.bukkit.entity.Player pl : Bukkit.getOnlinePlayers()) {
                 PacketUtils.sendPacket(packet4, ((CraftPlayer) (pl)).getHandle());
