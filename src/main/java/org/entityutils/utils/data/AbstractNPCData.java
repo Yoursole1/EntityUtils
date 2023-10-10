@@ -76,7 +76,7 @@ public abstract class AbstractNPCData implements EUEntityData {
     }
 
     public boolean isValid() {
-        return getNpc() != null && getNpc().isAlive() && getNpc().valid && getNpc().isChunkLoaded();
+        return getNpc() != null && getNpc().isAlive() && getNpc().isChunkLoaded();
     }
 
     // TODO:  clone, serialize
