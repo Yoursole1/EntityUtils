@@ -28,8 +28,9 @@ public class Node {
             {0, 0, 1},
             {0, 0, -1},
 
-            {0, 1, 0},
-            {0, -1, 0},
+//            commented because you can't step straight up or straight down
+//            {0, 1, 0},
+//            {0, -1, 0},
 
             {0, 1, 1},
             {0, 1, -1},

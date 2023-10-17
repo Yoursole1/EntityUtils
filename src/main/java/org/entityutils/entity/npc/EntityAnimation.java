@@ -1,18 +1,42 @@
 package org.entityutils.entity.npc;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.entityutils.entity.npc.movement.Instruction;
+import org.entityutils.entity.pathfind.Path;
 
-@AllArgsConstructor
-public enum EntityAnimation {
+import java.util.HashMap;
+import java.util.Map;
 
-    SWING_MAIN_ARM(0),
-    TAKE_DAMAGE(1),
-    LEAVE_BED(2),
-    SWING_OFFHAND(3),
-    CRITICAL_EFFECT(4),
-    MAGIC_CRITICAL_EFFECT(5);
+public class EntityAnimation {
 
-    @Getter
-    private final int id;
+    private Map<EntityMovement, Integer> animation;
+
+    public EntityAnimation(){
+        this.animation = new HashMap<>();
+    }
+
+
+    /**
+     * @param ticksOffset the amount of ticks to wait since the previous
+     *                    animation played
+     * @return
+     */
+    public EntityAnimation add(EntityMovement e, int ticksOffset){
+
+
+        return this;
+    }
+
+    public EntityAnimation add(Instruction ins, int ticksOffset){
+
+
+        return this;
+    }
+
+    public EntityAnimation add(Path p, int ticksOffset){
+
+
+        return this;
+    }
+
+
 }

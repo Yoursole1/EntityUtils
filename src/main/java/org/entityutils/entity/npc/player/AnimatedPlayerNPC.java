@@ -14,6 +14,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 import org.entityutils.EntityUtilsPlugin;
 import org.entityutils.entity.npc.EntityAnimation;
+import org.entityutils.entity.npc.EntityMovement;
 import org.entityutils.entity.npc.movement.Instruction;
 import org.entityutils.entity.pathfind.Node;
 import org.entityutils.entity.pathfind.Path;
@@ -210,9 +211,14 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
         PacketUtils.sendPacket(p, this.getData().getViewers());
     }
 
-    public void animate(EntityAnimation animation) {
+    public void animate(EntityMovement animation) {
         ClientboundAnimatePacket p = new ClientboundAnimatePacket(this.getData().getNpc(), animation.getId());
 
         PacketUtils.sendPacket(p, this.getData().getViewers());
+    }
+
+    public void animate(EntityAnimation animation) {
+
+
     }
 }
