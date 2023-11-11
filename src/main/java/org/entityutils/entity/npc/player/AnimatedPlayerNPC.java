@@ -1,7 +1,6 @@
 package org.entityutils.entity.npc.player;
 
 
-import lombok.SneakyThrows;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
@@ -11,12 +10,12 @@ import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Consumer;
 import org.bukkit.util.Vector;
 import org.entityutils.EntityUtilsPlugin;
 import org.entityutils.entity.npc.EntityAnimation;
 import org.entityutils.entity.npc.movement.Instruction;
 import org.entityutils.entity.pathfind.Node;
-import org.entityutils.entity.pathfind.Path;
 import org.entityutils.entity.pathfind.Pathfinder;
 import org.entityutils.utils.PacketUtils;
 import org.entityutils.utils.math.MathUtils;
@@ -49,8 +48,13 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
      * @param location
      */
     private boolean locked;
+
     @Override
     public void goTo(Location location, int speed) {
+        goTo(location, speed, s -> {});
+    }
+
+    public void goTo(Location location, int speed, Consumer<MovementStatus> onCompleted) {
         if(this.locked){
             return;
         }
@@ -69,7 +73,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
             List<Instruction> movement = toWalk.generateInstructions(stepsPerBlock);
 
-            this.executeMovementInstructions(movement, 100);
+            this.executeMovementInstructions(movement, 100, onCompleted);
 
         });
     }
@@ -98,19 +102,27 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
         this.executeMovementVectors(magnitudes, 100);
     }
 
-
     public void executeMovementInstructions(List<Instruction> asm, int speed){
+        executeMovementInstructions(asm, speed, s -> {});
+    }
+
+
+    public void executeMovementInstructions(List<Instruction> asm, int speed, Consumer<MovementStatus> onCompleted){
         List<Vector3> vectors = new ArrayList<>();
 
         for(Instruction ins : asm){
             vectors.addAll(ins.generateMovementVectors());
         }
 
-        executeMovementVectors(vectors, speed);
+        executeMovementVectors(vectors, speed, onCompleted);
+    }
+
+    private void executeMovementVectors(List<Vector3> movement, int speed){
+        executeMovementVectors(movement, speed, s -> {});
     }
 
 
-    private void executeMovementVectors(List<Vector3> movement, int speed){
+    private void executeMovementVectors(List<Vector3> movement, int speed, Consumer<MovementStatus> onCompleted){
         final int[] i = {0};
         new BukkitRunnable(){
             @Override
@@ -118,6 +130,8 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
                 if(i[0] >= movement.size() - 1){
                     locked = false;
                     this.cancel();
+
+                    onCompleted.accept(MovementStatus.SUCCESS);
                 }
 
                 moveOffset(movement.get(i[0]));

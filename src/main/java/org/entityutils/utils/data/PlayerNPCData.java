@@ -61,8 +61,4 @@ public class PlayerNPCData extends AbstractNPCData {
 
         return packets;
     }
-
-    public UUID getUUID() {
-        return npc.getUUID();
-    }
 }

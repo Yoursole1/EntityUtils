@@ -79,5 +79,9 @@ public abstract class AbstractNPCData implements EUEntityData {
         return getNpc() != null && getNpc().isAlive() && getNpc().isChunkLoaded();
     }
 
+    public UUID getUUID() {
+        return npc.getUUID();
+    }
+
     // TODO:  clone, serialize
 }
