@@ -30,7 +30,10 @@ public class PlayerNPCData extends AbstractNPCData {
 
     private ArrayList<SkinLayer> layers;
 
-    private transient ServerPlayer npc;
+    @Override
+    public ServerPlayer getNpc() {
+        return (ServerPlayer) super.getNpc();
+    }
 
     public PlayerNPCData(String name, Location loc, JavaPlugin plugin) {
         super(name, loc, plugin);

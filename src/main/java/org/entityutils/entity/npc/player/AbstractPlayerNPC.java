@@ -221,6 +221,19 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         }
     }
 
+    public void lookAt(Vector direction) {
+        Vector normalized = direction.clone().normalize();
+
+        float pitch = (float) Math.asin(-normalized.getY());
+        float yaw = (float) Math.atan2(normalized.getX(), normalized.getZ());
+
+        setDirection(yaw, pitch);
+    }
+
+    public void lookAt(Location location) {
+        lookAt(location.toVector().subtract(this.state.getLocation().toVector()));
+    }
+
     /**
      * Sets the direction of the NPC, and updates the body rotation to match.
      * Note that the yaw and pitch are NOT calculated normally because minecraft
