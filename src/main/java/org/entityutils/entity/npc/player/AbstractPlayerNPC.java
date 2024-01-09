@@ -139,7 +139,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     private void init() {
         MinecraftServer server = ((CraftServer) (Bukkit.getServer())).getServer();
         ServerLevel level = ((CraftWorld) (this.state.getLocation().getWorld())).getHandle();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), this.state.isShowName() ? this.state.getName() : "");
+        GameProfile profile = new GameProfile(this.state.getUUID(), this.state.isShowName() ? this.state.getName() : "");
 
         if (this.state.getValue() != null) {
             profile.getProperties().put("textures", new Property("textures", this.state.getValue(), this.state.getSignature()));
