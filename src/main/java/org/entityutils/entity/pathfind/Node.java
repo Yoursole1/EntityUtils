@@ -245,7 +245,7 @@ public class Node {
         int offsetSum = xOffset + yOffset + zOffset;
 
         int adder = switch (offsetSum) {
-            case 0, 3 -> 17; //shouldn't be 0 anymore but leaving this here just in case
+            case 3 -> 17;
             case 1 -> 10;
             case 2 -> 14;
             default -> throw new IllegalStateException("Offset is invalid: " + offsetSum);
