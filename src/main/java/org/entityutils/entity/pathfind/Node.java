@@ -238,14 +238,14 @@ public class Node {
             return 0;
         }
 
-        int xOffset = this.x - parentNode.getX();
-        int yOffset = this.y - parentNode.getY();
-        int zOffset = this.z - parentNode.getZ();
+        int xOffset = Math.abs(this.x - parentNode.getX());
+        int yOffset = Math.abs(this.y - parentNode.getY());
+        int zOffset = Math.abs(this.z - parentNode.getZ());
 
-        int offsetSum = Math.abs(xOffset + yOffset + zOffset);
+        int offsetSum = xOffset + yOffset + zOffset;
 
         int adder = switch (offsetSum) {
-            case 0, 3 -> 17; //shouldn't be 0 but for some reason it is?
+            case 0, 3 -> 17; //shouldn't be 0 anymore but leaving this here just in case
             case 1 -> 10;
             case 2 -> 14;
             default -> throw new IllegalStateException("Offset is invalid: " + offsetSum);

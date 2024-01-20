@@ -6,6 +6,7 @@ import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.server.level.ServerPlayer;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_20_R1.CraftChunk;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -44,6 +45,9 @@ public class NPCManager {
 
 
     public void onChunkLoad(ChunkLoadEvent e) {
+        CraftChunk chunk = (CraftChunk) e.getChunk(); // todo check if valid cast
+
+
         for(NPC npc : this.registeredNPCs){
             if (isInsideChunk(npc.getData().getLocation(), e.getChunk())) {
                 npc.refresh();
