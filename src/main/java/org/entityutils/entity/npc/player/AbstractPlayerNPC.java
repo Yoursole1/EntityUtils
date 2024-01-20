@@ -67,6 +67,11 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         if (alive) {
             if (this.state.getLocation() == null || this.state.getPlugin() == null) return;
 
+            //init NPC data
+            if (this.state.getNpc() == null) {
+                this.init();
+            }
+
             for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()) {
                 setAlive(((CraftPlayer) p).getHandle(), true);
             }
@@ -139,7 +144,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     private void init() {
         MinecraftServer server = ((CraftServer) (Bukkit.getServer())).getServer();
         ServerLevel level = ((CraftWorld) (this.state.getLocation().getWorld())).getHandle();
-        GameProfile profile = new GameProfile(UUID.randomUUID(), this.state.isShowName() ? this.state.getName() : "");
+        GameProfile profile = new GameProfile(this.state.getUUID(), this.state.isShowName() ? this.state.getName() : "");
 
         if (this.state.getValue() != null) {
             profile.getProperties().put("textures", new Property("textures", this.state.getValue(), this.state.getSignature()));
@@ -281,7 +286,8 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
             setAlive(p, false);
         }
 
-        this.state.setNpc(null);
+        // Not necessary to set the npc to null
+        // this.state.setNpc(null);
 
         for (UUID uuid : view) {
             Player p = ((CraftPlayer) (Objects.requireNonNull(Bukkit.getPlayer(uuid)))).getHandle();

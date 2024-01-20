@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.entityutils.entity.decoration.HologramEntity;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public abstract class AbstractNPCData implements EUEntityData {
 
     private transient Entity npc;
+    private UUID uuid = UUID.randomUUID();
 
     private ArrayList<Pose> pose;
 
@@ -80,7 +82,23 @@ public abstract class AbstractNPCData implements EUEntityData {
     }
 
     public UUID getUUID() {
-        return npc.getUUID();
+        return uuid;
+    }
+
+    public void setUUID(UUID uuid) {
+        this.uuid = uuid;
+
+        if (this.npc != null) {
+            this.npc.setUUID(uuid);
+        }
+    }
+
+    public void setNpc(@Nullable Entity npc) {
+        this.npc = npc;
+
+        if (npc != null) {
+            npc.setUUID(uuid);
+        }
     }
 
     // TODO:  clone, serialize
