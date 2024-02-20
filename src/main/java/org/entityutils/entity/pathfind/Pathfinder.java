@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public record Pathfinder(Node starting, Node ending) {
 
     // The maximum search depth for the pathfinder
-    private static final int MAX_DEPTH = 5000;
+    private static final int MAX_DEPTH = Integer.MAX_VALUE;
 
     /**
      * @return an optimal path using A* pathfinding

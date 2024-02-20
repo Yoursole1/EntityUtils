@@ -245,14 +245,15 @@ public class Node {
         int offsetSum = xOffset + yOffset + zOffset;
 
         int adder = switch (offsetSum) {
-            case 3 -> 17;
             case 1 -> 10;
             case 2 -> 14;
+            case 3 -> 17;
             default -> throw new IllegalStateException("Offset is invalid: " + offsetSum);
         };
 
         return adder + parentNode.gCost();
     }
+
 
 
     /**
@@ -264,7 +265,7 @@ public class Node {
         this.parent = node;
 
         int pathA = this.gCost();
-        this.parent = thisNode;
+        this.parent = thisNode.parent;
         int pathB = this.gCost();
 
         return pathA < pathB;
