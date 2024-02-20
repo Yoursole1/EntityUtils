@@ -123,22 +123,23 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
 
     private void executeMovementVectors(List<Vector3> movement, int speed, Consumer<MovementStatus> onCompleted){
-        final int[] i = {0};
         new BukkitRunnable(){
+            int i = 0;
+
             @Override
             public void run(){
-                if(i[0] >= movement.size() - 1){
+                if(i > movement.size() - 1){
                     locked = false;
                     this.cancel();
 
                     onCompleted.accept(MovementStatus.SUCCESS);
+                } else {
+                    moveOffset(movement.get(i));
                 }
 
-                moveOffset(movement.get(i[0]));
-
-                i[0]++;
+                i++;
             }
-        }.runTaskTimer(EntityUtilsPlugin.getInstance(), 0, 100/speed);
+        }.runTaskTimer(getPlugin(), 0, 100/speed);
     }
 
     private void moveOffset(Vector3 offset){ //movement distance should be less than 8

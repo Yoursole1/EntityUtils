@@ -58,6 +58,10 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.state = data;
     }
 
+    public JavaPlugin getPlugin() {
+        return this.state.getPlugin();
+    }
+
     /**
      * Show or hide from all players
      * @param alive alive?
