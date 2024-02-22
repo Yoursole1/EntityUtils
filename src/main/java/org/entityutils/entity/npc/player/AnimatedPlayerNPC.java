@@ -70,7 +70,7 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
             if(toWalk == null){
                 return;
             }
-
+            //toWalk.reverse(); //todo verify
             List<Instruction> movement = toWalk.generateInstructions(stepsPerBlock);
 
             this.executeMovementInstructions(movement, 100, onCompleted);

@@ -1,12 +1,11 @@
 package org.entityutils.entity.pathfind;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@AllArgsConstructor
 @Getter
 public class Node {
 
@@ -58,14 +56,37 @@ public class Node {
             {-1, -1, 1},
             {-1, -1, -1}
     };
+
     private final int x;
     private final int y;
     private final int z;
+    @NonNull
     private final World world;
-    @Nullable
-    @Setter
-    //Only null if starting node
     private Node parent;
+
+    // cached g and h cost to speed up calculation
+
+    private int gCost;
+    private boolean gCostUpdated;
+    private int hCost;
+    private boolean hCostUpdated;
+
+    public Node(int x, int y, int z, @NotNull World world, Node parent){
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.world = world;
+        this.parent = parent;
+
+        this.gCost = this.gCost();
+        this.gCostUpdated = true;
+
+        // can't initialize hCost cache without end node.  Once initialized it never should
+        // change
+        this.hCost = 0;
+        this.hCostUpdated = false;
+    }
+
     public Node(Location loc) {
         this.x = loc.getBlockX();
         this.y = loc.getBlockY();
@@ -73,6 +94,17 @@ public class Node {
 
         this.world = loc.getWorld();
         this.parent = null;
+    }
+
+    /**
+     * Copy constructor
+     */
+    public Node(Node other){
+        this.x = other.x;
+        this.y = other.y;
+        this.z = other.z;
+        this.world = other.world;
+        this.parent = other.parent;
     }
 
     /**
@@ -233,6 +265,11 @@ public class Node {
      * @return cost of the best current path from starting node
      */
     public int gCost() {
+
+        if(this.gCostUpdated){
+            return this.gCost;
+        }
+
         Node parentNode = this.getParent();
         if (parentNode == null) { //this node is the starting node
             return 0;
@@ -251,7 +288,10 @@ public class Node {
             default -> throw new IllegalStateException("Offset is invalid: " + offsetSum);
         };
 
-        return adder + parentNode.gCost();
+        this.gCost = adder + parentNode.gCost();
+        this.gCostUpdated = true;
+
+        return this.gCost;
     }
 
 
@@ -280,13 +320,13 @@ public class Node {
         Path p = new Path();
 
         Node current = this;
-        while (current.getParent() != null) {
-            p.addNode(current);
+        while (current != null) {
+            p.addNode(new Node(current));
             current = current.getParent();
         }
-        p.addNode(current);
+//        p.addNode(current);
 
-        p.reverse();
+//        p.reverse();
         return p;
     }
 
@@ -297,6 +337,11 @@ public class Node {
      * @return hCost of the optimal path not accounting for obstacles
      */
     public int hCost(Node ending) {
+
+        if(this.hCostUpdated){ // return from saved, hCost never changes
+            return this.hCost;
+        }
+
         int xOffset = Math.abs(this.x - ending.getX());
         int yOffset = Math.abs(this.y - ending.getY());
         int zOffset = Math.abs(this.z - ending.getZ());
@@ -334,7 +379,8 @@ public class Node {
             hCost += face * 10; //truncated sqrt(1) * 10
         }
 
-
+        this.hCost = hCost;
+        this.hCostUpdated = true;
         return hCost;
     }
 
@@ -361,8 +407,17 @@ public class Node {
         );
     }
 
+    public void setParent(Node parent){
+        this.parent = parent;
+        this.gCostUpdated = false;
+    }
+
     public Location toLocation(){
         return new Location(this.world, this.x, this.y, this.z);
     }
 
+    @Override
+    public String toString() { // world not included because no one cares about this
+        return "Node: (" + this.x + ", " + this.y + ", " + this.z + ")";
+    }
 }

@@ -25,23 +25,21 @@ public record Pathfinder(Node starting, Node ending) {
      */
     public Path getPath() {
 
-        List<Node> open = new ArrayList<>(); // List of nodes to be considered for the path
-        List<Node> closed = new ArrayList<>(); // List of nodes that have already been evaluated
+        List<Node> open = new ArrayList<>();
+        List<Node> closed = new ArrayList<>();
 
-        open.add(starting); // Add the starting node to the list of nodes to be considered
+        open.add(starting);
 
         for (int i = 0; i < Pathfinder.MAX_DEPTH; i++) {
 
-            // Find the node in the open list with the lowest f cost
             Node current = this.minimal(open);
-            open.remove(current); // Remove the current node from the open list
-            closed.add(current); // Add the current node to the closed list
+            open.remove(current);
+            closed.add(current);
 
-            if (current.nodeEquals(this.ending)) { // If we have reached the ending node
-                return current.getPath(); // Return the path leading to the ending node
+            if (current.nodeEquals(this.ending)) {
+                return current.getPath();
             }
 
-            // Consider each neighboring node of the current node
             for (Node neighbour : current.getAdj()) {
                 boolean cont = false;
 
@@ -56,11 +54,9 @@ public record Pathfinder(Node starting, Node ending) {
                     continue;
                 }
 
-                // Update the parent of the neighbor node if the current node is a better parent
                 if (neighbour.isBetterParent(current) || !(open.contains(neighbour))) {
                     neighbour.setParent(current);
 
-                    // Add the neighbor node to the open list if it is not already in the list
                     if (!(open.contains(neighbour))) {
                         open.add(neighbour);
                     }
