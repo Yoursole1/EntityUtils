@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public record Pathfinder(Node starting, Node ending) {
 
     // The maximum search depth for the pathfinder
-    private static final int MAX_DEPTH = Integer.MAX_VALUE;
+    private static final int MAX_DEPTH = 10000;
 
     /**
      * @return an optimal path using A* pathfinding
@@ -31,6 +31,7 @@ public record Pathfinder(Node starting, Node ending) {
         open.add(starting);
 
         for (int i = 0; i < Pathfinder.MAX_DEPTH; i++) {
+
 
             Node current = this.minimal(open);
             open.remove(current);
@@ -54,10 +55,10 @@ public record Pathfinder(Node starting, Node ending) {
                     continue;
                 }
 
-                if (neighbour.isBetterParent(current) || !(open.contains(neighbour))) {
+                if (neighbour.isBetterParent(current) || !(listContainsNode(open, neighbour))) {
                     neighbour.setParent(current);
 
-                    if (!(open.contains(neighbour))) {
+                    if (!(listContainsNode(open, neighbour))) {
                         open.add(neighbour);
                     }
                 }
@@ -65,6 +66,16 @@ public record Pathfinder(Node starting, Node ending) {
         }
 
         return null;
+    }
+
+
+    private boolean listContainsNode(List<Node> list, Node node){
+        for(Node n : list){
+            if(n.nodeEquals(node)){
+                return true;
+            }
+        }
+        return false;
     }
 
     // Finds the node in the provided list of nodes with the lowest f cost
