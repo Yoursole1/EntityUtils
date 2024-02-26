@@ -3,8 +3,7 @@ package org.entityutils.entity.pathfind;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -25,18 +24,21 @@ public record Pathfinder(Node starting, Node ending) {
      */
     public Path getPath() {
 
-        List<Node> open = new ArrayList<>();
+        Queue<Node> open = new PriorityQueue<>(
+                (o1, o2) -> Integer.compare(o1.fCost(ending), o2.fCost(ending))
+        );
+
         List<Node> closed = new ArrayList<>();
 
         open.add(starting);
 
         for (int i = 0; i < Pathfinder.MAX_DEPTH; i++) {
-
-
-            Node current = this.minimal(open);
+            Node current = open.peek();
             open.remove(current);
             closed.add(current);
 
+            // this should never throw NullPointerException, despite
+            // what your IDE is telling you
             if (current.nodeEquals(this.ending)) {
                 return current.getPath();
             }
@@ -69,26 +71,13 @@ public record Pathfinder(Node starting, Node ending) {
     }
 
 
-    private boolean listContainsNode(List<Node> list, Node node){
+    private boolean listContainsNode(Queue<Node> list, Node node){
         for(Node n : list){
             if(n.nodeEquals(node)){
                 return true;
             }
         }
         return false;
-    }
-
-    // Finds the node in the provided list of nodes with the lowest f cost
-    private Node minimal(List<Node> nodes) {
-        Node min = nodes.get(0);
-
-        for (Node n : nodes) {
-            if (n.fCost(this.ending) < min.fCost(this.ending)) {
-                min = n;
-            }
-        }
-
-        return min;
     }
 
 }
