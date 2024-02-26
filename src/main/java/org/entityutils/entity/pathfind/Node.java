@@ -174,11 +174,11 @@ public class Node {
             throw new IllegalArgumentException("traversable location too far from node");
         }
 
-        if (this.isNotAir(x, y, z)) {
+        if (this.isCollidable(x, y, z)) {
             return false;
         }
 
-        if (this.isNotAir(x, y + 1, z)) {
+        if (this.isCollidable(x, y + 1, z)) {
             return false;
         }
 
@@ -190,13 +190,13 @@ public class Node {
             switch (yOffset) {
                 case 1 -> {
                     //jumping up, block 2 above current node must be air
-                    if (this.isNotAir(this.x, this.y + 2, this.z)) {
+                    if (this.isCollidable(this.x, this.y + 2, this.z)) {
                         return false;
                     }
                 }
                 case -1 -> {
                     //stepping down, block two above target node must be air
-                    if (this.isNotAir(x, y + 2, z)) {
+                    if (this.isCollidable(x, y + 2, z)) {
                         return false;
                     }
                 }
@@ -207,25 +207,25 @@ public class Node {
         if (xOffset != 0 && zOffset != 0) {
             if (yOffset == 0) {
                 //level diagonal path, verify blocks diagonal in all directions are safe
-                return !this.isNotAir(this.x + xOffset, this.y, this.z) &&
-                        !this.isNotAir(this.x, this.y, this.z + zOffset) &&
-                        !this.isNotAir(this.x + xOffset, this.y + 1, this.z) &&
-                        !this.isNotAir(this.x, this.y + 1, this.z + zOffset);
+                return !this.isCollidable(this.x + xOffset, this.y, this.z) &&
+                        !this.isCollidable(this.x, this.y, this.z + zOffset) &&
+                        !this.isCollidable(this.x + xOffset, this.y + 1, this.z) &&
+                        !this.isCollidable(this.x, this.y + 1, this.z + zOffset);
             } else {
                 switch (yOffset) {
                     case 1 -> {
                         //step up diagonal path
-                        if (this.isNotAir(this.x + xOffset, this.y + 1, this.z) ||
-                                this.isNotAir(this.x, this.y + 1, this.z + zOffset) ||
-                                this.isNotAir(this.x + xOffset, this.y + 2, this.z) ||
-                                this.isNotAir(this.x, this.y + 2, this.z + zOffset)) {
+                        if (this.isCollidable(this.x + xOffset, this.y + 1, this.z) ||
+                                this.isCollidable(this.x, this.y + 1, this.z + zOffset) ||
+                                this.isCollidable(this.x + xOffset, this.y + 2, this.z) ||
+                                this.isCollidable(this.x, this.y + 2, this.z + zOffset)) {
                             return false;
                         }
                     }
                     //step down diagonal path
                     case -1 -> {
-                        if (this.isNotAir(this.x + xOffset, this.y, this.z) ||
-                                this.isNotAir(this.x, this.y, this.z + zOffset)) {
+                        if (this.isCollidable(this.x + xOffset, this.y, this.z) ||
+                                this.isCollidable(this.x, this.y, this.z + zOffset)) {
                             return false;
                         }
                     }
@@ -233,7 +233,6 @@ public class Node {
                 }
             }
         }
-
 
         return true;
     }
@@ -244,8 +243,9 @@ public class Node {
      * @param z
      * @return is the block at this location not air
      */
-    private boolean isNotAir(int x, int y, int z) {
-        return this.world.getBlockAt(x, y, z).getType() != Material.AIR;
+    private boolean isCollidable(int x, int y, int z) {
+        Material type = this.world.getBlockAt(x, y, z).getType();
+        return type.isCollidable() || type == Material.WATER || type == Material.LAVA;
     }
 
     /**

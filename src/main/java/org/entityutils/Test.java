@@ -36,38 +36,38 @@ public class Test implements Listener {
         npcs.get(npcs.size()-1).setSkin(UUID.fromString("8c13f015-b6fa-4752-9f8b-02629addbf98"), SkinLayer.HAT);
     }
 
-//    private boolean show = false;
-//    @EventHandler
-//    public void onShift(PlayerToggleSneakEvent e) {
-//        if (e.isSneaking()){
-//            return;
-//        }
-//        for(AnimatedPlayerNPC npc : npcs){
-//            npc.goTo(e.getPlayer().getLocation(), 8);
-//        }
-//    }
-
-
-    private static List<Location> locations = new ArrayList<>();
+    private boolean show = false;
     @EventHandler
-    public void onShift(PlayerToggleSneakEvent e){
-        if(e.isSneaking()){
+    public void onShift(PlayerToggleSneakEvent e) {
+        if (e.isSneaking()){
             return;
         }
-        locations.add(e.getPlayer().getLocation());
-        if(locations.size()==2){
-            Path p = new Pathfinder(new Node(locations.get(0)), new Node(locations.get(1))).getPath();
-
-            Node curr = p.getTip();
-            while(curr != null){
-                Location l = new Location(curr.getWorld(), curr.getX(), curr.getY(), curr.getZ());
-                l.getBlock().setType(Material.DIAMOND_BLOCK);
-                curr = curr.getParent();
-            }
-
-            locations = new ArrayList<>();
+        for(AnimatedPlayerNPC npc : npcs){
+            npc.goTo(e.getPlayer().getLocation(), 8);
         }
     }
+
+
+//    private static List<Location> locations = new ArrayList<>();
+//    @EventHandler
+//    public void onShift(PlayerToggleSneakEvent e){
+//        if(e.isSneaking()){
+//            return;
+//        }
+//        locations.add(e.getPlayer().getLocation());
+//        if(locations.size()==2){
+//            Path p = new Pathfinder(new Node(locations.get(0)), new Node(locations.get(1))).getPath();
+//
+//            Node curr = p.getTip();
+//            while(curr != null){
+//                Location l = new Location(curr.getWorld(), curr.getX(), curr.getY(), curr.getZ());
+//                l.getBlock().setType(Material.DIAMOND_BLOCK);
+//                curr = curr.getParent();
+//            }
+//
+//            locations = new ArrayList<>();
+//        }
+//    }
     @EventHandler
     public void onNpcClick(NPCClickEvent e){
         System.out.println(e.isLeftClick());
