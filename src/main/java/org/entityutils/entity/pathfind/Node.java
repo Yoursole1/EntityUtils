@@ -324,9 +324,7 @@ public class Node {
             p.addNode(new Node(current));
             current = current.getParent();
         }
-//        p.addNode(current);
 
-//        p.reverse();
         return p;
     }
 
