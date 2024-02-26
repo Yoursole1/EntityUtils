@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.Vector;
 import org.entityutils.EntityUtilsPlugin;
@@ -37,6 +38,8 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
     // which was originally c*(-(x-1)^2 + 1)
     private static final double a = -1/1.2D; //slope term
     private static final double b = 1/1.2D; //y intercept
+
+    private BukkitTask movementThread;
 
     public AnimatedPlayerNPC(String name, Location loc, JavaPlugin plugin) {
         super(name, loc, plugin);
@@ -68,14 +71,29 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
                 () -> new Pathfinder(starting, ending).getPath()).thenAccept(toWalk -> {
 
             if(toWalk == null){
+                this.locked = false;
                 return;
             }
-            //toWalk.reverse(); //todo verify
+
             List<Instruction> movement = toWalk.generateInstructions(stepsPerBlock);
 
             this.executeMovementInstructions(movement, 100, onCompleted);
-
         });
+
+    }
+
+    /**
+     * @return true if movement was happening, otherwise takes no action and returns false
+     */
+    public boolean cancelMovement(){
+        if(this.movementThread == null){
+            return false;
+        }
+
+        this.movementThread.cancel();
+        this.movementThread = null;
+        this.locked = false;
+        return true;
     }
 
     /**
@@ -123,13 +141,14 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
 
     private void executeMovementVectors(List<Vector3> movement, int speed, Consumer<MovementStatus> onCompleted){
-        new BukkitRunnable(){
+        this.movementThread = new BukkitRunnable(){
             int i = 0;
 
             @Override
             public void run(){
                 if(i > movement.size() - 1){
                     locked = false;
+                    movementThread = null;
                     this.cancel();
 
                     onCompleted.accept(MovementStatus.SUCCESS);
