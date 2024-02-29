@@ -303,6 +303,22 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         this.state.setHeadTrack(track);
     }
 
+    private EquipmentSlot toNmsSlot(org.bukkit.inventory.EquipmentSlot slot) {
+        EquipmentSlot nmsSlot = EquipmentSlot.MAINHAND;
+        return switch (slot) {
+            case HAND -> EquipmentSlot.MAINHAND;
+            case OFF_HAND -> EquipmentSlot.OFFHAND;
+            case FEET -> EquipmentSlot.FEET;
+            case LEGS -> EquipmentSlot.LEGS;
+            case CHEST -> EquipmentSlot.CHEST;
+            case HEAD -> EquipmentSlot.HEAD;
+        };
+    }
+
+    public void setItem(ItemStack item, org.bukkit.inventory.EquipmentSlot slot) {
+        setItem(item, toNmsSlot(slot));
+    }
+
     public void setItem(ItemStack item, EquipmentSlot inventorySlot) {
         this.state.getInventory().add(new com.mojang.datafixers.util.Pair<>(inventorySlot, CraftItemStack.asNMSCopy(item)));
         if (this.state.getNpc() == null) {

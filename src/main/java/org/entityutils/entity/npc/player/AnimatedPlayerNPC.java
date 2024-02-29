@@ -6,8 +6,11 @@ import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -248,5 +251,18 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
         ClientboundAnimatePacket p = new ClientboundAnimatePacket(this.getData().getNpc(), animation.getId());
 
         PacketUtils.sendPacket(p, this.getData().getViewers());
+    }
+
+    /**
+     *  Makes the NPC cast a fishing hook. This might look weird if they're not holding a fishing rod
+     */
+    public void castFishingHook() {
+        this.animate(EntityAnimation.SWING_MAIN_ARM);
+
+        Level world = ((CraftWorld) getData().getLocation().getWorld()).getHandle();
+
+        FishingHook hook = new FishingHook(getData().getNpc(), world, 0, 0);
+
+        world.addFreshEntity(hook);
     }
 }
