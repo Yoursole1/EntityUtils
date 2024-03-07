@@ -233,8 +233,8 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     public void lookAt(Vector direction) {
         Vector normalized = direction.clone().normalize();
 
-        float pitch = (float) Math.asin(-normalized.getY());
-        float yaw = (float) Math.atan2(normalized.getX(), normalized.getZ());
+        float pitch = (float) (Math.asin(-normalized.getY()) * 180 / Math.PI);
+        float yaw = (float) (Math.atan2(normalized.getX(), normalized.getZ()) * 180 / Math.PI);
 
         setDirection(yaw, pitch);
     }
