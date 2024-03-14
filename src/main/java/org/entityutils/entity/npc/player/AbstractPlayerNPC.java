@@ -24,6 +24,7 @@ import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.entityutils.entity.decoration.HologramEntity;
 import org.entityutils.entity.npc.NPC;
@@ -231,10 +232,25 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     }
 
     public void lookAt(Vector direction) {
-        Vector normalized = direction.clone().normalize();
+        float pitch, yaw;
 
-        float pitch = (float) (Math.asin(-normalized.getY()) * 180 / Math.PI);
-        float yaw = (float) (Math.atan2(normalized.getX(), normalized.getZ()) * 180 / Math.PI);
+        // Adapted from Location.setDirection()
+        final double _2PI = 2 * Math.PI;
+        final double x = direction.getX();
+        final double z = direction.getZ();
+
+        if (x == 0 && z == 0) {
+            pitch = direction.getY() > 0 ? -90 : 90;
+            yaw = 0;
+        } else {
+            double theta = Math.atan2(-x, z);
+            yaw = (float) Math.toDegrees((theta + _2PI) % _2PI);
+
+            double x2 = NumberConversions.square(x);
+            double z2 = NumberConversions.square(z);
+            double xz = Math.sqrt(x2 + z2);
+            pitch = (float) Math.toDegrees(Math.atan(-direction.getY() / xz));
+        }
 
         setDirection(yaw, pitch);
     }
