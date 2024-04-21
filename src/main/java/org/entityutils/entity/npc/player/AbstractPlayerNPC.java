@@ -256,7 +256,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     }
 
     public void lookAt(Location location) {
-        lookAt(location.toVector().subtract(this.state.getLocation().toVector()));
+        lookAt(location.toVector().subtract(this.state.getLocation().clone().add(0, this.state.getEyeHeight(), 0).toVector()));
     }
 
     /**
