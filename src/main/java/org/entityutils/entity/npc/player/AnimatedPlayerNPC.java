@@ -77,6 +77,16 @@ public non-sealed class AnimatedPlayerNPC extends AbstractPlayerNPC {
 
             List<Instruction> movement = toWalk.generateInstructions(stepsPerBlock);
 
+            Vector3 sum = new Vector3(0,0,0);
+            for(Instruction i : movement){
+                for(Vector3 v : i.generateMovementVectors()){
+                    sum.add(v);
+                }
+            }
+            sum.add(this.getData().getLocation());
+            System.out.println(sum);
+
+
             this.executeMovementInstructions(movement, 100, onCompleted);
         });
 

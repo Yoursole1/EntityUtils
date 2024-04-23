@@ -43,6 +43,7 @@ public class Vector3 {
 
     // This method returns a list of vectors that are evenly spaced between this vector and the origin
     public List<Vector3> lerp(int steps) {
+        Vector3 sum = new Vector3(0,0,0);
         List<Vector3> out = new ArrayList<>();
 
         // Calculate the offset vector by dividing this vector by the number of steps
@@ -52,6 +53,8 @@ public class Vector3 {
         // Loop `steps` times, adding a vector that is `offset` closer to the origin to the list each time
         for (int j = 0; j < steps; j++) {
             out.add(offset);
+            //
+            sum.add(offset);
         }
 
         return out;
