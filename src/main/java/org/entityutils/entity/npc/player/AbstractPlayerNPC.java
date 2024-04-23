@@ -24,6 +24,7 @@ import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.entityutils.entity.decoration.HologramEntity;
 import org.entityutils.entity.npc.NPC;
@@ -231,16 +232,31 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     }
 
     public void lookAt(Vector direction) {
-        Vector normalized = direction.clone().normalize();
+        float pitch, yaw;
 
-        float pitch = (float) Math.asin(-normalized.getY());
-        float yaw = (float) Math.atan2(normalized.getX(), normalized.getZ());
+        // Adapted from Location.setDirection()
+        final double _2PI = 2 * Math.PI;
+        final double x = direction.getX();
+        final double z = direction.getZ();
+
+        if (x == 0 && z == 0) {
+            pitch = direction.getY() > 0 ? -90 : 90;
+            yaw = 0;
+        } else {
+            double theta = Math.atan2(-x, z);
+            yaw = (float) Math.toDegrees((theta + _2PI) % _2PI);
+
+            double x2 = NumberConversions.square(x);
+            double z2 = NumberConversions.square(z);
+            double xz = Math.sqrt(x2 + z2);
+            pitch = (float) Math.toDegrees(Math.atan(-direction.getY() / xz));
+        }
 
         setDirection(yaw, pitch);
     }
 
     public void lookAt(Location location) {
-        lookAt(location.toVector().subtract(this.state.getLocation().toVector()));
+        lookAt(location.toVector().subtract(this.state.getLocation().clone().add(0, this.state.getEyeHeight(), 0).toVector()));
     }
 
     /**
@@ -301,6 +317,22 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
 
     public void headTrack(boolean track) {
         this.state.setHeadTrack(track);
+    }
+
+    private EquipmentSlot toNmsSlot(org.bukkit.inventory.EquipmentSlot slot) {
+        EquipmentSlot nmsSlot = EquipmentSlot.MAINHAND;
+        return switch (slot) {
+            case HAND -> EquipmentSlot.MAINHAND;
+            case OFF_HAND -> EquipmentSlot.OFFHAND;
+            case FEET -> EquipmentSlot.FEET;
+            case LEGS -> EquipmentSlot.LEGS;
+            case CHEST -> EquipmentSlot.CHEST;
+            case HEAD -> EquipmentSlot.HEAD;
+        };
+    }
+
+    public void setItem(ItemStack item, org.bukkit.inventory.EquipmentSlot slot) {
+        setItem(item, toNmsSlot(slot));
     }
 
     public void setItem(ItemStack item, EquipmentSlot inventorySlot) {

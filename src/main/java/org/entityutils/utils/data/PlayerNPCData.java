@@ -89,4 +89,8 @@ public class PlayerNPCData extends AbstractNPCData {
             getNpc().gameProfile = new GameProfile(getUUID(), oldProfile.getName());
         }
     }
+
+    public float getEyeHeight() {
+        return getNpc().getEyeHeight();
+    }
 }
