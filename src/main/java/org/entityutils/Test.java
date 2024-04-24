@@ -36,20 +36,15 @@ public class Test implements Listener {
         npcs.get(npcs.size()-1).setSkin(UUID.fromString("8c13f015-b6fa-4752-9f8b-02629addbf98"), SkinLayer.HAT);
     }
 
-    private boolean go = false;
     @EventHandler
     public void onShift(PlayerToggleSneakEvent e) {
         if (e.isSneaking()){
             return;
         }
+        System.out.println(e.getPlayer().getLocation());
         for(AnimatedPlayerNPC npc : npcs){
-            if(!go){
-                npc.goTo(e.getPlayer().getLocation(), 8);
-            }else{
-                System.out.println(npc.cancelMovement());
-            }
+            npc.goTo(e.getPlayer().getLocation(), 8);
         }
-        go = !go;
     }
 
 

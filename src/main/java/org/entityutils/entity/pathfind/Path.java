@@ -1,6 +1,8 @@
 package org.entityutils.entity.pathfind;
 
 import lombok.Getter;
+import org.bukkit.Location;
+import org.entityutils.entity.npc.movement.CenterInstruction;
 import org.entityutils.entity.npc.movement.Instruction;
 import org.entityutils.entity.npc.movement.JumpInstruction;
 import org.entityutils.entity.npc.movement.WalkInstruction;
@@ -43,10 +45,10 @@ public class Path {
         return first;
     }
 
-    public List<Instruction> generateInstructions(int ticksPerBlock) {
+    public List<Instruction> generateInstructions(Location start, Location target, int ticksPerBlock) {
 
         List<Instruction> movement = new ArrayList<>();
-
+        Node init = new Node(this.tip);
         Node curr = this.tip;
         while (curr.getParent() != null) {
             Node nxt = curr.getParent();
@@ -63,6 +65,14 @@ public class Path {
 
             curr = curr.getParent();
         }
+
+        Vector3 finalVec = new Vector3(curr.getX(), curr.getY(), curr.getZ());
+        Vector3 initVec = new Vector3(-init.getX(), -init.getY(), -init.getZ());
+        finalVec.add(initVec); // offset from movement
+        Vector3 startingLoc = new Vector3(start);
+        startingLoc.add(finalVec); // location from naive movement
+
+        movement.add(new WalkInstruction(startingLoc, new Vector3(target), ticksPerBlock));
 
         return movement;
     }
