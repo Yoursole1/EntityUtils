@@ -4,11 +4,13 @@ import net.minecraft.world.entity.Pose;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.entityutils.entity.npc.EntityAnimation;
+import org.entityutils.entity.npc.NPC;
 import org.entityutils.entity.npc.movement.CenterInstruction;
 import org.entityutils.entity.npc.movement.TeleportInstruction;
 import org.entityutils.entity.npc.player.AnimatedPlayerNPC;
@@ -30,10 +32,16 @@ public class Test implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
+        for(NPC npc : npcs){
+            npc.setAlive(((CraftPlayer)e.getPlayer()).getHandle(), true);
+        }
+
         npcs.add(new AnimatedPlayerNPC("Hi world", e.getPlayer().getLocation(), EntityUtilsPlugin.getInstance()));
         npcs.get(npcs.size()-1).setAlive(true);
         npcs.get(npcs.size()-1).showName(true);
         npcs.get(npcs.size()-1).setSkin(UUID.fromString("8c13f015-b6fa-4752-9f8b-02629addbf98"), SkinLayer.HAT);
+
+
     }
 
     @EventHandler
