@@ -102,6 +102,8 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
     public void setAlive(Player p, boolean alive) {
 
         if (alive) {
+            if(this.state.getViewers().contains(p.getUUID())) return; // player already sees it
+
             if (this.state.getLocation() == null || this.state.getPlugin() == null) return;
 
             //init NPC data
