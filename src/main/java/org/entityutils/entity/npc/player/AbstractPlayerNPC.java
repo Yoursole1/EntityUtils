@@ -237,7 +237,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
         float pitch, yaw;
 
         // Adapted from Location.setDirection()
-        final double _2PI = 2 * Math.PI;
+        final double TAU = 2 * Math.PI;
         final double x = direction.getX();
         final double z = direction.getZ();
 
@@ -246,7 +246,7 @@ public abstract sealed class AbstractPlayerNPC implements NPC permits AnimatedPl
             yaw = 0;
         } else {
             double theta = Math.atan2(-x, z);
-            yaw = (float) Math.toDegrees((theta + _2PI) % _2PI);
+            yaw = (float) Math.toDegrees((theta + TAU) % TAU);
 
             double x2 = NumberConversions.square(x);
             double z2 = NumberConversions.square(z);
